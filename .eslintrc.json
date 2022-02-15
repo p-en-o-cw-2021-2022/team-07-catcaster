@@ -1,0 +1,55 @@
+{
+    "root": true,
+    "env": {
+        "es2021": true
+    },
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+        "project": [ "tsconfig.json", "src/web/tsconfig.json", "src/wdio-test/tsconfig.json" ]
+    },
+    "plugins": [
+        "@typescript-eslint"
+    ],
+    "extends": [
+        "eslint:recommended",
+        "plugin:node/recommended",
+        "plugin:@typescript-eslint/eslint-recommended",
+        "plugin:@typescript-eslint/recommended",
+        "plugin:@typescript-eslint/recommended-requiring-type-checking"
+    ],
+    "settings": {
+        "node": {
+            "tryExtensions": [".js", ".json", ".node", ".ts"]
+        }
+    },
+    "rules": {
+        "indent": ["error", 4],
+        "linebreak-style": ["error", "unix"],
+        "quotes": ["error", "single"],
+        "semi": ["error", "always"],
+        "brace-style": ["error", "1tbs", { "allowSingleLine": true }],
+        "max-len": ["off", "warn", { "code": 132 }],
+        "no-invalid-this": ["error"],
+        "no-trailing-spaces": ["error"],
+        "space-before-blocks": ["error"],
+        "no-tabs": ["error"],
+        "no-lonely-if": ["error"],
+        "new-parens": ["error", "always"],
+        "no-var": ["error"],
+        "prefer-const": ["error"],
+        "no-template-curly-in-string": ["error"],
+        "curly": ["error", "multi-line", "consistent"],
+        "eqeqeq": ["error", "always"],
+        "guard-for-in": ["error"],
+        "no-new-wrappers": ["error"],
+        "no-return-await": ["error"],
+        "no-unused-vars": "off",
+        "@typescript-eslint/no-unused-vars": ["warn", { "argsIgnorePattern": "^_" }],
+        "@typescript-eslint/no-inferrable-types": "off",
+        "@typescript-eslint/explicit-module-boundary-types": "off",
+        "@typescript-eslint/restrict-template-expressions": "off",
+        "@typescript-eslint/prefer-for-of": ["warn"],
+        "node/no-unsupported-features/es-syntax": "off",
+        "node/no-missing-import": "off"
+    }
+}
