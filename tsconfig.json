@@ -1,6 +1,21 @@
 {
-    "extends": "./tsconfig.base",
+    "$schema": "https://json.schemastore.org/tsconfig",
+    "display": "Node 16",
 
-    "include": ["src"],
-    "exclude": ["src/web", "src/wdio-test"]
+    "compilerOptions": {
+      "module": "commonjs",
+      "lib": ["es2021"],
+      "target": "es2021",
+      "outDir": "dist",
+      "rootDir": "src",
+      "strict": true,
+      "esModuleInterop": true,
+      "skipLibCheck": true,
+      "forceConsistentCasingInFileNames": true,
+      "noImplicitAny": true,
+      "sourceMap": true,
+      "listEmittedFiles": true,
+      "typeRoots": [ "./types", "./node_modules/@types"]
+    }
+
 }
