@@ -54,6 +54,8 @@
                 var sendMessageBox = document.getElementById("sendMessageBox");
                 var sendButton = document.getElementById("sendButton");
                 var clearMsgsButton = document.getElementById("clearMsgsButton");
+                
+                let connections = new Object();
 
                 /**
                  * Create the Peer object for our end of the connection.
@@ -78,22 +80,23 @@
 
                         console.log('ID: ' + peer.id);
                         recvId.innerHTML = "ID: " + peer.id;
-                        status.innerHTML = "Awaiting connection...";
+                        status.innerHTML = "Connections: <br>";
                     });
                     peer.on('connection', function (c) {
-                        // Allow only a single connection
-                        if (conn && conn.open) {
-                            c.on('open', function() {
-                                c.send("Already connected to another client");
-                                setTimeout(function() { c.close(); }, 500);
-                            });
-                            return;
-                        }
-
-                        conn = c;
+                        connections[c.peer] = c;
+                        status.innerHTML += (c.peer + '<br>');
+                        // Data received
+                        c.on('data', function (data) {
+                            console.log("Data recieved");
+                            var cueString = "<span class=\"cueMsg\">Cue: </span>";
+                            addMessage("<span class=\"peerMsg\">Peer: </span>" + data);
+                        });
+                        // Connection closed
+                        c.on('close', function () {
+                            status.innerHTML = status.innerHTML + "<br>" + "Connection reset with " + c.peer;
+                        });
                         console.log("Connected to: " + conn.peer);
                         status.innerHTML = "Connected";
-                        ready();
                     });
                     peer.on('disconnected', function () {
                         status.innerHTML = "Connection lost. Please reconnect";
@@ -119,61 +122,6 @@
                  * Triggered once a connection has been achieved.
                  * Defines callbacks to handle incoming data and connection events.
                  */
-                function ready() {
-                    conn.on('data', function (data) {
-                        console.log("Data recieved");
-                        var cueString = "<span class=\"cueMsg\">Cue: </span>";
-                        switch (data) {
-                            case 'Go':
-                                go();
-                                addMessage(cueString + data);
-                                break;
-                            case 'Fade':
-                                fade();
-                                addMessage(cueString + data);
-                                break;
-                            case 'Off':
-                                off();
-                                addMessage(cueString + data);
-                                break;
-                            case 'Reset':
-                                reset();
-                                addMessage(cueString + data);
-                                break;
-                            default:
-                                addMessage("<span class=\"peerMsg\">Peer: </span>" + data);
-                                break;
-                        };
-                    });
-                    conn.on('close', function () {
-                        status.innerHTML = "Connection reset<br>Awaiting connection...";
-                        conn = null;
-                    });
-                }
-
-                function go() {
-                    standbyBox.className = "display-box hidden";
-                    goBox.className = "display-box go";
-                    fadeBox.className = "display-box hidden";
-                    offBox.className = "display-box hidden";
-                    return;
-                };
-
-                function fade() {
-                    standbyBox.className = "display-box hidden";
-                    goBox.className = "display-box hidden";
-                    fadeBox.className = "display-box fade";
-                    offBox.className = "display-box hidden";
-                    return;
-                };
-
-                function off() {
-                    standbyBox.className = "display-box hidden";
-                    goBox.className = "display-box hidden";
-                    fadeBox.className = "display-box hidden";
-                    offBox.className = "display-box off";
-                    return;
-                }
 
                 function reset() {
                     standbyBox.className = "display-box standby";
