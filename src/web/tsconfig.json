@@ -1,20 +1,20 @@
 {
-    "$schema": "https://json.schemastore.org/tsconfig",
-    "display": "Browser es2021",
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "display": "Browser es2021",
 
-    "compilerOptions": {
-      "module": "es2020",
-      "lib": ["es2021", "dom"],
-      "target": "es6",
-      "rootDir": "../",
-      "outDir": "../../dist/webroot",
-      "strict": true,
-      "skipLibCheck": true,
-      "forceConsistentCasingInFileNames": true,
-      "noImplicitAny": true,
-      "sourceMap": true,
-      "listEmittedFiles": true,
-      "moduleResolution": "node"
-    }
+  "compilerOptions": {
+    "module": "es2020",
+    "lib": ["es2021", "dom"],
+    "target": "es6",
+    "rootDir": "../..",
+    "outDir": "../../dist/webroot",
+    "strict": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "noImplicitAny": true,
+    "sourceMap": true,
+    "listEmittedFiles": true,
+    "moduleResolution": "node"
+  }
 
 }
