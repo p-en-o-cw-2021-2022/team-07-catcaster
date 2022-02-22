@@ -1,4 +1,4 @@
-import {StringRandomizer} from './classes';
+//import {StringRandomizer} from './classes';
 
 describe('IDgenerator', () => {
     
