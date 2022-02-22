@@ -1,4 +1,4 @@
-import Koa, { Request } from 'koa';
+import Koa from 'koa';
 import Router from '@koa/router'; // there is also 'koa-router' (@koa/router is listed officially on koajs)
 import serve from 'koa-static';
 import mount from 'koa-mount';
@@ -11,9 +11,6 @@ import * as request from './requesthandlers';
 
 const app = new Koa();
 
-// Log all requests to the screen such that we see what is happening
-app.use(logger());
-
 // When we run this server we serve you all of our `dist/webroot` folder.
 const webroot = __dirname + '/../../dist/webroot';
 app.use(mount('/', serve(webroot)));
@@ -21,7 +18,7 @@ app.use(mount('/', serve(webroot)));
 // Configure some REST points:
 const router = new Router();
 router
-    .get('/screen/', (ctx: request.context) => {
+    .get('/screen/123/', (ctx: request.context) => {
         request.getScreenPage(ctx);
         //serve page with QR code here;
     })
@@ -32,6 +29,10 @@ router
     .get('/game/screen/', (ctx: request.context) => {
         request.getGamePage(ctx);
         //serve game page;
+    })
+    .get('/loading/screen/', (ctx: request.context) => {
+        request.getLoadingPage(ctx);
+        //serve loading page;
     })
 
 
