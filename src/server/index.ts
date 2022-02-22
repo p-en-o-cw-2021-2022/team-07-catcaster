@@ -3,6 +3,9 @@ import Router from '@koa/router'; // there is also 'koa-router' (@koa/router is 
 import serve from 'koa-static';
 import mount from 'koa-mount';
 import logger from 'koa-logger';
+import https from 'https';
+import http from 'http';
+import fs from 'fs';
 
 const app = new Koa();
 
@@ -22,19 +25,17 @@ router
     .get('/controller/', (ctx, _next) => {
         //serve page with controls here;
     })
-    .post('/notes/:key', (ctx, _next) => {
-        ctx.body = 'post';
+    .get('/game/screen/', (ctx, _next) => {
+        //serve game page;
     })
-    .put('/notes/:key', (ctx, _next) => {
-        ctx.body = 'put';
-    })
-    .del('/notes/:key', (ctx, _next) => {
-        ctx.body = 'del';
-    });
 
-app.use(mount('/api/v0', router.routes())).use(router.allowedMethods());
 
-const port = 4000;
-app.listen(4000, () => {
-    console.log(`Listening on http://127.0.0.1:${port}/.`);
-});
+app.use(mount('/catcaster/', router.routes())).use(router.allowedMethods());
+
+const options = {
+    key: fs.readFileSync('dist/key.pem'),
+    cert: fs.readFileSync('dist/cert.pem')
+};
+
+export const httpsServer = https.createServer(options, app.callback()).listen(8000, () => console.log('https app staat aan...'));
+export const httpServer = http.createServer(app.callback()).listen(3000, () => console.log('http app staat aan...'));
