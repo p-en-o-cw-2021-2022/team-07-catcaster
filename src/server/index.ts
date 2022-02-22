@@ -1,4 +1,4 @@
-import Koa from 'koa';
+import Koa, { Request } from 'koa';
 import Router from '@koa/router'; // there is also 'koa-router' (@koa/router is listed officially on koajs)
 import serve from 'koa-static';
 import mount from 'koa-mount';
@@ -6,6 +6,8 @@ import logger from 'koa-logger';
 import https from 'https';
 import http from 'http';
 import fs from 'fs';
+import * as request from './requesthandlers';
+
 
 const app = new Koa();
 
@@ -19,13 +21,16 @@ app.use(mount('/', serve(webroot)));
 // Configure some REST points:
 const router = new Router();
 router
-    .get('/screen/', (ctx, _next) => {
+    .get('/screen/', (ctx: request.context) => {
+        request.getScreenPage(ctx);
         //serve page with QR code here;
     })
-    .get('/controller/', (ctx, _next) => {
+    .get('/controller/', (ctx: request.context) => {
+        request.getControllerPage(ctx);
         //serve page with controls here;
     })
-    .get('/game/screen/', (ctx, _next) => {
+    .get('/game/screen/', (ctx: request.context) => {
+        request.getGamePage(ctx);
         //serve game page;
     })
 
