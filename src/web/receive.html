@@ -19,20 +19,11 @@
                 <td>
                     <input type="text" id="sendMessageBox" placeholder="Enter a message..." autofocus="true" />
                     <button type="button" id="sendButton">Send</button>
-                    <button type="button" id="clearMsgsButton">Clear Msgs (Local)</button>
                 </td>
             </tr>
             <tr>
                 <td><div id="status" class="status"></div></td>
                 <td><div class="message" id="message"></div></td>
-            </tr>
-            <tr>
-                <td class="display-box standby" id="standby"><h2>Standby</h2></td>
-                <td class="display-box hidden" id="go"><h2>Go</h2></td>
-            </tr>
-            <tr>
-                <td class="display-box hidden" id="fade"><h2>Fade</h2></td>
-                <td class="display-box hidden" id="off"><h2>All Off</h2></td>
             </tr>
         </table>
 
@@ -47,13 +38,8 @@
                 var recvId = document.getElementById("receiver-id");
                 var status = document.getElementById("status");
                 var message = document.getElementById("message");
-                var standbyBox = document.getElementById("standby");
-                var goBox = document.getElementById("go");
-                var fadeBox = document.getElementById("fade");
-                var offBox = document.getElementById("off");
                 var sendMessageBox = document.getElementById("sendMessageBox");
                 var sendButton = document.getElementById("sendButton");
-                var clearMsgsButton = document.getElementById("clearMsgsButton");
                 
                 let connections = new Object();
 
@@ -63,7 +49,7 @@
                  * Sets up callbacks that handle any events related to our
                  * peer object.
                  */
-                 function initialize() {
+                function initialize() {
                     // Create own peer object with connection to shared PeerJS server
                     peer = new Peer(null, {
                         debug: 2
@@ -84,16 +70,17 @@
                     });
                     peer.on('connection', function (c) {
                         connections[c.peer] = c;
-                        status.innerHTML += (c.peer + '<br>');
+                        status.innerHTML = onConnChange();
                         // Data received
                         c.on('data', function (data) {
                             console.log("Data recieved");
                             var cueString = "<span class=\"cueMsg\">Cue: </span>";
-                            addMessage("<span class=\"peerMsg\">Peer: </span>" + data);
+                            addMessage("<span class=\"peerMsg\">" + c.peer.slice(0, 10) + ": </span>" + data);
                         });
                         // Connection closed
                         c.on('close', function () {
-                            status.innerHTML = status.innerHTML + "<br>" + "Connection reset with " + c.peer;
+                            delete connections[c.peer];
+                            status.innerHTML = onConnChange();
                         });
                         console.log("Connected to: " + conn.peer);
                         status.innerHTML = "Connected";
@@ -131,6 +118,14 @@
                     return;
                 };
 
+                function onConnChange() {
+                    connectionString = 'Connected to: <br>';
+                    for (connection in connections) {
+                        connectionString += (connection + '<br>');
+                    }
+                    return connectionString;
+                }
+
                 function addMessage(msg) {
                     var now = new Date();
                     var h = now.getHours();
@@ -149,11 +144,6 @@
                     };
 
                     message.innerHTML = "<br><span class=\"msg-time\">" + h + ":" + m + ":" + s + "</span>  -  " + msg + message.innerHTML;
-                }
-
-                function clearMessages() {
-                    message.innerHTML = "";
-                    addMessage("Msgs cleared");
                 }
 
                 // Listen for enter in message box
@@ -176,8 +166,6 @@
                     }
                 });
 
-                // Clear messages box
-                clearMsgsButton.addEventListener('click', clearMessages);
 
                 initialize();
             })();
