@@ -7,17 +7,17 @@ export type context = Koa.ParameterizedContext<Koa.DefaultState, Koa.DefaultCont
 export function getScreenPage(ctx: context){
     console.log(8)
     ctx.type = 'html';
-    fs.createReadStream('dist/webroot/web/index.html'); //replace placeholder
+    ctx.body = fs.createReadStream('dist/webroot/web/index.html'); //replace placeholder
 }
 
 export function getControllerPage(ctx: context){
     ctx.type = 'html';
-    fs.createReadStream('placeholder'); //replace placeholder
+    ctx.body = fs.createReadStream('placeholder'); //replace placeholder
 }
 
 export function getGamePage(ctx: context){
     ctx.type = 'html';
-    fs.createReadStream('placeholder'); //replace placeholder
+    ctx.body = fs.createReadStream('placeholder'); //replace placeholder
 }
 
 export function getLoadingPage(ctx: context){
