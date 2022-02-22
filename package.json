@@ -14,7 +14,7 @@
     "build-and-copy": "npm run clean && npm run tsc && npm run copy-files-web",
     "lint": "eslint --ext .ts src",
     "lint-fix": "eslint --ext .ts --fix src",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "author": "P&O CW 2021-2022",
   "license": "ISC",
