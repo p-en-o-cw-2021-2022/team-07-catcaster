@@ -16,12 +16,11 @@ app.use(mount('/', serve(webroot)));
 // Configure some REST points:
 const router = new Router();
 router
-    .get('/', (ctx, _next) => {
-        ctx.body = 'Hello world from api v0!';
+    .get('/screen/', (ctx, _next) => {
+        //serve page with QR code here;
     })
-    .get('/notes/:key', (ctx, _next) => {
-        const { key } = ctx.params;
-        ctx.body = `Here is note ${key}!`;
+    .get('/controller/', (ctx, _next) => {
+        //serve page with controls here;
     })
     .post('/notes/:key', (ctx, _next) => {
         ctx.body = 'post';
