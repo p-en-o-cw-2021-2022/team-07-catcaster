@@ -32,22 +32,37 @@ export class Planet {
         // return Math.atan((this.radius * 1 / (1 + Math.abs(this.angle[0]/90)))/(this.radius * 1 / (1 + Math.abs(this.angle[1]/90)))) * 180;
         //return Math.atan((this.radius * Math.sin((this.angle[1] / 180) * Math.PI))/ (this.radius * Math.sin((this.angle[0] / 180) * Math.PI)));
 
-        const tmp = Math.sqrt((Math.sin((this.angle[1] / 180) * Math.PI)) ** 2 + ( Math.sin((this.angle[0] / 180) * Math.PI)) ** 2);
+        // if (this.angle[1] > 0 && this.angle[0] > 0) {
+        //     return -Math.atan(this.angle[0] / this.angle[1]);
+        // } else {
+        //     return -Math.atan(this.angle[0] / this.angle[1]) + 180;
+        // }
+        return 0;
 
-        if (this.angle[0] >= 0 && this.angle[1] >= 0) {
-            return tmp;
-        } else if (this.angle[1] >= 0 && this.angle[0] < 0) {
-            return 180 - tmp;
-        } else if (this.angle[1] < 0 && this.angle[0] < 0) {
-            return 270 - tmp;
-        } else {
-            return 360 - tmp;
-        }
+        //const tmp = Math.sqrt((Math.sin((this.angle[1] / 180) * Math.PI)) ** 2 + ( Math.sin((this.angle[0] / 180) * Math.PI)) ** 2);
+
+        // if (this.angle[0] >= 0 && this.angle[1] >= 0) {
+        // return this.toDegrees(-Math.atan(this.angle[0] / this.angle[1]));
+        // } else if (this.angle[1] >= 0 && this.angle[0] < 0) {
+        //     return -Math.atan(this.angle[0] / this.angle[1]);
+        // } else if (this.angle[1] < 0 && this.angle[0] < 0) {
+        //     return -Math.atan(this.angle[0] / this.angle[1]) + 180;
+        // } else {
+        //     return -Math.atan(this.angle[0] / this.angle[1]) + 360;
+        // }
     }
     calcAnimationRadiuses(): number[] {
     //  return [this.radius * 1 / (1 + Math.abs(this.angle[0]/90)), this.radius * 1 / (1 + Math.abs(this.angle[1]/90))];
-    //    return [this.radius * Math.cos((this.angle[0] / 180) * Math.PI) , this.radius * Math.cos((this.angle[1] / 180) * Math.PI)];
-    return []
+        return [this.radius * Math.cos((this.angle[0] / 180) * Math.PI) , this.radius * Math.cos((this.angle[1] / 180) * Math.PI)];
+        // if (this.angle[1] > 0) {
+        //return [this.radius, this.radius * Math.cos((this.angle[1] / 180) * Math.PI)];
+        // } else {
+        //     return [this.radius * Math.cos((this.angle[0] / 180) * Math.PI), this.radius];
+        // }
 
+    }
+
+    toDegrees(radian: number) {
+        return (radian / Math.PI) * 180;
     }
 }
