@@ -28,7 +28,7 @@ function updateCanvas(e: DeviceOrientationEvent) {
     const force = e.gamma!;
     planetAngle = -(Math.atan((catMassa * -9.8) / catPosOnPlanet) + Math.PI/2);
     const acc = (force/catMassa);
-    // + (catMassa * 9.8) * Math.cos(planetAngle);
+    //+ (catMassa * -9.8) * Math.sin(planetAngle);
 
     const tmpV = catVelocity + acc * dt;
     const tmpX = catPosOnPlanet + tmpV * dt + (1/2) * acc * dt**2;
