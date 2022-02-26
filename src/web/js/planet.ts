@@ -1,4 +1,4 @@
-import { throws } from 'assert';
+import { Matrix3, Vector, Vector3 } from 'three';
 import { Cat } from './cat.js';
 
 export class Planet {
@@ -9,12 +9,17 @@ export class Planet {
     cats: Map<number, Cat> = new Map();
     radius: number;
     maxAngles: [number[], number[]] = [[-60, 60], [-60, 60]];
+    x: Vector3;
+    y: Vector3;
+    animationAngle: number = 0;
 
     constructor(id: number, coordinates: number[], radius: number) {
         this.id = id;
-        this.angle = [0,0];
+        this.angle = [0,0,0];
         this.coordinates = coordinates;
         this.radius = radius;
+        this.x = new Vector3(radius, 0, 0);
+        this.y = new Vector3(0,radius,0);
     }
 
     addCat(id:number, mass:number) {
@@ -22,47 +27,37 @@ export class Planet {
     }
 
     update(angles:number[]): void {
-        if (angles[0] >= this.maxAngles[0][0] && angles[0] <= this.maxAngles[0][1] && angles[1] >= this.maxAngles[1][0] && angles[1] <= this.maxAngles[1][1]) {
+        if(angles[0] > -60 && angles[0] <= 60 && angles[1] > -60 && angles[1] <= 60 && angles[2] > -60 && angles[2] <= 60) {
             this.angle = angles;
         }
     }
 
-    calcAnimationAngle(): number {
+    updateVectors() {
 
-        // return Math.atan((this.radius * 1 / (1 + Math.abs(this.angle[0]/90)))/(this.radius * 1 / (1 + Math.abs(this.angle[1]/90)))) * 180;
-        //return Math.atan((this.radius * Math.sin((this.angle[1] / 180) * Math.PI))/ (this.radius * Math.sin((this.angle[0] / 180) * Math.PI)));
+        const beta = (this.angle[1] / 180) * Math.PI;
+        const gamma = (this.angle[2] / 180) * Math.PI;
 
-        // if (this.angle[1] > 0 && this.angle[0] > 0) {
-        //     return -Math.atan(this.angle[0] / this.angle[1]);
-        // } else {
-        //     return -Math.atan(this.angle[0] / this.angle[1]) + 180;
-        // }
-        return 0;
+        // const betaRotationMatrix = new Matrix3().set( Math.cos(beta), 0, Math.sin(beta) , 0, 1, 0, -Math.sin(beta), 0, Math.cos(beta));
+        // const gammaRotationMatrix = new Matrix3().set(1, 0, 0, 0, Math.cos(gamma), -Math.sin(gamma), 0, Math.sin(gamma), Math.cos(gamma));
 
-        //const tmp = Math.sqrt((Math.sin((this.angle[1] / 180) * Math.PI)) ** 2 + ( Math.sin((this.angle[0] / 180) * Math.PI)) ** 2);
+        const tmpX = new Vector3(100,0,0);
+        tmpX.applyAxisAngle(new Vector3(0, 1, 0), gamma);
+        tmpX.applyAxisAngle(new Vector3(1, 0, 0), beta);
+        const tmpY = new Vector3(0, 100, 0);
+        tmpY.applyAxisAngle(new Vector3(0, 1, 0), gamma);
+        tmpY.applyAxisAngle(new Vector3(1, 0, 0), beta);
 
-        // if (this.angle[0] >= 0 && this.angle[1] >= 0) {
-        // return this.toDegrees(-Math.atan(this.angle[0] / this.angle[1]));
-        // } else if (this.angle[1] >= 0 && this.angle[0] < 0) {
-        //     return -Math.atan(this.angle[0] / this.angle[1]);
-        // } else if (this.angle[1] < 0 && this.angle[0] < 0) {
-        //     return -Math.atan(this.angle[0] / this.angle[1]) + 180;
-        // } else {
-        //     return -Math.atan(this.angle[0] / this.angle[1]) + 360;
-        // }
-    }
-    calcAnimationRadiuses(): number[] {
-    //  return [this.radius * 1 / (1 + Math.abs(this.angle[0]/90)), this.radius * 1 / (1 + Math.abs(this.angle[1]/90))];
-        return [this.radius * Math.cos((this.angle[0] / 180) * Math.PI) , this.radius * Math.cos((this.angle[1] / 180) * Math.PI)];
-        // if (this.angle[1] > 0) {
-        //return [this.radius, this.radius * Math.cos((this.angle[1] / 180) * Math.PI)];
-        // } else {
-        //     return [this.radius * Math.cos((this.angle[0] / 180) * Math.PI), this.radius];
-        // }
-
+        this.x = tmpX;
+        this.y = tmpY;
+        this.animationAngle = this.x.projectOnPlane(new Vector3(0, 0, 1)).angleTo(new Vector3(1,0,0));
     }
 
     toDegrees(radian: number) {
         return (radian / Math.PI) * 180;
     }
+
+    toRadians(degree: number) {
+        return (degree / 180) * Math.PI;
+    }
+
 }
