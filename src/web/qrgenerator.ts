@@ -11,4 +11,5 @@ export function generateQR(url: String) {
         console.log('saved qrcode to: ' + "QR.png" + '\n')
     })
 }
+
   

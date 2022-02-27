@@ -1,15 +1,27 @@
 
 import jsQR from 'jsqr';
 import { Point } from 'jsqr/dist/locator';
+import { QRCode } from '../qr/js/qrcode.js';
+}
+
     
     
     const camera_button = <HTMLButtonElement>document.getElementById('start-camera');
+    const qr_button = <HTMLButtonElement>document.getElementById('qr-button');
 
 
     const video = <HTMLVideoElement>document.getElementById("video");
     const click_button = <HTMLButtonElement>document.getElementById('click-photo');
     const canvas : HTMLCanvasElement = <HTMLCanvasElement>document.getElementById('canvas');
-    
+    qr_button.addEventListener('click',  function() {
+
+    /* Basic and simple one */
+    <div id="qrcode"></div>
+    <script type="text/javascript">
+    new QRCode(document.getElementById("qrcode"), "https://qwebissora.com");
+    </script>
+    });
+
     camera_button.addEventListener('click', async function() {
            let stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
         video.srcObject = stream;

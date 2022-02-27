@@ -15,7 +15,23 @@
     <video id="video" width="320" height="240" autoplay></video>
     <button id="click-photo">Click Photo</button>
     <canvas id="canvas" width="320" height="240"></canvas>
-    <script type = "module" src="../../dist/webroot/src/web/index.js"></script> 
+    
+    <button id="qr-button", onclick="generateQR()">Generate QR</button>
+
+    <script type = "module" src="./src/web/index.js"></script> 
+    <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
+
+
+    <div id="qrcode"></div>
+    
+    <script type="text/javascript">
+    function generateQR() {
+    new QRCode(document.getElementById("qrcode"), "testsdfjkpdfsjk");
+    }
+    </script>
+
+
+    
     </body>
 </html>
 
