@@ -3,8 +3,7 @@
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width">
-        <title>Peer-to-Peer Cue System --- Reciever</title>
-        <link rel="stylesheet" href="style.css">
+        <title>Reciever</title>
     </head>
     <body>
         <table class="display">
@@ -19,6 +18,7 @@
                 <td>
                     <input type="text" id="sendMessageBox" placeholder="Enter a message..." autofocus="true" />
                     <button type="button" id="sendButton">Send</button>
+                    <button type="button" id="clearMsgsButton">Clear Msgs (Local)</button>
                 </td>
             </tr>
             <tr>
@@ -34,12 +34,12 @@
                 var lastPeerId = null;
                 var peer = null; // Own peer object
                 var peerId = null;
-                // var conn = null;
                 var recvId = document.getElementById("receiver-id");
                 var status = document.getElementById("status");
                 var message = document.getElementById("message");
                 var sendMessageBox = document.getElementById("sendMessageBox");
                 var sendButton = document.getElementById("sendButton");
+                var clearMsgsButton = document.getElementById("clearMsgsButton");
                 
                 let connections = new Object();
 
@@ -126,6 +126,11 @@
                     return connectionString;
                 }
 
+                function clearMessages() {
+                    message.innerHTML = "";
+                    addMessage("Msgs cleared");
+                };
+
                 function addMessage(msg) {
                     var now = new Date();
                     var h = now.getHours();
@@ -168,6 +173,8 @@
                     addMessage("<span class=\"selfMsg\">Self: </span>" + msg);
                 });
 
+                // Clear messages box
+                clearMsgsButton.addEventListener('click', clearMessages);
 
                 initialize();
             })();
