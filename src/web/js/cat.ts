@@ -1,22 +1,100 @@
+import { Vector3 } from 'three';
+import { Planet } from './planet';
 
 export class Cat {
 
     id: number;
     mass: number;
-    force: number[];
-    coordinates: number[];
-    velocity: number[];
+    radius: number;
+    position: Vector3;
+    xF: number = 0;
+    yF: number = 0;
+    xVel: number = 0;
+    yVel: number = 0;
+    planet: Planet;
 
-    constructor(mass: number, id: number) {
+    constructor( id: number, radius: number, planet: Planet, mass: number = 10) {
         this.id = id;
         this.mass = mass;
-        this.force = [0 ,0];
-        this.coordinates = [0, 0];
-        this.velocity = [0, 0];
+        this.radius = radius;
+        this.position = new Vector3(0, 0, radius);
+        this.planet = planet;
     }
 
-    update(newForce: number[]): void {
-        // TO-DO later (update coordinbates maybe? using new updated force)
-        return;
+    setPlanet(planet: Planet) {
+        this.planet = planet;
+    }
+
+    updateForce(axis: string, force: number) {
+
+        switch(axis) {
+        case 'x':
+            this.xF = force;
+            break;
+        case 'y':
+            this.yF = force;
+            break;
+        }
+    }
+
+    updatePosition(dt: number) {
+
+        const accX: number = (this.xF)/this.mass;
+        const accY: number = (this.yF)/this.mass;
+        // const accZ: number = ()
+
+        const xPos = this.position.x + this.xVel * dt + (1/2) * accX * dt ** 2;
+        const yPos = this.position.y + this.yVel * dt + (1/2) * accY * dt ** 2;
+
+        this.xVel += accX * dt;
+        this.yVel += accY * dt;
+
+        const tmp = new Vector3(xPos, yPos, this.position.z);
+
+        if (!this.isValidPos(tmp)) {
+            this.xVel = 0;
+            this.yVel = 0;
+            return;
+        }
+
+        this.position = tmp;
+    }
+
+    // Check if the given position is on planet
+    isValidPos(vector: Vector3): boolean {
+
+        const xCond = Math.abs(vector.x) <= this.planet.radius;
+        const yCond = Math.abs(vector.y) <= this.planet.radius;
+        const zCond = Math.abs(vector.z) <= this.planet.radius * Math.sin(this.planet.MAX_ANGLE);
+
+        return xCond && yCond && zCond;
     }
 }
+
+
+// calcFriction(axis: string, force: number):number {
+
+//     let angle = 0;
+//     let vel = 0;
+//     switch(axis) {
+//     case 'x':
+//         angle = this.planet.gamma;
+//         vel = this.xVel;
+//         break;
+//     case 'y':
+//         angle = this.planet.beta;
+//         vel = this.yVel;
+//         break;
+//     case 'z':
+//         angle = this.planet.alpha;
+//         break;
+//     }
+
+//     if ( vel < 0) {
+//         return this.planet.friction * -this.planet.g * Math.cos(angle) * this.mass;
+//     } else if ( vel > 0) {
+//         return -this.planet.friction * -this.planet.g * Math.cos(angle) * this.mass;
+//     } else {
+//         return 0;
+//     }
+// }
