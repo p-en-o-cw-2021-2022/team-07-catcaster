@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import * as THREE from 'three';
 import { Cat } from '../js/cat.js';
 import { setInnerText } from '../js/dom-util.js';
@@ -36,12 +35,23 @@ scene.add( sphere );
 
 
 function animate() {
+
     cat.updatePosition(dt);
-    circle.rotation.x = planet.gamma;
-    circle.rotation.y = planet.beta;
+
+    circle.rotation.x = planet.beta;
+    circle.rotation.y = planet.gamma;
+
+
     sphere.position.copy(cat.position);
+
     requestAnimationFrame( animate ); // can be disabled while using deviceOrientationEvent
     renderer.render( scene, camera );
+    setInnerText('xF', cat.xF);
+    setInnerText('yF', cat.yF);
+    setInnerText('xP', cat.position.x.toFixed(3));
+    setInnerText('yP', cat.position.y.toFixed(3));
+    setInnerText('zP', cat.position.z.toFixed(3));
+    setInnerText('angle', [planet.alpha, planet.beta, planet.gamma].toString());
 }
 
 function update(e: KeyboardEvent) {
@@ -60,11 +70,6 @@ function update(e: KeyboardEvent) {
         cat.updateForce('x', cat.xF - 5);
         break;
     }
-
-    setInnerText('xF', cat.xF);
-    setInnerText('yF', cat.yF);
-    setInnerText('pos', cat.position.toArray().toString());
-    setInnerText('angle', [planet.alpha, planet.beta, planet.gamma].toString());
 }
 
 document.addEventListener('keypress', update);

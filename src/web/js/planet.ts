@@ -56,7 +56,7 @@ export class Planet {
     updateAngles() {
 
         // update gamma x
-        this.gamma = -this.MAX_ANGLE * (this.cat!.position.x / this.radius);
+        this.gamma = this.MAX_ANGLE * (this.cat!.position.x / this.radius);
 
         // update beta y
         this.beta = -this.MAX_ANGLE * (this.cat!.position.y / this.radius);

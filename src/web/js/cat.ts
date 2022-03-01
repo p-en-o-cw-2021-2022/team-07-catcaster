@@ -43,24 +43,31 @@ export class Cat {
         const accX: number = (this.xF)/this.mass;
         const accY: number = (this.yF)/this.mass;
 
-        const xPos = this.position.x + this.xVel * dt + (1/2) * accX * dt ** 2;
-        const yPos = this.position.y + this.yVel * dt + (1/2) * accY * dt ** 2;
+        this.position.x += this.xVel * dt + (1/2) * accX * dt ** 2;
+        this.position.y += this.yVel * dt + (1/2) * accY * dt ** 2;
 
         this.xVel += accX * dt;
         this.yVel += accY * dt;
 
-        const tmp = new Vector3(xPos, yPos, this.position.z);
+        // const tmp = new Vector3(xPos, yPos, this.position.z);
 
-        if (!this.isValidPos(tmp)) {
+        if (!this.isValidPos(this.position)) {
             this.xVel = 0;
             this.yVel = 0;
             return;
         }
 
+        const oldGamma = this.planet.gamma;
+        const oldBeta = this.planet.beta;
+
         this.planet.updateAngles();
-        tmp.applyAxisAngle(new Vector3(1,0,0), this.planet.gamma);
-        tmp.applyAxisAngle(new Vector3(0,1,0), this.planet.beta);
-        this.position = tmp;
+
+        const dgamma = oldGamma - this.planet.gamma;
+        const dbeta = oldBeta - this.planet.beta;
+
+        this.position.applyAxisAngle(new Vector3(0,1,0), -dgamma);
+        this.position.applyAxisAngle(new Vector3(1,0,0), -dbeta);
+
     }
 
     // Check if the given position is on planet
