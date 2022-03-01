@@ -22,7 +22,8 @@ export class IdDatabase
         let result:string = "";
         while(this.doesIdExist(result)){
             for(let i = 0; i<length;i++) {
-                let character:string = this.stringChars[i];
+                let index = this.getRandomInt(this.stringChars.length);
+                let character:string = this.stringChars[index];
                 result = result + character;
             }
         }
@@ -73,4 +74,9 @@ export class IdDatabase
         this.ids.delete(id);
         return true;
     }
+
+    //This function creates a random integer between 0 and the given maximum.
+    private getRandomInt(max : number) {
+        return Math.floor(Math.random()*max);
+}
 }
