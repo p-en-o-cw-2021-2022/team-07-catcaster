@@ -2,7 +2,6 @@ import Koa from 'koa';
 import Router from '@koa/router'; // there is also 'koa-router' (@koa/router is listed officially on koajs)
 import serve from 'koa-static';
 import mount from 'koa-mount';
-import logger from 'koa-logger';
 import https from 'https';
 import http from 'http';
 import fs from 'fs';
@@ -11,12 +10,15 @@ import * as request from './requesthandlers';
 
 const app = new Koa();
 
+const testpath = 'dist/webroot/web/index'
+const router = new Router();
+
 // When we run this server we serve you all of our `dist/webroot` folder.
 const webroot = __dirname + '/../../dist/webroot';
-app.use(mount('/', serve(webroot)));
+app.use(mount('/catcaster', router.routes()));
+app.use(router.routes()).use(router.allowedMethods())
 
 // Configure some REST points:
-const router = new Router();
 router
     .get('/screen/123/', (ctx: request.context) => {
         request.getScreenPage(ctx);
@@ -34,9 +36,6 @@ router
         request.getLoadingPage(ctx);
         //serve loading page;
     })
-
-
-app.use(mount('/catcaster/', router.routes())).use(router.allowedMethods());
 
 const options = {
     key: fs.readFileSync('dist/key.pem'),
