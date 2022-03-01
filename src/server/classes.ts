@@ -78,5 +78,5 @@ export class IdDatabase
     //This function creates a random integer between 0 and the given maximum.
     private getRandomInt(max : number) {
         return Math.floor(Math.random()*max);
-}
+    }
 }
