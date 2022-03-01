@@ -75,7 +75,7 @@
                         c.on('data', function (data) {
                             console.log("Data recieved");
                             var cueString = "<span class=\"cueMsg\">Cue: </span>";
-                            addMessage("<span class=\"peerMsg\">" + c.peer.slice(0, 10) + ": </span>" + data);
+                            addMessage("<span class=\"peerMsg\">" + c.peer.slice(0, 8) + ": </span>" + data);
                         });
                         // Connection closed
                         c.on('close', function () {
