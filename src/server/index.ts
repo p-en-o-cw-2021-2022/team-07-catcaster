@@ -16,12 +16,13 @@ const app = new Koa();
 
 const wss = websocket(app);
 
-const testpath = 'dist/webroot/web/index'
+const testpath = 'dist/webroot/web/Redirect Page'
 const router = new Router();
 
 // When we run this server we serve you all of our `dist/webroot` folder.
 const webroot = __dirname + '/../../dist/webroot';
 app.use(mount('/catcaster', router.routes()));
+app.use(mount('/catcaster/screen/', serve(testpath)));
 app.use(router.routes()).use(router.allowedMethods())
 
 // Configure some REST points:
