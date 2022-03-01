@@ -1,6 +1,29 @@
 import { askPermissionIfNeeded } from '../js/motion-events.js';
 import { setInnerText } from '../js/dom-util.js';
 
+let highesty: number = 0;
+let lowesty: number = 0;
+
+function motionEventHandler(e: DeviceMotionEvent) {
+    if (e.acceleration === null || e.acceleration.y === null) {
+        return;
+    }
+
+    if (e.acceleration.y > highesty) {
+        highesty = e.acceleration.y;
+    }
+
+    if (e.acceleration.y < lowesty) {
+        lowesty = e.acceleration.y;
+    }
+
+    setInnerText('currenty', e.acceleration.y.toFixed(2));
+    setInnerText('highesty', highesty.toFixed(2));
+    setInnerText('lowesty', lowesty.toFixed(2));
+
+    return;
+}
+
 function orientationEventHandler(e: DeviceOrientationEvent) {
     if (e.gamma === null || e.beta === null) {
         return;
@@ -33,7 +56,10 @@ function firstTouch() {
     void askPermissionIfNeeded().then(v => {
         const { ok, msg } = v;
         setInnerText('dm_status', msg);
-        if (ok) {window.addEventListener('deviceorientation', orientationEventHandler);}
+        if (ok) {
+            window.addEventListener('deviceorientation', orientationEventHandler);
+            window.addEventListener('devicemotion', motionEventHandler);
+        }
     });
 }
 
