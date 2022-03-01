@@ -3,6 +3,8 @@ import { setInnerText } from '../js/dom-util.js';
 
 let highesty: number = 0;
 let lowesty: number = 0;
+let refresher: number = 0;
+let jump:boolean = false;
 
 function motionEventHandler(e: DeviceMotionEvent) {
     if (e.acceleration === null || e.acceleration.y === null) {
@@ -45,9 +47,23 @@ function sendControllerInput(gamma: number, beta: number) {
     return;
 }
 
+/*
+Checkes whether the jump flag should be true. Every 10 frames resets lowesty and highesty.
+ */
 function detectJump() {
-    //TODO
-    // Should somehow detect and send jump to screen
+    // Thresholds for jump flag are 50 and -50
+    if (lowesty < -50 && highesty > 50) {
+        jump = true;
+    }
+    refresher++;
+    if (refresher === 10) { // The frame count at which it refreshes
+        refresher = 0;
+        highesty = 0;
+        lowesty = 0;
+        jump = false;
+    }
+
+    setInnerText('jump', jump);
 }
 
 function firstTouch() {
