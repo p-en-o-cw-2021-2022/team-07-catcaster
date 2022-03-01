@@ -34,7 +34,7 @@
                 var lastPeerId = null;
                 var peer = null; // Own peer object
                 var peerId = null;
-                var conn = null;
+                // var conn = null;
                 var recvId = document.getElementById("receiver-id");
                 var status = document.getElementById("status");
                 var message = document.getElementById("message");
@@ -70,6 +70,7 @@
                     });
                     peer.on('connection', function (c) {
                         connections[c.peer] = c;
+                        console.log(c);
                         status.innerHTML = onConnChange();
                         // Data received
                         c.on('data', function (data) {
@@ -82,7 +83,7 @@
                             delete connections[c.peer];
                             status.innerHTML = onConnChange();
                         });
-                        console.log("Connected to: " + conn.peer);
+                        //console.log("Connected to: " + conn.peer);
                         status.innerHTML = "Connected";
                     });
                     peer.on('disconnected', function () {
@@ -94,11 +95,11 @@
                         peer._lastServerId = lastPeerId;
                         peer.reconnect();
                     });
-                    peer.on('close', function() {
-                        conn = null;
-                        status.innerHTML = "Connection destroyed. Please refresh";
-                        console.log('Connection destroyed');
-                    });
+                    // peer.on('close', function() {
+                    //     conn = null;
+                    //     status.innerHTML = "Connection destroyed. Please refresh";
+                    //     console.log('Connection destroyed');
+                    // });
                     peer.on('error', function (err) {
                         console.log(err);
                         alert('' + err);
@@ -155,14 +156,18 @@
                 });
                 // Send message
                 sendButton.addEventListener('click', function () {
-                    if (conn && conn.open) {
-                        var msg = sendMessageBox.value;
-                        sendMessageBox.value = "";
-                        conn.send(msg);
-                        console.log("Sent: " + msg)
-                        addMessage("<span class=\"selfMsg\">Self: </span>" + msg);
-                    } else {
-                        console.log('Connection is closed');
+                    for(connection in connections){
+                        if (connections[connection] && connections[connection].open) {
+                            console.log(connection);
+                            console.log(connections);
+                            var msg = sendMessageBox.value;
+                            sendMessageBox.value = "";
+                            connections[connection].send(msg);
+                            console.log("Sent: " + msg)
+                            addMessage("<span class=\"selfMsg\">Self: </span>" + msg);
+                        } else {
+                            console.log('Connection is closed');
+                        }
                     }
                 });
 
