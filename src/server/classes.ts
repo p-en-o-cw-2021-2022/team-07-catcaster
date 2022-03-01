@@ -8,9 +8,14 @@ This class stores all ID's and helps to check if they are unique.
 */
 export class IdDatabase
 {
-    public ids:any = new Map();
+    public ids:any;
 
     public stringChars:string = "0123456789abcdef";
+
+    public constructor() {
+        this.ids = new Map();
+        this.ids.set("","default");
+    }
 
     public generateId(length:number)
     {
