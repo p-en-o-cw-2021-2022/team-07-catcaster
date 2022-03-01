@@ -68,17 +68,9 @@
                         }
 
                         console.log('ID: ' + peer.id);
-                        recvId.innerHTML = "ID: " + peer.id;
                         status.innerHTML = "Connections: <br>";
                     });
-                    peer.on('connection', function (c) {
-                        connections[c.peer] = c;
-                        status.innerHTML = onConnChange();
-                    });
                     peer.on('disconnected', function () {
-                        status.innerHTML = "Connection lost. Please reconnect";
-                        console.log('Connection lost. Please reconnect');
-
                         // Workaround for peer.reconnect deleting previous id
                         peer.id = lastPeerId;
                         peer._lastServerId = lastPeerId;
@@ -107,12 +99,13 @@
                     conn = peer.connect(recvIdInput.value, {
                         reliable: true
                     });
+
                     connections[conn.peer] = conn;
 
                     conn.on('open', function () {
                         status.innerHTML = "Connected to: " + conn.peer;
                         console.log("Connected to: " + conn.peer);
-
+                        status.innerHTML = onConnChange()
                         // Check URL params for comamnds that should be sent immediately
                         var command = getUrlParam("command");
                         if (command)
@@ -162,6 +155,15 @@
 
                     message.innerHTML = "<br><span class=\"msg-time\">" + h + ":" + m + ":" + s + "</span>  -  " + msg + message.innerHTML;
                 };
+
+                function onConnChange() {
+                    console.log(connections);
+                    connectionString = 'Connected to: <br>';
+                    for (connection in connections) {
+                        connectionString += (connection + '<br>');
+                    }
+                    return connectionString;
+                }
 
                 function clearMessages() {
                     message.innerHTML = "";
