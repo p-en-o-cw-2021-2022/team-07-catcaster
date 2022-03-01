@@ -6,9 +6,15 @@ import https from 'https';
 import http from 'http';
 import fs from 'fs';
 import * as request from './requesthandlers';
+import websocket from 'koa-websocket'
+import route from 'koa-route'
 
+/*server*/
+/*written by Thijs*/
 
 const app = new Koa();
+
+const wss = websocket(app);
 
 const testpath = 'dist/webroot/web/index'
 const router = new Router();
@@ -20,7 +26,7 @@ app.use(router.routes()).use(router.allowedMethods())
 
 // Configure some REST points:
 router
-    .get('/screen/123/', (ctx: request.context) => {
+    .get('/screen/', (ctx: request.context) => {
         request.getScreenPage(ctx);
         //serve page with QR code here;
     })
@@ -36,6 +42,13 @@ router
         request.getLoadingPage(ctx);
         //serve loading page;
     })
+    .post('/screen/', (ctx: request.context) => {
+        request.sendId(ctx);
+    })
+
+wss.ws.use((route.all('/screen/:id/', (ctx: any) => {
+    ctx.websocket.send('hello world')
+})))
 
 const options = {
     key: fs.readFileSync('dist/key.pem'),
