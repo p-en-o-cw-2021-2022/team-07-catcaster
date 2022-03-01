@@ -4,7 +4,8 @@ export class Planet {
     id: number;
     radius: number;
     coordinates: number[];
-    cats: Map<number, Cat> = new Map();
+    // cats: Map<number, Cat> = new Map();
+    cat: Cat | undefined = undefined;
     friction: number;
     alpha = 0;
     beta = 0;
@@ -19,9 +20,9 @@ export class Planet {
         this.friction = friction;
     }
 
-    addCat(id:number, mass:number) {
-        this.cats.set(id, new Cat(id, mass, this));
-    }
+    // addCat(id:number, mass:number) {
+    //     this.cats.set(id, new Cat(id, mass, this));
+    // }
 
     setAngle(axis: string, angle: number) {
 
@@ -48,8 +49,17 @@ export class Planet {
         return false;
     }
 
+    setCat(cat:Cat) {
+        this.cat = cat;
+    }
+
     updateAngles() {
-        throw new Error('Method not implemented.');
+
+        // update gamma x
+        this.gamma = -this.MAX_ANGLE * (this.cat!.position.x / this.radius);
+
+        // update beta y
+        this.beta = -this.MAX_ANGLE * (this.cat!.position.y / this.radius);
     }
 
 }

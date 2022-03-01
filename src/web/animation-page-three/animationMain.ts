@@ -7,8 +7,9 @@ import { Planet } from '../js/planet.js';
 const dt = 0.01;
 
 // Create planet and cat objects with default values
-const planet = new Planet(0, 5, 10);
-const cat = new Cat(0, 0.5, planet);
+const planet: Planet = new Planet(0, 5, 10);
+const cat: Cat = new Cat(0, 0.5, planet);
+planet.setCat(cat);
 
 // Initialize animation scene and camera
 const scene = new THREE.Scene();
@@ -64,7 +65,6 @@ function update(e: KeyboardEvent) {
     setInnerText('yF', cat.yF);
     setInnerText('pos', cat.position.toArray().toString());
     setInnerText('angle', [planet.alpha, planet.beta, planet.gamma].toString());
-    // planet.updateAngles();
 }
 
 document.addEventListener('keypress', update);

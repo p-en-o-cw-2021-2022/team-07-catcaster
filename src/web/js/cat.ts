@@ -37,11 +37,11 @@ export class Cat {
         }
     }
 
+    // Updates the relative position of cat on planet
     updatePosition(dt: number) {
 
         const accX: number = (this.xF)/this.mass;
         const accY: number = (this.yF)/this.mass;
-        // const accZ: number = ()
 
         const xPos = this.position.x + this.xVel * dt + (1/2) * accX * dt ** 2;
         const yPos = this.position.y + this.yVel * dt + (1/2) * accY * dt ** 2;
@@ -57,6 +57,9 @@ export class Cat {
             return;
         }
 
+        this.planet.updateAngles();
+        tmp.applyAxisAngle(new Vector3(1,0,0), this.planet.gamma);
+        tmp.applyAxisAngle(new Vector3(0,1,0), this.planet.beta);
         this.position = tmp;
     }
 
