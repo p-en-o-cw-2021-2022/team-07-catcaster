@@ -117,6 +117,8 @@
                     conn.on('close', function () {
                         status.innerHTML = "Connection closed";
                     });
+
+                    recvIdInput.value = "";
                 };
 
                 /**
