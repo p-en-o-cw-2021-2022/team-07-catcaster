@@ -15,7 +15,7 @@ export class IdDatabase
     public generateId(length:number)
     {
         let result:string = "";
-        while(!this.doesIdExist(result)){
+        while(this.doesIdExist(result)){
             for(let i = 0; i<length;i++) {
                 let character:string = this.stringChars[i];
                 result = result + character;
