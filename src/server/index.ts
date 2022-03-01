@@ -47,7 +47,7 @@ router
         request.sendId(ctx);
     })
 
-wss.ws.use((route.all('/screen/:id/', (ctx: any) => {
+wss.ws.use((route.all('/screen/:id', (ctx: any) => {
     ctx.websocket.send('hello world')
 })))
 

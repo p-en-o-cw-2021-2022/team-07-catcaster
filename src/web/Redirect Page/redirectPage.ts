@@ -1,4 +1,5 @@
 requestID();
+const WSServer = <HTMLDivElement>document.getElementById('WSServer');
 
 async function requestID(){
     let response = await fetch("/catcaster/screen/", {
@@ -11,6 +12,7 @@ async function requestID(){
 
     if (response.ok) {
         let id = await response.json();
-        window.location.href = '/catcaster/screen/'+id;
+        //window.location.href = '/catcaster/screen/'+id;
     }
+    
 }

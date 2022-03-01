@@ -3,6 +3,14 @@
         <title>Loading</title>
     <body>
         <script> var exports = {}; </script>
-        <script type = "module" src = redirectPage.js>var exports = {};</script> 
+        <script type = "module" src = redirectPage.js>var exports = {};</script>
+        <script type = 'text/javascript'>
+            let url = prompt('Give the signaling server address!');
+            let websocket = new WebSocket(url)
+            websocket.onopen = function() {
+                websocket.send(JSON.stringify('hello world'));
+            };
+        </script>
     </body>
+
 </html>
