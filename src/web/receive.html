@@ -82,8 +82,7 @@
                             delete connections[c.peer];
                             status.innerHTML = onConnChange();
                         });
-                        //console.log("Connected to: " + conn.peer);
-                        status.innerHTML = "Connected";
+                        console.log("Connected to: " + c.peer);
                     });
                     peer.on('disconnected', function () {
                         status.innerHTML = "Connection lost. Please reconnect";
