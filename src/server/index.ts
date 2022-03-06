@@ -14,7 +14,7 @@ import logger from 'koa-logger';
 // and feature/webrtc-walkie-talkie to understand how you can do that.
 
 // You can run this file by doing
-//  DEBUG=koa-mount npx ts-node src/msg-board-server/index.ts
+//  DEBUG=koa-mount npx ts-node src/server/index.ts
 // It will start a http webserver on port 4000.
 // If you check out the demo branch for WebRTC and there do
 //  npm run tsc-web
