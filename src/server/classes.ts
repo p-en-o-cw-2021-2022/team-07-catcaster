@@ -1,6 +1,6 @@
 /*
 Classes used by the server.
-Written by Warre.
+@Author Warre.
 */
 
 /*

@@ -6,17 +6,15 @@ import https from 'https';
 import http from 'http';
 import fs from 'fs';
 import * as request from './requesthandlers';
-import websocket from 'koa-websocket'
-import route from 'koa-route'
+import ws from 'ws';
+import { websocketEventHandlers } from './websocket';
 
 /*server*/
-/*written by Thijs*/
+/*@Author Thijs*/
 
 const app = new Koa();
 
-const wss = websocket(app);
-
-const testpath = 'dist/webroot/web/Redirect Page'
+const testpath = 'dist/webroot/web'
 const router = new Router();
 
 // When we run this server we serve you all of our `dist/webroot` folder.
@@ -47,10 +45,6 @@ router
         request.sendId(ctx);
     })
 
-wss.ws.use((route.all('/screen/:id', (ctx: any) => {
-    ctx.websocket.send('hello world')
-})))
-
 const options = {
     key: fs.readFileSync('dist/key.pem'),
     cert: fs.readFileSync('dist/cert.pem')
@@ -58,3 +52,7 @@ const options = {
 
 export const httpsServer = https.createServer(options, app.callback()).listen(8000, () => console.log('https app staat aan...'));
 export const httpServer = http.createServer(app.callback()).listen(3000, () => console.log('http app staat aan...'));
+
+const websocket = new ws.Server({server:httpServer});
+websocketEventHandlers(websocket);
+

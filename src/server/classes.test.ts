@@ -1,5 +1,9 @@
 import {IdDatabase} from './classes';
 
+/*
+@author Warre
+*/
+
 describe('IdDatabase Tests', () => {
     
     const idDatabase = new IdDatabase();

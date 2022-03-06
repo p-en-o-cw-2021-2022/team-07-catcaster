@@ -7,13 +7,12 @@ export type context = Koa.ParameterizedContext<Koa.DefaultState, Koa.DefaultCont
 
 export function getScreenPage(ctx: context){
     ctx.type = 'html';
-    ctx.body = fs.createReadStream('dist/webroot/web/Redirect Page/redirectPage.html'); //replace placeholder
+    ctx.body = fs.createReadStream('dist/webroot/web/redirectPage.html'); //replace placeholder
 }
 
 export function sendId(ctx: context) {
     let database = new IdDatabase();
     let id = database.generateId(8);
-    console.log(8);
     database.addController(id);
     ctx.response.status = 200;
     ctx.body = JSON.stringify(id);

@@ -1,0 +1,1 @@
+const WSServer = <HTMLDivElement>document.getElementById('WSServer');
