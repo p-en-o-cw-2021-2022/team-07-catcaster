@@ -30,11 +30,11 @@ click_button.addEventListener('click', function() {
 
        // data url of the image
     console.log(data);
-    const qrlocations = decodeQR(data, canvas.width, canvas.height);
-    console.log(qrlocations);
+    const qr = jsQR(data, canvas.width, canvas.height);
+    console.log(qr?.data);
 });
 
-function decodeQR(pixelarray: Uint8ClampedArray, width: number, height: number) {
+/* function decodeQR(pixelarray: Uint8ClampedArray, width: number, height: number) {
 
     const qrlocations: Array<[[number, number], String]> = [];
 
@@ -61,7 +61,7 @@ function decodeQR(pixelarray: Uint8ClampedArray, width: number, height: number) 
     
     return qrlocations;
 
-}
+} */
 
     
 
