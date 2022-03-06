@@ -26,8 +26,11 @@ app.use(router.routes()).use(router.allowedMethods())
 // Configure some REST points:
 router
     .get('/screen/', (ctx: request.context) => {
-        request.getScreenPage(ctx);
+        request.getLoadingPage(ctx);
         //serve page with QR code here;
+    })
+    .get('/screen/:id', (ctx:request.context) => {
+        request.getScreenPage(ctx);
     })
     .get('/controller/', (ctx: request.context) => {
         request.getControllerPage(ctx);
@@ -36,10 +39,6 @@ router
     .get('/game/screen/', (ctx: request.context) => {
         request.getGamePage(ctx);
         //serve game page;
-    })
-    .get('/loading/screen/', (ctx: request.context) => {
-        request.getLoadingPage(ctx);
-        //serve loading page;
     })
     .post('/screen/', (ctx: request.context) => {
         request.sendId(ctx);
