@@ -25,7 +25,7 @@ function eventHandlersScreen() {
 
     websocket.onopen = (event) => {
         console.log('Connection established.');
-        websocket.send(JSON.stringify({client: 'screen', id: myId}));
+        websocket.send(JSON.stringify({client: 'screen', id: myId.innerHTML}));
     };
 
     websocket.onmessage = (message:any) => {

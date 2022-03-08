@@ -1,5 +1,7 @@
-const id = getIdController();
-var screenId = null;
+var id = <HTMLDivElement>document.getElementById('sender-id');
+var screenId = <HTMLDivElement>document.getElementById('receiver-id');
+
+id.innerHTML = getIdController();
 eventHandlersController();
 
 function getIdController(){
@@ -23,15 +25,14 @@ function eventHandlersController() {
 
     websocket.onopen = (event) => {
         console.log('Connection established.');
-        websocket.send(JSON.stringify({client: 'controller', id: id}));
+        websocket.send(JSON.stringify({client: 'controller', id: id.innerHTML}));
     };
 
     websocket.onmessage = (message:any) => {
         let mes = JSON.parse(message.data);
         console.log('received message from : ', mes.id, '  |  client is: ', mes.client);
         if(mes.client == 'screen'){
-            screenId = mes.id;
+            screenId.innerHTML = mes.id;
         }
     };
 };
-export {id, screenId}
