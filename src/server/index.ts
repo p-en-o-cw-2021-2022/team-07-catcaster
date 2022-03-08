@@ -54,6 +54,9 @@ router
     .post('/catcaster/screen/', (ctx: request.context) => {
         request.sendScreenId(ctx);
     })
+    .post('/catcaster/controller/', (ctx:request.context) => {
+        request.sendControllerId(ctx);
+    })
 
 const options = {
     key: fs.readFileSync('dist/key.pem'),

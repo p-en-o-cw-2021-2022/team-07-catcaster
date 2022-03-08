@@ -32,6 +32,13 @@ export function getControllerPage(ctx: context) {
     ctx.body = fs.createReadStream('dist/webroot/web/controllerPage/controllerPage.html')
 }
 
+export function sendControllerId(ctx: context) {
+    let id = database.generateId(8);
+    database.addController(id);
+    ctx.response.status = 200;
+    ctx.body = JSON.stringify(id);
+}
+
 export function getGamePage(ctx: context){
     ctx.type = 'html';
     ctx.body = fs.createReadStream('placeholder'); //replace placeholder
