@@ -5,7 +5,7 @@ import { database } from './index';
 
 export type context = Koa.ParameterizedContext<Koa.DefaultState, Koa.DefaultContext & Router.RouterParamContext<Koa.DefaultState, Koa.DefaultContext>, unknown>;
 
-export function getLoadingPage(ctx: context){
+export function getScreenRedirectPage(ctx: context){
     ctx.type = 'html';
     ctx.body = fs.createReadStream('dist/webroot/web/redirectPage/redirectPage.html'); //replace placeholder
 }
@@ -22,9 +22,14 @@ export function sendScreenId(ctx: context) {
     ctx.body = JSON.stringify(id);
 }
 
-export function getControllerPage(ctx: context){
+export function getControllerRedirectPage(ctx: context){
     ctx.type = 'html';
-    ctx.body = fs.createReadStream('placeholder'); //replace placeholder
+    ctx.body = fs.createReadStream('dist/webroot/web/controllerPage/controllerRedirect.html'); //replace placeholder
+}
+
+export function getControllerPage(ctx: context) {
+    ctx.type = 'html';
+    ctx.body = fs.createReadStream('dist/webroot/web/controllerPage/controllerPage.html')
 }
 
 export function getGamePage(ctx: context){

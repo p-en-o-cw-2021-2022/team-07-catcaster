@@ -30,15 +30,18 @@ export var database = new IdDatabase();
 // Configure some REST points:
 router
     .get('/catcaster/screen/', (ctx: request.context) => {
-        request.getLoadingPage(ctx);
+        request.getScreenRedirectPage(ctx);
         //serve page with QR code here;
     })
     .get('/catcaster/screen/:id', (ctx:request.context) => {
         request.getScreenPage(ctx);
     })
     .get('/catcaster/controller/', (ctx: request.context) => {
-        request.getControllerPage(ctx);
+        request.getControllerRedirectPage(ctx);
         //serve page with controls here;
+    })
+    .get('/catcaster/controller/:id', (ctx:request.context) => {
+        request.getControllerPage(ctx);
     })
     .get('/catcaster/game/screen/', (ctx: request.context) => {
         request.getGamePage(ctx);
