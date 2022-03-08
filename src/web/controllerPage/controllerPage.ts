@@ -34,5 +34,4 @@ function eventHandlersController() {
         }
     };
 };
-
 export {id, screenId}
