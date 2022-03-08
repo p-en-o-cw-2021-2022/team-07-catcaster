@@ -1,7 +1,7 @@
-const myId = getIdScreen();
-eventHandlersScreen();
+const id = getIdController();
+eventHandlersController();
 
-function getIdScreen(){
+function getIdController(){
     let currentUrl = window.location.href;
     let result:string = "";
     for(let i = 0; i < 8;i++){
@@ -11,7 +11,7 @@ function getIdScreen(){
     return result;
 }
 
-function eventHandlersScreen() {
+function eventHandlersController() {
     let url = prompt("Enter websocket server address:");
     if (url == null) {
         return;
@@ -22,14 +22,14 @@ function eventHandlersScreen() {
 
     websocket.onopen = (event) => {
         console.log('Connection established.');
-        websocket.send(JSON.stringify({client: 'screen', myId: id}));
+        websocket.send(JSON.stringify({client: 'controller', id: id}));
     };
 
     websocket.onmessage = (message:any) => {
         let mes = JSON.parse(message.data);
         console.log('received message from : ', mes.id, '  |  client is: ', mes.client);
-        if(mes.client == 'controller'){
-            let controllerId = mes.id;
+        if(mes.client == 'screen'){
+            let screenId = mes.id;
         }
     };
 };
