@@ -205,7 +205,7 @@
                 connectButton.addEventListener('click', join);
 
                 // Since all our callbacks are setup, start the process of obtaining an ID
-                recvIdInput.addEventListener('change', (event) => {
+                recvIdInput.addEventListener('DOMSubtreeModified', (event) => {
                     console.log('initalizing...')
                     initialize();
                 })
