@@ -24,7 +24,7 @@ export function sendScreenId(ctx: context) {
 
 export function getControllerRedirectPage(ctx: context){
     ctx.type = 'html';
-    ctx.body = fs.createReadStream('dist/webroot/web/controllerPage/controllerRedirect.html'); //replace placeholder
+    ctx.body = fs.createReadStream('dist/webroot/web/controllerRedirect/controllerRedirect.html'); //replace placeholder
 }
 
 export function getControllerPage(ctx: context) {

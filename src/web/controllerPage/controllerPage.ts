@@ -1,4 +1,5 @@
 const id = getIdController();
+var screenId = null;
 eventHandlersController();
 
 function getIdController(){
@@ -29,7 +30,9 @@ function eventHandlersController() {
         let mes = JSON.parse(message.data);
         console.log('received message from : ', mes.id, '  |  client is: ', mes.client);
         if(mes.client == 'screen'){
-            let screenId = mes.id;
+            screenId = mes.id;
         }
     };
 };
+
+export {id, screenId}
