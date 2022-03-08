@@ -8,40 +8,44 @@ import fs from 'fs';
 import * as request from './requesthandlers';
 import ws from 'ws';
 import { websocketEventHandlers } from './websocket';
+import { IdDatabase } from './classes';
 
 /*server*/
 /*@Author Thijs*/
 
 const app = new Koa();
 
-const testpath = 'dist/webroot/web'
+const redirectPage = 'dist/webroot/web/redirectPage';
+const screenPage = 'dist/webroot/web/screenPage';
 const router = new Router();
 
 // When we run this server we serve you all of our `dist/webroot` folder.
 const webroot = __dirname + '/../../dist/webroot';
-app.use(mount('/catcaster', router.routes()));
-app.use(mount('/catcaster/screen/', serve(testpath)));
+app.use(mount('/catcaster/screen/', serve(redirectPage)));
+app.use(mount('/catcaster/screen/', serve(screenPage)));
 app.use(router.routes()).use(router.allowedMethods())
+
+export var database = new IdDatabase();
 
 // Configure some REST points:
 router
-    .get('/screen/', (ctx: request.context) => {
+    .get('/catcaster/screen/', (ctx: request.context) => {
         request.getLoadingPage(ctx);
         //serve page with QR code here;
     })
-    .get('/screen/:id', (ctx:request.context) => {
+    .get('/catcaster/screen/:id', (ctx:request.context) => {
         request.getScreenPage(ctx);
     })
-    .get('/controller/', (ctx: request.context) => {
+    .get('/catcaster/controller/', (ctx: request.context) => {
         request.getControllerPage(ctx);
         //serve page with controls here;
     })
-    .get('/game/screen/', (ctx: request.context) => {
+    .get('/catcaster/game/screen/', (ctx: request.context) => {
         request.getGamePage(ctx);
         //serve game page;
     })
-    .post('/screen/', (ctx: request.context) => {
-        request.sendId(ctx);
+    .post('/catcaster/screen/', (ctx: request.context) => {
+        request.sendScreenId(ctx);
     })
 
 const options = {

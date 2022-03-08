@@ -1,4 +1,5 @@
-import ws from 'ws';
+import ws, { WebSocketServer } from 'ws';
+import { database } from './index';
 
 export function websocketEventHandlers(websocket:ws.Server) {
 
@@ -7,18 +8,41 @@ export function websocketEventHandlers(websocket:ws.Server) {
         console.log('Connection established.');
 
         ws.on('message', (message) => {
-            console.log('Received message: ', message);
             const mes = JSON.parse(message.toString());
-            console.log(mes);
+            console.log('Received message from: ', mes.id);
 
-            switch (mes.type) {
+            switch (mes.client) {
 
-            case 'test':
-                console.log('Succesfully accepted test message.');
-                ws.send(JSON.stringify({answer: "Test successfull"}));
+            case 'screen':
+                console.log('Newly connected ID is from a screen.');
+                
+                //Het id dat door de client wordt doorgestuurd moet reeds bestaan.
+                if (!database.doesIdExist(mes.id)){
+                    console.log('Received ID is not in the database.');
+                    return;
+                }
+                //ws.send(JSON.stringify({type: 'ControllerID', id: mes.id}));
+                break
+
+            case 'controller':
+                console.log('Newly connected ID is from a controller.');
+
+                //Het id dat door de client wordt doorgestuurd moet reeds bestaan.
+                if (!database.doesIdExist(mes.id)){
+                    console.log('Received ID is not in the database.');
+                    return;
+                }
+
+                //Send the controller the ID of the screen, as to establish a webRTC connection
+                let screenid = database.getScreenId();
+                ws.send(JSON.stringify({client : 'screen', id : screenid}))
+
+                let controllerid = database.getControllerId();
+                websocket.clients.forEach(function(client){
+                    client.send(JSON.stringify({client: 'controller', id:controllerid}))
+                });
                 break
             }
-
         })
     });
 

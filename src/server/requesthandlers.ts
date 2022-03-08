@@ -1,24 +1,23 @@
 import Koa from 'koa';
 import Router from '@koa/router';
 import fs from 'fs'
-import { IdDatabase } from './classes';
+import { database } from './index';
 
 export type context = Koa.ParameterizedContext<Koa.DefaultState, Koa.DefaultContext & Router.RouterParamContext<Koa.DefaultState, Koa.DefaultContext>, unknown>;
-let database = new IdDatabase();
 
 export function getLoadingPage(ctx: context){
     ctx.type = 'html';
-    ctx.body = fs.createReadStream('dist/webroot/web/redirectPage.html'); //replace placeholder
+    ctx.body = fs.createReadStream('dist/webroot/web/redirectPage/redirectPage.html'); //replace placeholder
 }
 
 export function getScreenPage(ctx: context){
     ctx.type = 'html';
-    ctx.body = fs.createReadStream('dist/webroot/web/screenPage.html');
+    ctx.body = fs.createReadStream('dist/webroot/web/screenPage/screenPage.html');
 }
 
-export function sendId(ctx: context) {
+export function sendScreenId(ctx: context) {
     let id = database.generateId(8);
-    database.addController(id);
+    database.addScreen(id);
     ctx.response.status = 200;
     ctx.body = JSON.stringify(id);
 }

@@ -1,3 +1,5 @@
+requestID();
+
 async function requestID(){
     let response = await fetch("/catcaster/screen/", {
         method : 'POST',
@@ -13,4 +15,4 @@ async function requestID(){
     };
 };
 
-requestID();
+

@@ -75,6 +75,25 @@ export class IdDatabase
         return true;
     }
 
+    public getScreenId(){
+        for (let [key, value] of this.ids.entries()) {
+            if (value == 'screen'){
+                return key;
+            }
+        }
+        return null;
+    }
+
+    public getControllerId(){
+        for (let [key, value] of this.ids.entries()) {
+            if (value == 'controller'){
+                return key;
+            }
+        }
+        return null;
+    }
+
+
     //This function creates a random integer between 0 and the given maximum.
     private getRandomInt(max : number) {
         return Math.floor(Math.random()*max);
