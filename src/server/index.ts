@@ -17,12 +17,16 @@ const app = new Koa();
 
 const redirectPage = 'dist/webroot/web/redirectPage';
 const screenPage = 'dist/webroot/web/screenPage';
+const controllerRedirect = 'dist/webroot/web/controllerRedirect';
+const controllerPage = 'dist/webroot/web/controllerPage';
 const router = new Router();
 
 // When we run this server we serve you all of our `dist/webroot` folder.
 const webroot = __dirname + '/../../dist/webroot';
 app.use(mount('/catcaster/screen/', serve(redirectPage)));
 app.use(mount('/catcaster/screen/', serve(screenPage)));
+app.use(mount('/catcaster/controller/', serve(controllerRedirect)));
+app.use(mount('/catcaster/controller/', serve(controllerPage)));
 app.use(router.routes()).use(router.allowedMethods())
 
 export var database = new IdDatabase();

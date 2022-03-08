@@ -6,7 +6,7 @@ cert/
 
 # VS Code config directory
 .vscode/
-
+.history/
 # vim swap files
 *.swp
 
