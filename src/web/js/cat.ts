@@ -1,4 +1,5 @@
-import { Vector3 } from 'three';
+import * as THREE from 'three';
+import { Scene, Vector3 } from 'three';
 import { Planet } from './planet';
 
 export class Cat {
@@ -12,13 +13,19 @@ export class Cat {
     xVel: number = 0;
     yVel: number = 0;
     planet: Planet;
+    sphere: THREE.SphereGeometry;
+    animation: THREE.Mesh;
 
-    constructor( id: number, radius: number, planet: Planet, mass: number = 10) {
+    constructor(scene: Scene, id: number, radius: number, planet: Planet, mass: number = 10) {
         this.id = id;
         this.mass = mass;
         this.radius = radius;
         this.position = new Vector3(0, 0, radius);
         this.planet = planet;
+
+        this.sphere = new THREE.SphereGeometry( 0.5, 32, 16 );
+        this.animation = new THREE.Mesh( this.sphere, new THREE.MeshNormalMaterial());
+        scene.add( this.animation );
     }
 
     setPlanet(planet: Planet) {
@@ -54,19 +61,25 @@ export class Cat {
         if (!this.isValidPos(this.position)) {
             this.xVel = 0;
             this.yVel = 0;
+            // this.xF = 0;
+            // this.yF = 0;
             return;
         }
 
-        const oldGamma = this.planet.gamma;
-        const oldBeta = this.planet.beta;
+        this.planet.checkTP();
 
-        this.planet.updateAngles();
+        // const oldGamma = this.planet.gamma;
+        // const oldBeta = this.planet.beta;
 
-        const dgamma = oldGamma - this.planet.gamma;
-        const dbeta = oldBeta - this.planet.beta;
+        // this.planet.updateAngles();
 
-        this.position.applyAxisAngle(new Vector3(0,1,0), -dgamma);
-        this.position.applyAxisAngle(new Vector3(1,0,0), -dbeta);
+        // const dgamma = oldGamma - this.planet.gamma;
+        // const dbeta = oldBeta - this.planet.beta;
+
+        // this.position.applyAxisAngle(new Vector3(0,1,0), -dgamma);
+        // this.position.applyAxisAngle(new Vector3(1,0,0), -dbeta);
+
+        this.animation.position.copy(this.position);
 
     }
 

@@ -1,22 +1,17 @@
 import * as THREE from 'three';
+import { Scene } from 'three';
 import { Cat } from '../js/cat.js';
 import { setInnerText } from '../js/dom-util.js';
+import { askPermissionIfNeeded } from '../js/motion-events.js';
 import { Planet } from '../js/planet.js';
 
-const dt = 0.01;
-
-// Create planet and cat objects with default values
-const planet: Planet = new Planet(0, 5, 10);
-const cat: Cat = new Cat(0, 0.5, planet);
-planet.setCat(cat);
 
 // Initialize animation scene and camera
 const scene = new THREE.Scene();
 scene.background = new THREE.Color('white');
 const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
 camera.position.z = 10;
-camera.position.y = -10;
-camera.rotateX(Math.PI/4);
+// camera.rotateX(-Math.PI/2);
 
 // Initialize renderer
 const renderer = new THREE.WebGLRenderer();
@@ -25,26 +20,17 @@ renderer.setSize( window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(window.devicePixelRatio * scaleFactor);
 document.body.appendChild( renderer.domElement );
 
-// Initialize planet animation as a circle
-const circle = new THREE.Mesh( new THREE.CircleGeometry( planet.radius, 32 ), new THREE.MeshNormalMaterial() );
-scene.add( circle );
+// Create planet and cat objects with default values
+const dt = 0.01;
 
-// Initialize cat animation as a sphere
-const sphere = new THREE.Mesh( new THREE.SphereGeometry( 0.5, 32, 16 ), new THREE.MeshNormalMaterial());
-scene.add( sphere );
-
+const planet: Planet = new Planet(scene, 0, 5, 10, [0,0, 0]);
+const planet2: Planet = new Planet(scene, 0, 5, 10, [10,0, 0]);
+const cat: Cat = new Cat(scene, 0, 0.5, planet);
+planet.setCat(cat);
 
 function animate() {
 
     cat.updatePosition(dt);
-
-    circle.rotation.x = planet.beta;
-    circle.rotation.y = planet.gamma;
-
-
-    sphere.position.copy(cat.position);
-
-    requestAnimationFrame( animate ); // can be disabled while using deviceOrientationEvent
     renderer.render( scene, camera );
     setInnerText('xF', cat.xF);
     setInnerText('yF', cat.yF);
@@ -52,6 +38,8 @@ function animate() {
     setInnerText('yP', cat.position.y.toFixed(3));
     setInnerText('zP', cat.position.z.toFixed(3));
     setInnerText('angle', [planet.alpha, planet.beta, planet.gamma].toString());
+
+    requestAnimationFrame( animate );
 }
 
 function update(e: KeyboardEvent) {
@@ -72,24 +60,21 @@ function update(e: KeyboardEvent) {
     }
 }
 
+function update2(e: DeviceOrientationEvent) {
+    cat.updateForce('x', e.gamma!);
+    cat.updateForce('y', -e.beta!);
+}
+
+function firstTouch() {
+    window.removeEventListener('touchend', firstTouch);
+    // note the 'void' ignores the promise result here...
+    void askPermissionIfNeeded().then(v => {
+        const { ok, msg } = v;
+        setInnerText('dm_status', msg);
+        if (ok) {window.addEventListener('deviceorientation', update2);}
+    });
+}
+
 document.addEventListener('keypress', update);
+window.addEventListener('touchend', firstTouch);
 animate();
-
-// function update(e: KeyboardEvent) {
-//     switch(e.key) {
-//     case 's' :
-//         planet.setAngle('gamma', planet.gamma + 0.08);
-//         break;
-//     case 'a' :
-//         planet.setAngle('beta', planet.beta - 0.08);
-//         break;
-//     case 'd' :
-//         planet.setAngle('beta', planet.beta + 0.08);
-//         break;
-//     case 'w' :
-//         planet.setAngle('gamma', planet.gamma - 0.08);
-//         break;
-//     }
-
-//     animate();
-// }
