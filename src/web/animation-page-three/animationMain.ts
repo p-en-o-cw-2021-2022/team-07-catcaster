@@ -23,8 +23,10 @@ document.body.appendChild( renderer.domElement );
 // Create planet and cat objects with default values
 const dt = 0.01;
 
-const planet: Planet = new Planet(scene, 0, 5, 10, [0,0, 0]);
-const planet2: Planet = new Planet(scene, 0, 5, 10, [10,0, 0]);
+const planet: Planet = new Planet(scene, 0, 5, 10, [0,0,0]);
+const planet2: Planet = new Planet(scene, 1, 5, 10, [10,0,0]);
+planet.addNeighbour(planet2);
+planet2.addNeighbour(planet);
 const cat: Cat = new Cat(scene, 0, 0.5, planet);
 planet.setCat(cat);
 

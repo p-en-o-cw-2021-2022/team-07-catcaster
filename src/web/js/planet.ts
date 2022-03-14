@@ -1,6 +1,5 @@
-import { subtract } from 'mathjs';
 import * as THREE from 'three';
-import { Scene, Vector3 } from 'three';
+import { Plane, Scene, Vector3 } from 'three';
 import { Cat } from './cat.js';
 export class Planet {
 
@@ -8,7 +7,7 @@ export class Planet {
     radius: number;
     coordinates: number[];
     // cats: Map<number, Cat> = new Map();
-    cat: Cat | undefined = undefined;
+    cat: Cat | undefined = undefined; // Should be made into a map
     friction: number;
     alpha:number = 0;
     beta:number = 0;
@@ -17,13 +16,18 @@ export class Planet {
     MAX_ANGLE: number = 2 * Math.PI/9;
     animation: THREE.Mesh;
     circle: THREE.CircleGeometry;
-    portalCoord = new Vector3(3,0,0);
+    portals: Map<number, Vector3>; // Should be made into a map
+    neighbours: Map<number, Planet>;
 
     constructor(scene: Scene, id: number, radius: number, friction: number, coordinates: number[] = [0,0,0]) {
         this.id = id;
         this.coordinates = coordinates;
         this.radius = radius;
         this.friction = friction;
+        this.neighbours = new Map<number, Planet>();
+        this.portals = new Map<number, Vector3>();
+
+        this.portals.set(1, new Vector3(3,0,0)); //FIX Make it be set in the add neighbour
 
         this.circle = new THREE.CircleGeometry( this.radius, 32 );
         this.circle.translate(coordinates[0], coordinates[1], coordinates[2]);
@@ -31,7 +35,12 @@ export class Planet {
         scene.add( this.animation );
     }
 
-
+    // Add a new neighbouring planet if not already added.
+    addNeighbour(newNeighbour: Planet) {
+        if (!this.neighbours.has(newNeighbour.id)) {
+            this.neighbours.set(newNeighbour.id, newNeighbour);
+        }
+    }
     // addCat(id:number, mass:number) {
     //     this.cats.set(id, new Cat(id, mass, this));
     // }
@@ -85,8 +94,16 @@ export class Planet {
     checkTP() {
         const tmp = this.cat?.position;
 
-        if(tmp!.distanceTo(this.portalCoord) <= 1) {
-            this.cat!.position = new Vector3(10,0,0);
+        for (const entry of this.portals.entries()) {
+            const portalId = entry[0];
+            const portalVec3 = entry[1];
+
+            if(tmp!.distanceTo(portalVec3) <= 1) {
+                const x = this.neighbours.get(portalId)?.coordinates[0];
+                const y = this.neighbours.get(portalId)?.coordinates[1];
+                const z = this.neighbours.get(portalId)?.coordinates[2];
+                this.cat!.position = new Vector3(x,y,z);
+            }
         }
     }
 }
