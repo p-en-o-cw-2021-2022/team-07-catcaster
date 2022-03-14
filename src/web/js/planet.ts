@@ -16,7 +16,7 @@ export class Planet {
     MAX_ANGLE: number = 2 * Math.PI/9;
     animation: THREE.Mesh;
     circle: THREE.CircleGeometry;
-    portals: Map<number, Vector3>; // Should be made into a map
+    portals: Map<number, Vector3>;
     neighbours: Map<number, Planet>;
 
     constructor(scene: Scene, id: number, radius: number, friction: number, coordinates: number[] = [0,0,0]) {
@@ -41,9 +41,11 @@ export class Planet {
             this.neighbours.set(newNeighbour.id, newNeighbour);
         }
     }
-    // addCat(id:number, mass:number) {
-    //     this.cats.set(id, new Cat(id, mass, this));
-    // }
+
+    // SHOULD BE CHANGED TO WORK WITH A MAP
+    addCat(cat: Cat) {
+        this.cat = cat;
+    }
 
     setAngle(axis: string, angle: number) {
 
@@ -95,14 +97,18 @@ export class Planet {
         const tmp = this.cat?.position;
 
         for (const entry of this.portals.entries()) {
-            const portalId = entry[0];
+            const planetId = entry[0];
             const portalVec3 = entry[1];
 
             if(tmp!.distanceTo(portalVec3) <= 1) {
-                const x = this.neighbours.get(portalId)?.coordinates[0];
-                const y = this.neighbours.get(portalId)?.coordinates[1];
-                const z = this.neighbours.get(portalId)?.coordinates[2];
+                const neighbour: Planet = this.neighbours.get(planetId)!;
+                this.cat!.changePlanet(neighbour);
+                const x = neighbour.coordinates[0];
+                const y = neighbour.coordinates[1];
+                const z = neighbour.coordinates[2];
+                neighbour.addCat(this.cat!);
                 this.cat!.position = new Vector3(x,y,z);
+                this.cat = undefined;
             }
         }
     }

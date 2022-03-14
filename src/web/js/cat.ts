@@ -59,6 +59,8 @@ export class Cat {
         // const tmp = new Vector3(xPos, yPos, this.position.z);
 
         if (!this.isValidPos(this.position)) {
+            console.log('Position is invalid');
+            console.log(this.planet.id);
             this.xVel = 0;
             this.yVel = 0;
             // this.xF = 0;
@@ -86,11 +88,15 @@ export class Cat {
     // Check if the given position is on planet
     isValidPos(vector: Vector3): boolean {
 
-        const xCond = Math.abs(vector.x) <= this.planet.radius;
-        const yCond = Math.abs(vector.y) <= this.planet.radius;
-        const zCond = Math.abs(vector.z) <= this.planet.radius * Math.sin(this.planet.MAX_ANGLE);
+        const xCond = Math.abs(vector.x - this.planet.coordinates[0]) <= this.planet.radius;
+        const yCond = Math.abs(vector.y - this.planet.coordinates[1]) <= this.planet.radius;
+        const zCond = Math.abs(vector.z - this.planet.coordinates[2]) <= this.planet.radius * Math.sin(this.planet.MAX_ANGLE);
 
         return xCond && yCond && zCond;
+    }
+
+    changePlanet(newPlanet: Planet) {
+        this.planet = newPlanet;
     }
 }
 
