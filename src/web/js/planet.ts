@@ -27,8 +27,6 @@ export class Planet {
         this.neighbours = new Map<number, Planet>();
         this.portals = new Map<number, Vector3>();
 
-        this.portals.set(1, new Vector3(3,0,0)); //FIX Make it be set in the add neighbour
-
         this.circle = new THREE.CircleGeometry( this.radius, 32 );
         this.circle.translate(coordinates[0], coordinates[1], coordinates[2]);
         this.animation = new THREE.Mesh( this.circle, new THREE.MeshNormalMaterial() );
@@ -36,9 +34,15 @@ export class Planet {
     }
 
     // Add a new neighbouring planet if not already added.
-    addNeighbour(newNeighbour: Planet) {
+    // Portal vector is relative to center of the neightbour planet
+    addNeighbour(newNeighbour: Planet, portalVector: Vector3) {
         if (!this.neighbours.has(newNeighbour.id)) {
             this.neighbours.set(newNeighbour.id, newNeighbour);
+            const x = this.coordinates[0];
+            const y = this.coordinates[1];
+            const z = this.coordinates[2];
+            const portalCoords = new Vector3(x,y,z);
+            this.portals.set(newNeighbour.id, portalVector.add(portalCoords));
         }
     }
 

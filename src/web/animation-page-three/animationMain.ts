@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { Scene } from 'three';
+import { Scene, Vector3 } from 'three';
 import { Cat } from '../js/cat.js';
 import { setInnerText } from '../js/dom-util.js';
 import { askPermissionIfNeeded } from '../js/motion-events.js';
@@ -25,8 +25,8 @@ const dt = 0.01;
 
 const planet: Planet = new Planet(scene, 0, 5, 10, [0,0,0]);
 const planet2: Planet = new Planet(scene, 1, 5, 10, [10,0,0]);
-planet.addNeighbour(planet2);
-planet2.addNeighbour(planet);
+planet.addNeighbour(planet2, new Vector3(3,0,0));
+planet2.addNeighbour(planet, new Vector3(-3,0,0));
 const cat: Cat = new Cat(scene, 0, 0.5, planet);
 planet.setCat(cat);
 
