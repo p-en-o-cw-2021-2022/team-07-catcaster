@@ -94,10 +94,6 @@ export class Cat {
 
         return xCond && yCond && zCond;
     }
-
-    changePlanet(newPlanet: Planet) {
-        this.planet = newPlanet;
-    }
 }
 
 

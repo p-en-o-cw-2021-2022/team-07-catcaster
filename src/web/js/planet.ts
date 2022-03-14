@@ -102,7 +102,7 @@ export class Planet {
 
             if(tmp!.distanceTo(portalVec3) <= 1) {
                 const neighbour: Planet = this.neighbours.get(planetId)!;
-                this.cat!.changePlanet(neighbour);
+                this.cat!.setPlanet(neighbour);
                 const x = neighbour.coordinates[0];
                 const y = neighbour.coordinates[1];
                 const z = neighbour.coordinates[2];
