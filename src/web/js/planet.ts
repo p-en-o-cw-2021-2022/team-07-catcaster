@@ -42,11 +42,6 @@ export class Planet {
         }
     }
 
-    // SHOULD BE CHANGED TO WORK WITH A MAP
-    addCat(cat: Cat) {
-        this.cat = cat;
-    }
-
     setAngle(axis: string, angle: number) {
 
         if (!this.isValidAngle(angle)) {
@@ -94,7 +89,8 @@ export class Planet {
     }
 
     checkTP() {
-        const tmp = this.cat?.position;
+        const tmp = this.cat?.position; // Current cat checking.
+        // TODO Add logic to handle multiple cats
 
         for (const entry of this.portals.entries()) {
             const planetId = entry[0];
@@ -106,7 +102,7 @@ export class Planet {
                 const x = neighbour.coordinates[0];
                 const y = neighbour.coordinates[1];
                 const z = neighbour.coordinates[2];
-                neighbour.addCat(this.cat!);
+                neighbour.setCat(this.cat!);
                 this.cat!.position = new Vector3(x,y,z);
                 this.cat = undefined;
             }
