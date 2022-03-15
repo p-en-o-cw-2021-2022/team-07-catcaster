@@ -48,16 +48,20 @@ function update(e: KeyboardEvent) {
 
     switch(e.key) {
     case 'd' :
-        cat.updateForce('x', cat.xF + 5);
+        // cat.updateForce('x', cat.xF + 5);
+        cat.xVel += 1;
         break;
     case 's' :
-        cat.updateForce('y', cat.yF - 5);
+        // cat.updateForce('y', cat.yF - 5);
+        cat.yVel -= 1;
         break;
     case 'w' :
-        cat.updateForce('y', cat.yF + 5);
+        // cat.updateForce('y', cat.yF + 5);
+        cat.yVel += 1;
         break;
     case 'a' :
-        cat.updateForce('x', cat.xF - 5);
+        // cat.updateForce('x', cat.xF - 5);
+        cat.xVel -= 1;
         break;
     }
 }
