@@ -18,11 +18,9 @@ export function getScreenPage(ctx: context){
 }
 
 export function sendScreenId(ctx: context) {
-    let idExist = false;
-    while (!idExist) {
-        let id = database.generateId(8);
-        idExist = database.addScreen(id);
-    }
+    
+    let id = database.generateId(8);
+    database.addScreen(id);
     ctx.response.status = 200;
     ctx.body = JSON.stringify(id);
 }
@@ -40,11 +38,8 @@ export function getControllerPage(ctx: context) {
 }
 
 export function sendControllerId(ctx: context) {
-    let idExist = false;
-    while (!idExist) {
-        let id = database.generateId(8);
-        idExist = database.addController(id);
-    }
+    let id = database.generateId(8);
+    database.addController(id);
     ctx.response.status = 200;
     ctx.body = JSON.stringify(id);
 }
