@@ -75,7 +75,7 @@ export class IdDatabase
         return true;
     }
 
-    public getScreenId(){
+    public getScreenIds(){
         let list = [];
         for (let [key, value] of this.ids.entries()) {
             if (value == 'screen'){
