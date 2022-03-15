@@ -178,9 +178,7 @@
                 // Clear messages box
                 clearMsgsButton.addEventListener('click', clearMessages);
 
-                recvId.addEventListener('DOMSubtreeModified', (event) => {
-                    initialize();
-                })
+                recvId.addEventListener('DOMSubtreeModified', initialize);
             })();
         </script>
     </body>

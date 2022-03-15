@@ -19,7 +19,7 @@
                     <span style="font-weight: bold">ID: </span>
                     <div type="text" id="receiver-id"></div>
                     <div type="text" id="sender-id"></div> 
-                    <button id="connect-button">Connect</button>
+                    <div type="text" id="connection-div"></div> 
                 </td>
                 <td>
                     <input type="text" id="sendMessageBox" placeholder="Enter a message..." autofocus="true" />
@@ -42,13 +42,13 @@
                 var lastPeerId = null;
                 var peer = null; // own peer object
                 var recvIdInput = document.getElementById("receiver-id");
-                var senderId = document.getElementById("sender-id")
+                var senderId = document.getElementById("sender-id");
+                var connectionHelp = document.getElementById("connection-div");
                 var status = document.getElementById("status");
                 var message = document.getElementById("message");
                 var sendMessageBox = document.getElementById("sendMessageBox");
                 var sendButton = document.getElementById("sendButton");
                 var clearMsgsButton = document.getElementById("clearMsgsButton");
-                var connectButton = document.getElementById("connect-button");
 
                 let connections = new Object();
                 /**
@@ -101,29 +101,36 @@
                 function join() {
 
                     // Create connection to destination peer specified in the input field
-                    conn = peer.connect(recvIdInput.innerHTML, {
+                    let len = recvIdInput.innerHTML.length;
+                    while (len>0){
+                        let otherpeer = recvIdInput.innerHTML.substring(0,8);
+                        conn = peer.connect(otherpeer, {
                         reliable: true
-                    });
+                        });
 
-                    connections[conn.peer] = conn;
 
-                    conn.on('open', function () {
-                        status.innerHTML = "Connected to: " + conn.peer;
-                        console.log("Connected to: " + conn.peer);
-                        status.innerHTML = onConnChange()
-                        // Check URL params for comamnds that should be sent immediately
-                        var command = getUrlParam("command");
-                        if (command)
-                            conn.send(command);
-                    });
-                    // Handle incoming data (messages only since this is the signal sender)
-                    conn.on('data', function (data) {
-                        addMessage("<span class=\"peerMsg\">" + conn.peer.slice(0, 8) + ": </span>" + data);                    });
-                    conn.on('close', function () {
-                        status.innerHTML = "Connection closed";
-                    });
+                        connections[conn.peer] = conn;
 
-                    recvIdInput.value = "";
+                        conn.on('open', function () {
+                            status.innerHTML = "Connected to: " + conn.peer;
+                            console.log("Connected to: " + conn.peer);
+                            status.innerHTML = onConnChange()
+                            // Check URL params for comamnds that should be sent immediately
+                            var command = getUrlParam("command");
+                            if (command)
+                                conn.send(command);
+                        });
+                        // Handle incoming data (messages only since this is the signal sender)
+                        conn.on('data', function (data) {
+                            addMessage("<span class=\"peerMsg\">" + conn.peer.slice(0, 8) + ": </span>" + data);                    });
+                        conn.on('close', function () {
+                            status.innerHTML = "Connection closed";
+                        });
+
+
+                        recvIdInput.innerHTML = recvIdInput.innerHTML.substring(8);
+                        len = recvIdInput.innerHTML.length;
+                    }
                 };
 
                 /**
@@ -202,13 +209,15 @@
                 // Clear messages box
                 clearMsgsButton.addEventListener('click', clearMessages);
                 // Start peer connection on click
-                connectButton.addEventListener('click', join);
+                connectionHelp.addEventListener('DOMSubtreeModified', join);
+                connectionHelp.addEventListener('DOMSubtreeModified', (event) => {
+                    console.log(peer);
+                    console.log(recvIdInput.innerHTML);
+                    join();
+                });
 
                 // Since all our callbacks are setup, start the process of obtaining an ID
-                recvIdInput.addEventListener('DOMSubtreeModified', (event) => {
-                    console.log('initalizing...')
-                    initialize();
-                })
+                senderId.addEventListener('DOMSubtreeModified', initialize);
             })();
         </script>
     </body>

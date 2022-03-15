@@ -15,10 +15,7 @@ function getIdScreen(){
 }
 
 function eventHandlersScreen() {
-    let url = prompt("Enter websocket server address:");
-    if (url == null) {
-        return;
-    }
+    let url = 'ws://localhost:3000/catcaster/controller/' + myId.innerHTML;
 
     const websocket = new WebSocket(url);
     console.log("Starting Websocket connection...")

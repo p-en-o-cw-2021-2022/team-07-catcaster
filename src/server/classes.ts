@@ -76,12 +76,13 @@ export class IdDatabase
     }
 
     public getScreenId(){
+        let list = [];
         for (let [key, value] of this.ids.entries()) {
             if (value == 'screen'){
-                return key;
+                list.push(key);
             }
         }
-        return null;
+        return list;
     }
 
     public getControllerId(){
