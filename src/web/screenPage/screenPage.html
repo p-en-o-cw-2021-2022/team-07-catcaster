@@ -38,7 +38,7 @@
                 <td><div class="message" id="message"></div></td>
             </tr>
         </table>
-
+        <p id="gyro-data"></p>
         <script> var exports = {}; </script>
         <script type = "module" src = screenPage.js>var exports = {};</script>
         <script src = "https://unpkg.com/peerjs@1.3.1/dist/peerjs.min.js">var exports = {};</script>
@@ -54,6 +54,7 @@
                 var sendMessageBox = document.getElementById("sendMessageBox");
                 var sendButton = document.getElementById("sendButton");
                 var clearMsgsButton = document.getElementById("clearMsgsButton");
+                var gyrodata = document.getElementById("gyro-data");
                 
                 let connections = new Object();
 
@@ -89,7 +90,7 @@
                         c.on('data', function (data) {
                             console.log("Data recieved");
                             var cueString = "<span class=\"cueMsg\">Cue: </span>";
-                            addMessage("<span class=\"peerMsg\">" + c.peer.slice(0, 8) + ": </span>" + data);
+                            addMessage(data);
                         });
                         // Connection closed
                         c.on('close', function () {
@@ -145,6 +146,7 @@
                 };
 
                 function addMessage(msg) {
+                    gyrodata.innerText = msg;
                     var now = new Date();
                     var h = now.getHours();
                     var m = addZero(now.getMinutes());
@@ -161,7 +163,7 @@
                         return t;
                     };
 
-                    message.innerHTML = "<br><span class=\"msg-time\">" + h + ":" + m + ":" + s + "</span>  -  " + msg + message.innerHTML;
+                  console.log("<br><span class=\"msg-time\">" + h + ":" + m + ":" + s + "</span>  -  " + msg);
                 }
 
                 // Listen for enter in message box

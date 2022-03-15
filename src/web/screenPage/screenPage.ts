@@ -15,7 +15,8 @@ function getIdScreen(){
 }
 
 function eventHandlersScreen() {
-    let url = 'wss://bab5-2a02-2c40-200-b001-00-1-97fd.eu.ngrok.io/catcaster/controller/' + myId.innerHTML;
+    let url = prompt()!;
+    //'wss://bab5-2a02-2c40-200-b001-00-1-97fd.eu.ngrok.io/catcaster/controller/' + myId.innerHTML;
 
     const websocket = new WebSocket(url);
     console.log("Starting Websocket connection...")

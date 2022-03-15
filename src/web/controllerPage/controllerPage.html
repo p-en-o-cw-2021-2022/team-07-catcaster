@@ -35,6 +35,12 @@
                 <td><div class="message" id="message"></div></td>
             </tr>
         </table>
+        <p>Gamma sent: <span id="gamma"></span></p>
+        <p>Beta sent: <span id="beta"></span></p>
+        <p>Current y: <span id="currenty"></span></p>
+        <p>Highest y: <span id="highesty"></span></p>
+        <p>Lowest y: <span id="lowesty"></span></p>
+        <p>Jump: <span id="jump"></span></p>
 
         <script> var exports = {}; </script>
         <script type = "module" src = controllerPage.js>var exports = {};</script>
@@ -53,6 +59,7 @@
                 var sendButton = document.getElementById("sendButton");
                 var clearMsgsButton = document.getElementById("clearMsgsButton");
                 var gyrodata = document.getElementById("gyro-data");
+                var jumpdata = document.getElementById("jump");
 
                 let connections = new Object();
                 /**
@@ -220,6 +227,19 @@
                         }
                     }
                 });
+                jumpdata.addEventListener('DOMSubtreeModified', function() {
+                    var msg = jumpdata.innerText;
+                    if(msg == 'true'){
+                        for(connection in connections){
+                        if (connections[connection] && connections[connection].open) {
+                            connections[connection].send(msg);
+                            console.log("Sent: " + msg);
+                            } else {
+                            console.log('Connection is closed');
+                            }
+                        }
+                    }
+                });
                 // Clear messages box
                 clearMsgsButton.addEventListener('click', clearMessages);
                 // Start peer connection on click
@@ -234,11 +254,5 @@
                 senderId.addEventListener('DOMSubtreeModified', initialize);
             })();
         </script>
-        <p>Gamma sent: <span id="gamma"></span></p>
-        <p>Beta sent: <span id="beta"></span></p>
-        <p>Current y: <span id="currenty"></span></p>
-        <p>Highest y: <span id="highesty"></span></p>
-        <p>Lowest y: <span id="lowesty"></span></p>
-        <p>Jump: <span id="jump"></span></p>
     </body>
 </html>
