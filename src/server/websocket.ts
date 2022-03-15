@@ -37,16 +37,6 @@ export function websocketEventHandlers(websocket:ws.Server) {
                 case 'controller':
                     console.log('Newly connected ID is from a controller.');
 
-<<<<<<< Updated upstream
-                //Send the controller the ID of the screen, as to establish a webRTC connection
-                let controllerid = database.getControllerIds();
-                websocket.clients.forEach(function(client){
-                    client.send(JSON.stringify({client: 'controller', id:controllerid}))
-                });
-                let screenid = database.getScreenIds();
-                for(let sid of screenid!){
-                    ws.send(JSON.stringify({client : 'screen', id : sid}))
-=======
                     //Het id dat door de client wordt doorgestuurd moet reeds bestaan.
                     if (!database.doesIdExist(mes.id)){
                         console.log('Received ID is not in the database.');
@@ -64,7 +54,6 @@ export function websocketEventHandlers(websocket:ws.Server) {
                     }
                     setTimeout((event) => {ws.send(JSON.stringify({client : 'connect', id : 0}))}, 500);
                     break
->>>>>>> Stashed changes
                 }
             }
 
