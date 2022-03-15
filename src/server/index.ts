@@ -37,9 +37,6 @@ router
         request.getScreenRedirectPage(ctx);
         //serve page with QR code here;
     })
-    .get('/catcaster/screen/:id', (ctx:request.context) => {
-        request.getScreenPage(ctx);
-    })
     .get('/catcaster/controller/', (ctx: request.context) => {
         request.getControllerRedirectPage(ctx);
         //serve page with controls here;
@@ -59,8 +56,8 @@ router
     })
 
 const options = {
-    key: fs.readFileSync('dist/key.pem'),
-    cert: fs.readFileSync('dist/cert.pem')
+    key: fs.readFileSync('dist/webroot/web/key.pem'),
+    cert: fs.readFileSync('dist/webroot/web/cert.pem')
 };
 
 export const httpsServer = https.createServer(options, app.callback()).listen(8000, () => console.log('https app staat aan...'));
