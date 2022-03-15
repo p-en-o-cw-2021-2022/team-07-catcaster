@@ -11,9 +11,11 @@ const video = <HTMLVideoElement>document.getElementById('video');
 const click_button = <HTMLButtonElement>document.getElementById('click-photo');
 const canvas : HTMLCanvasElement = <HTMLCanvasElement>document.getElementById('canvas');
 const canvas2 : HTMLCanvasElement = <HTMLCanvasElement>document.getElementById('canvas2');
+const graph : HTMLCanvasElement = <HTMLCanvasElement>document.getElementById('graph');
+
 qr_button.addEventListener('click',  function() {
     const qrcode = <HTMLImageElement>document.getElementById('qrcode');
-    qrcode.src = 'https://chart.googleapis.com/chart?cht=qr&chl=TESTESTESTESTEST&chs=160x160&chld=L|0';
+    qrcode.src = 'https://chart.googleapis.com/chart?cht=qr&chl="TESTESTESTESTEST&chs=160x160&chld=L|0';
 });
 camera_button.addEventListener('click',  async function() {
     const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
@@ -124,10 +126,13 @@ async function QR(number: number) {
     console.log(qrlocations);
 
     const sites = [ {x: 200, y: 200}, {x: 50, y: 250}, {x: 400, y: 100}];
-    createVoronoi(sites);
+    const neighbors: Array<[[number, number], [number, number]]> = findNeighborsVoronoi(sites);
+
+    drawGraph(graph.getContext('2d')!, sites, neighbors);
+    
 }
 
-function createVoronoi(sites: {x: number;y: number;}[]) {
+function findNeighborsVoronoi(sites: {x: number;y: number;}[]) {
 
     const voronoi = new Voronoi();
     const bbox = {xl: 0, xr: 800, yt: 0, yb: 600}; // xl is x-left, xr is x-right, yt is y-top, and yb is y-bottom
@@ -148,9 +153,71 @@ function createVoronoi(sites: {x: number;y: number;}[]) {
         }
     }
 
-    console.log(neighbors);
+    return neighbors;
+
+    
 }
 
+function drawGraph(context: CanvasRenderingContext2D, sites: {x: number;y: number;}[], neighbors: Array<[[number, number], [number, number]]>) {
+    //draw points
+    for (let i = 0; i < sites.length; i++) {
+        drawPoint(context, sites[i].x, sites[i].y, i.toString(), "#505050", 5);
+    }
+
+    //draw lines
+    for (let i = 0; i < neighbors.length; i++) {
+        let n1x = neighbors[i][0][0];
+        let n1y = neighbors[i][0][1];
+        let n2x = neighbors[i][1][0];
+        let n2y = neighbors[i][1][1];
+        drawLine(context, [n1x, n1y], [n2x, n2y], "#505050", 1);
+    }
+}
+
+//adapted from: https://dirask.com/posts/JavaScript-how-to-draw-point-on-canvas-element-PpOBLD
+function drawPoint(context: CanvasRenderingContext2D, x: number, y: number, label: string, color: string, size: number) {
+    if (color == null) {
+      color = '#000';
+  }
+  if (size == null) {
+      size = 5;
+  }
+
+    // to increase smoothing for numbers with decimal part
+    var pointX = Math.round(x);
+  var pointY = Math.round(y);
+
+  context.beginPath();
+  context.fillStyle = color;
+  context.arc(pointX, pointY, size, 0 * Math.PI, 2 * Math.PI);
+  context.fill();
+
+    if (label) {
+      var textX = pointX;
+        var textY = Math.round(pointY - size - 3);
+    
+      context.font = 'Italic 14px Arial';
+      context.fillStyle = color;
+      context.textAlign = 'center';
+      context.fillText(label, textX, textY);
+  }
+}
+
+//adapted from: https://www.javascripttutorial.net/web-apis/javascript-draw-line/
+function drawLine(ctx: CanvasRenderingContext2D, begin: [number, number], end: [number, number], stroke: string, width: number) {
+    if (stroke) {
+        ctx.strokeStyle = stroke;
+    }
+
+    if (width) {
+        ctx.lineWidth = width;
+    }
+
+    ctx.beginPath();
+    ctx.moveTo(...begin);
+    ctx.lineTo(...end);
+    ctx.stroke();
+}
 
 
 
