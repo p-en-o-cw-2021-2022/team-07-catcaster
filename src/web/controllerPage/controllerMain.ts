@@ -41,7 +41,7 @@ function sendControllerInput(gamma: number, beta: number) {
 
     setInnerText('gamma', gamma);
     setInnerText('beta', beta);
-
+    setInnerText('gyro-data', `${beta.toFixed(2)} ${gamma.toFixed(2)}`);
     // Send somehow here
 
     return;
