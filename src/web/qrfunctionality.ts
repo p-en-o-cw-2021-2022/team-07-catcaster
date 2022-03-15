@@ -1,7 +1,6 @@
 
 import jsQR from 'jsqr';
 import { Point } from 'jsqr/dist/locator';
-import { number, options } from 'yargs';
 import {Voronoi} from 'voronoi';
 
 
@@ -27,16 +26,11 @@ click_button.addEventListener('click', function() {
     QR(number);
 });
 
-function wait(ms: number) {
-    return new Promise(r => setTimeout(r, ms));
-}
-
 
 async function QR(number: number) {
     const ctx = canvas.getContext('2d');
     ctx?.drawImage(video, 0, 0, canvas.width, canvas.height);
     const imageData = ctx?.getImageData(0, 0, canvas.width, canvas.height);
-    //await wait(500);
     const ctx2 = canvas2.getContext('2d');
 
 
@@ -44,17 +38,11 @@ async function QR(number: number) {
     const width = imageData!.width;
     const height = imageData!.height;
 
-    /*
-    for (let i = 0; i < data.length; i += 4) {
-        data[i] ^= 255;     // red
-        data[i + 1] ^= 255; // green
-        data[i + 2] ^= 255; // blue
-    }*/
+    
     const image: ImageData = new ImageData(data, width, height);
     ctx2?.putImageData(image, 0, 0);
 
-
-    const qrlocations: Array<[[number, number], string]> = [];
+    const qrlocations: { x: number; y: number; id: string}[] = new Array()
     let current_number = 0;
 
 
@@ -66,18 +54,17 @@ async function QR(number: number) {
 
 
         if (qr == null) {
-        //console.log(current_number)
             QR(number);
             return;
         }
 
         const topLeftCorner: Point = qr.location.topLeftCorner;
         const bottomRightCorner: Point = qr.location.bottomRightCorner;
-        const middle_location_x = (topLeftCorner.x +bottomRightCorner.x)/2;
-        const middle_location_y = (topLeftCorner.y+bottomRightCorner.y)/2;
-        //console.log(topLeftCorner,bottomRightCorner,middle_location_x,middle_location_y)
-        const id = qr.data;
-        const middle_location: [[number, number], string] = [[middle_location_x, middle_location_y], id];
+        const middle_location_x: number = (topLeftCorner.x +bottomRightCorner.x)/2;
+        const middle_location_y: number = (topLeftCorner.y+bottomRightCorner.y)/2;
+        
+        const id: string = qr.data;
+        const middle_location: {x: number, y: number, id: string} = {x: middle_location_x, y: middle_location_y, id: id};
         qrlocations.push(middle_location);
 
 
@@ -87,7 +74,7 @@ async function QR(number: number) {
         const topLeftFinderPattern = qr.location.topLeftFinderPattern;
         const topRightFinderPattern = qr.location.topRightFinderPattern;
         const bottomLeftFinderPattern = qr.location.bottomLeftFinderPattern;
-        //console.log(topLeftFinderPattern)
+        
 
 
         for (let x = Math.round(topLeftCorner.x); x <= Math.round(topLeftFinderPattern.x*2-topLeftCorner.x); x++) {
@@ -98,7 +85,7 @@ async function QR(number: number) {
                 }
             }
         }
-        //await wait(2000);
+        
         for (let x = Math.round(topRightCorner.x-2*(topRightCorner.x-topRightFinderPattern.x)); x <= Math.round(topRightCorner.x); x++) {
             for (let y = Math.round(topRightCorner.y); y <= Math.round((topRightFinderPattern.y-topRightCorner.y)*2+topRightCorner.y); y++) {
                 for (let i = 0; i < 4; i++) {
@@ -117,7 +104,7 @@ async function QR(number: number) {
 
         const image2: ImageData = new ImageData(data, width, height);
         ctx2?.putImageData(image2, 0, 0);
-        //await wait(2000);
+        
 
 
 
@@ -125,14 +112,16 @@ async function QR(number: number) {
     }
     console.log(qrlocations);
 
-    const sites = [ {x: 200, y: 200}, {x: 50, y: 250}, {x: 400, y: 100}];
-    const neighbors: Array<[[number, number], [number, number]]> = findNeighborsVoronoi(sites);
+    
 
-    drawGraph(graph.getContext('2d')!, sites, neighbors);
+   
+    const neighbors: Array<[[number, number], [number, number]]> = findNeighborsVoronoi(qrlocations);
+
+    drawGraph(graph.getContext('2d')!, qrlocations, neighbors);
     
 }
 
-function findNeighborsVoronoi(sites: {x: number;y: number;}[]) {
+function findNeighborsVoronoi(sites: {x: number;y: number; id: string}[]) {
 
     const voronoi = new Voronoi();
     const bbox = {xl: 0, xr: 800, yt: 0, yb: 600}; // xl is x-left, xr is x-right, yt is y-top, and yb is y-bottom
@@ -158,10 +147,13 @@ function findNeighborsVoronoi(sites: {x: number;y: number;}[]) {
     
 }
 
-function drawGraph(context: CanvasRenderingContext2D, sites: {x: number;y: number;}[], neighbors: Array<[[number, number], [number, number]]>) {
-    //draw points
+function drawGraph(context: CanvasRenderingContext2D, sites: {x: number;y: number; id: string}[], neighbors: Array<[[number, number], [number, number]]>) {
+    
+    context.clearRect(0, 0, graph.width, graph.height);
+
+    
     for (let i = 0; i < sites.length; i++) {
-        drawPoint(context, sites[i].x, sites[i].y, i.toString(), "#505050", 5);
+        drawPoint(context, sites[i].x, sites[i].y, sites[i].id, "#505050", 5);
     }
 
     //draw lines
