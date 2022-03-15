@@ -1,5 +1,6 @@
 var id = <HTMLDivElement>document.getElementById('sender-id');
 var screenId = <HTMLDivElement>document.getElementById('receiver-id');
+var connectiondiv = <HTMLDivElement>document.getElementById('connection-div');
 
 id.innerHTML = getIdController();
 eventHandlersController();
@@ -15,10 +16,7 @@ function getIdController(){
 }
 
 function eventHandlersController() {
-    let url = prompt("Enter websocket server address:");
-    if (url == null) {
-        return;
-    }
+    let url = 'ws://localhost:3000/catcaster/controller/' + id.innerHTML;
 
     const websocket = new WebSocket(url);
     console.log("Starting Websocket connection...")
@@ -31,8 +29,11 @@ function eventHandlersController() {
     websocket.onmessage = (message:any) => {
         let mes = JSON.parse(message.data);
         console.log('received message from : ', mes.id, '  |  client is: ', mes.client);
+        if (mes.client == 'connect'){
+            connectiondiv.innerHTML = 'connect';
+        }
         if(mes.client == 'screen'){
-            screenId.innerHTML = mes.id;
+            screenId.innerHTML += mes.id;
         }
     };
 };
