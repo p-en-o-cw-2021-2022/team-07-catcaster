@@ -59,8 +59,6 @@ export class Cat {
         // const tmp = new Vector3(xPos, yPos, this.position.z);
 
         if (!this.isValidPos(this.position)) {
-            console.log('Position is invalid');
-            console.log(this.planet.id);
             this.xVel = 0;
             this.yVel = 0;
             // this.xF = 0;

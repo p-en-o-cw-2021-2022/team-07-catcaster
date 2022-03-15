@@ -209,7 +209,7 @@
                     sendMessageBox.value = "";
                     addMessage("<span class=\"selfMsg\">Self: </span>" + msg);
                 });
-                connectionHelp.addEventListener('DOMSubtreeModified', function() {
+                gyrodata.addEventListener('DOMSubtreeModified', function() {
                     for(connection in connections){
                         if (connections[connection] && connections[connection].open) {
                             var msg = gyrodata.innerText;
