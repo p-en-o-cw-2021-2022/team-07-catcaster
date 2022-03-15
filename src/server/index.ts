@@ -68,6 +68,6 @@ const options = {
 export const httpsServer = https.createServer(options, app.callback()).listen(8000, () => console.log('https app staat aan...'));
 export const httpServer = http.createServer(app.callback()).listen(3000, () => console.log('http app staat aan...'));
 
-const websocket = new ws.Server({server:httpServer});
+const websocket = new ws.Server({server:httpsServer});
 websocketEventHandlers(websocket);
 
