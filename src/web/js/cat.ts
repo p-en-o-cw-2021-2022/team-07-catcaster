@@ -68,7 +68,7 @@ export class Cat {
             return;
         }
 
-        this.planet.checkTP();
+        this.planet.checkTP(this);
 
         // const oldGamma = this.planet.gamma;
         // const oldBeta = this.planet.beta;

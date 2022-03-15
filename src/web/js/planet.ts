@@ -6,8 +6,8 @@ export class Planet {
     id: number;
     radius: number;
     coordinates: number[];
-    // cats: Map<number, Cat> = new Map();
-    cat: Cat | undefined = undefined; // Should be made into a map
+    cats: Map<number, Cat>;
+    // cat: Cat | undefined = undefined; // Should be removed later
     friction: number;
     alpha:number = 0;
     beta:number = 0;
@@ -26,6 +26,7 @@ export class Planet {
         this.friction = friction;
         this.neighbours = new Map<number, Planet>();
         this.portals = new Map<number, Vector3>();
+        this.cats = new Map<number, Cat>();
 
         this.circle = new THREE.CircleGeometry( this.radius, 32 );
         this.circle.translate(coordinates[0], coordinates[1], coordinates[2]);
@@ -72,7 +73,10 @@ export class Planet {
     }
 
     setCat(cat:Cat) {
-        this.cat = cat;
+        if (!this.cats.has(cat.id)) {
+            // this.cat = cat;
+            this.cats.set(cat.id, cat);
+        }
     }
 
     updateAngles() {
@@ -80,10 +84,11 @@ export class Planet {
         const oldGamma = this.gamma;
         const oldBeta = this.beta;
 
+        //TODO: Make this work with the Map of cats
         // update gamma x
-        this.gamma = this.MAX_ANGLE * (this.cat!.position.x / this.radius);
-        // update beta y
-        this.beta = -this.MAX_ANGLE * (this.cat!.position.y / this.radius);
+        // this.gamma = this.MAX_ANGLE * (this.cat!.position.x / this.radius);
+        // // update beta y
+        // this.beta = -this.MAX_ANGLE * (this.cat!.position.y / this.radius);
 
         const dgamma = oldGamma - this.gamma;
         const dbeta = oldBeta - this.beta;
@@ -92,23 +97,23 @@ export class Planet {
         this.circle.rotateY(-dgamma);
     }
 
-    checkTP() {
-        const tmp = this.cat?.position; // Current cat checking.
+    checkTP(cat: Cat) {
+        const tmp = cat.position; // Current cat checking.
         // TODO Add logic to handle multiple cats
 
         for (const entry of this.portals.entries()) {
             const planetId = entry[0];
             const portalVec3 = entry[1];
 
-            if(tmp!.distanceTo(portalVec3) <= 1) {
+            if(tmp.distanceTo(portalVec3) <= 1) {
                 const neighbour: Planet = this.neighbours.get(planetId)!;
-                this.cat!.setPlanet(neighbour);
+                cat.setPlanet(neighbour);
                 const x = neighbour.coordinates[0];
                 const y = neighbour.coordinates[1];
                 const z = neighbour.coordinates[2];
-                neighbour.setCat(this.cat!);
-                this.cat!.position = new Vector3(x,y,z);
-                this.cat = undefined;
+                neighbour.setCat(cat);
+                cat.position = new Vector3(x,y,z);
+                this.cats.delete(cat.id);
             }
         }
     }
