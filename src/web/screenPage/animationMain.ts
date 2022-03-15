@@ -31,6 +31,13 @@ const cat: Cat = new Cat(scene, 0, 0.5, planet);
 planet.setCat(cat);
 
 function animate() {
+    const jumpdata = document.getElementById('jump')?.innerText;
+    if (jumpdata == 'true'){
+        cat.jump = true;
+    }
+    else {
+        cat.jump = false;
+    }
     const gyrodata = document.getElementById('gyro-data')?.innerText;
     if (gyrodata !== ''){
         const datalist = gyrodata!.split(' ');

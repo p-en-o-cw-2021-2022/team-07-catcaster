@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { Scene, Vector3 } from 'three';
+import { boolean } from 'yargs';
 import { Planet } from './planet';
 
 export class Cat {
@@ -12,6 +13,7 @@ export class Cat {
     yF: number = 0;
     xVel: number = 0;
     yVel: number = 0;
+    jump: boolean = false;
     planet: Planet;
     sphere: THREE.SphereGeometry;
     animation: THREE.Mesh;
@@ -48,10 +50,10 @@ export class Cat {
     updatePosition(dt: number) {
 
         const accX: number = (this.xF)/this.mass;
-        const accY: number = (this.yF)/this.mass;
+        const accY: number = -(this.yF)/this.mass;
 
-        this.position.x += this.xVel * dt + (1/2) * accX * dt ** 2;
-        this.position.y += this.yVel * dt + (1/2) * accY * dt ** 2;
+        this.position.x += this.xVel * dt //+ (1/2) * accX * dt ** 2;
+        this.position.y += this.yVel * dt //+ (1/2) * accY * dt ** 2;
 
         this.xVel += accX * dt;
         this.yVel += accY * dt;
@@ -63,10 +65,14 @@ export class Cat {
             this.yVel = 0;
             // this.xF = 0;
             // this.yF = 0;
+            this.position.x = this.planet.coordinates[0];
+            this.position.y = this.planet.coordinates[1];
             return;
         }
 
-        this.planet.checkTP(this);
+        if (this.jump) {
+            this.planet.checkTP(this);
+        }
 
         // const oldGamma = this.planet.gamma;
         // const oldBeta = this.planet.beta;
