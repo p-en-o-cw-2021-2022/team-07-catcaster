@@ -97,6 +97,6 @@ function firstTouch() {
     });
 }
 
-//document.addEventListener('keypress', update);
+document.addEventListener('keypress', update);
 window.addEventListener('touchend', firstTouch);
 animate();
