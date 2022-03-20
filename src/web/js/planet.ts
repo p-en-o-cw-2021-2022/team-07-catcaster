@@ -105,7 +105,7 @@ export class Planet {
             const planetId = entry[0];
             const portalVec3 = entry[1];
 
-            if(tmp.distanceTo(portalVec3) <= 1) {
+            if(tmp.distanceTo(portalVec3) <= 2) {
                 const neighbour: Planet = this.neighbours.get(planetId)!;
                 cat.setPlanet(neighbour);
                 const x = neighbour.coordinates[0];

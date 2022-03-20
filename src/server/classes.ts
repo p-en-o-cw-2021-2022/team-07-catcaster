@@ -54,7 +54,7 @@ export class IdDatabase
         }
 
         this.ids.set(id,"controller");
-        return true;
+        return;
     }
 
     public removeScreen(id:string) {
@@ -75,7 +75,7 @@ export class IdDatabase
         return true;
     }
 
-    public getScreenIds(){
+    public getScreenId(){
         let list = [];
         for (let [key, value] of this.ids.entries()) {
             if (value == 'screen'){
@@ -85,14 +85,13 @@ export class IdDatabase
         return list;
     }
 
-    public getControllerIds(){
-        let list = [];
+    public getControllerId(){
         for (let [key, value] of this.ids.entries()) {
             if (value == 'controller'){
-                list.push(key);
+                return key;
             }
         }
-        return list;
+        return null;
     }
 
 
