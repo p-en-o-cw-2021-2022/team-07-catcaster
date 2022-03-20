@@ -31,7 +31,22 @@ const cat: Cat = new Cat(scene, 0, 0.5, planet);
 planet.setCat(cat);
 
 function animate() {
-
+    const jumpdata = document.getElementById('jump')?.innerText;
+    if (jumpdata === 'true') {
+        cat.jump = true;
+    } else {
+        cat.jump = false;
+    }
+    const gyrodata = document.getElementById('gyro-data')?.innerText;
+    if (gyrodata !== '') {
+        const datalist = gyrodata!.split(' ');
+        const beta = datalist[0];
+        const gamma = datalist[1];
+        console.log(beta);
+        console.log(gamma);
+        cat.xF = Number(gamma);
+        cat.yF = Number(beta);
+    }
     cat.updatePosition(dt);
     renderer.render( scene, camera );
     setInnerText('xF', cat.xF);
