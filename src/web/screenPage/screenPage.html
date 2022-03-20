@@ -2,20 +2,9 @@
 <html>
     <head>
         <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width">
         <title>Reciever</title>
         <link href="data:image/x-icon;base64,AAABAAEAEBAAAAAAAABoBQAAFgAAACgAAAAQAAAAIAAAAAEACAAAAAAAAAEAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP//AAD//wAA+B8AAOfnAADf+wAA3rsAAL1dAAC//QAAt/UAAL/9AAC//QAAvD0AANvbAADX6wAA7/cAAP//AAA=" rel="icon" type="image/x-icon" />
-        <meta name ="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
-        <link rel="stylesheet" type="text/css" href="animationStylesheet.css">
-        <script async src="https://unpkg.com/es-module-shims@0.13.1/dist/es-module-shims.js"></script>
-
-        <script type="importmap">
-          {
-            "imports": {
-              "three": "https://unpkg.com/three@0.135.0/build/three.module.js"
-            }
-          }
-        </script> 
-        <script type="module" src="./animationMain.js"></script>
     </head>
     <body>
         <table class="display">
@@ -27,20 +16,18 @@
                 <td>
                     <div id="receiver-id" style="font-weight: bold;" title="Copy this ID to the input on send.html.">ID:</div>
                 </td>
+                <td>
+                    <input type="text" id="sendMessageBox" placeholder="Enter a message..." autofocus="true" />
+                    <button type="button" id="sendButton">Send</button>
+                    <button type="button" id="clearMsgsButton">Clear Msgs (Local)</button>
+                </td>
             </tr>
             <tr>
                 <td><div id="status" class="status"></div></td>
+                <td><div class="message" id="message"></div></td>
             </tr>
         </table>
-        <p id="gyro-data"></p>
-        <p id="jump">false</p>
-        <p>X-force: <span id="xF">n/a</span></p>
-        <p>Y-force: <span id="yF">n/a</span></p>
-        <p>X-coord: <span id="xP">n/a</span></p>
-        <p>Y-coord: <span id="yP">n/a</span></p>
-        <p>Z-coord: <span id="zP">n/a</span></p>
-        <p>Planet Angle: <span id="angle">n/a</span></p>
-        <p>Accelaration: <span id="acc">n/a</span></p>
+
         <script> var exports = {}; </script>
         <script type = "module" src = screenPage.js>var exports = {};</script>
         <script src = "https://unpkg.com/peerjs@1.3.1/dist/peerjs.min.js">var exports = {};</script>
@@ -49,10 +36,13 @@
 
                 var lastPeerId = null;
                 var peer = null; // Own peer object
+                var peerId = null;
                 var recvId = document.getElementById("receiver-id");
                 var status = document.getElementById("status");
-                var gyrodata = document.getElementById("gyro-data");
-                var jumpdata = document.getElementById("jump");
+                var message = document.getElementById("message");
+                var sendMessageBox = document.getElementById("sendMessageBox");
+                var sendButton = document.getElementById("sendButton");
+                var clearMsgsButton = document.getElementById("clearMsgsButton");
                 
                 let connections = new Object();
 
@@ -88,7 +78,7 @@
                         c.on('data', function (data) {
                             console.log("Data recieved");
                             var cueString = "<span class=\"cueMsg\">Cue: </span>";
-                            addMessage(data);
+                            addMessage("<span class=\"peerMsg\">" + c.peer.slice(0, 8) + ": </span>" + data);
                         });
                         // Connection closed
                         c.on('close', function () {
@@ -138,15 +128,55 @@
                     return connectionString;
                 }
 
+                function clearMessages() {
+                    message.innerHTML = "";
+                    addMessage("Msgs cleared");
+                };
+
                 function addMessage(msg) {
-                    if (msg == 'true' || msg == 'false'){
-                        jump.innerText = msg;
-                    }
-                    else {
-                        gyrodata.innerText = msg;
-                    }
-                  console.log("message: " + msg);
+                    var now = new Date();
+                    var h = now.getHours();
+                    var m = addZero(now.getMinutes());
+                    var s = addZero(now.getSeconds());
+
+                    if (h > 12)
+                        h -= 12;
+                    else if (h === 0)
+                        h = 12;
+
+                    function addZero(t) {
+                        if (t < 10)
+                            t = "0" + t;
+                        return t;
+                    };
+
+                    message.innerHTML = "<br><span class=\"msg-time\">" + h + ":" + m + ":" + s + "</span>  -  " + msg + message.innerHTML;
                 }
+
+                // Listen for enter in message box
+                sendMessageBox.addEventListener('keypress', function (e) {
+                    var event = e || window.event;
+                    var char = event.which || event.keyCode;
+                    if (char == '13')
+                        sendButton.click();
+                });
+                // Send message
+                sendButton.addEventListener('click', function () {
+                    for(connection in connections){
+                        if (connections[connection] && connections[connection].open) {
+                            var msg = sendMessageBox.value;
+                            connections[connection].send(msg);
+                            console.log("Sent: " + msg)
+                        } else {
+                            console.log('Connection is closed');
+                        }
+                    }
+                    sendMessageBox.value = "";
+                    addMessage("<span class=\"selfMsg\">Self: </span>" + msg);
+                });
+
+                // Clear messages box
+                clearMsgsButton.addEventListener('click', clearMessages);
 
                 recvId.addEventListener('DOMSubtreeModified', initialize);
             })();

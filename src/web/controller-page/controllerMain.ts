@@ -1,22 +1,27 @@
 import { askPermissionIfNeeded } from '../js/motion-events.js';
 import { setInnerText } from '../js/dom-util.js';
 
-let highestacc: number = 0;
+let highesty: number = 0;
+let lowesty: number = 0;
 let refresher: number = 0;
 let jump:boolean = false;
 
 function motionEventHandler(e: DeviceMotionEvent) {
-    if (e.acceleration === null || e.acceleration.x === null || e.acceleration.y === null || e.acceleration.z === null) {
+    if (e.acceleration === null || e.acceleration.y === null) {
         return;
     }
-    const avgacc = Math.sqrt(e.acceleration.x**2+e.acceleration.y**2+e.acceleration.z**2);
-    if (avgacc > highestacc) {
-        highestacc = avgacc;
+
+    if (e.acceleration.y > highesty) {
+        highesty = e.acceleration.y;
     }
 
-    setInnerText('currenty', avgacc.toFixed(2));
-    setInnerText('highesty', highestacc.toFixed(2));
-    //setInnerText('lowesty', lowesty.toFixed(2));
+    if (e.acceleration.y < lowesty) {
+        lowesty = e.acceleration.y;
+    }
+
+    setInnerText('currenty', e.acceleration.y.toFixed(2));
+    setInnerText('highesty', highesty.toFixed(2));
+    setInnerText('lowesty', lowesty.toFixed(2));
 
     return;
 }
@@ -36,7 +41,7 @@ function sendControllerInput(gamma: number, beta: number) {
 
     setInnerText('gamma', gamma);
     setInnerText('beta', beta);
-    setInnerText('gyro-data', `${beta.toFixed(2)} ${gamma.toFixed(2)}`);
+
     // Send somehow here
 
     return;
@@ -47,13 +52,14 @@ Checkes whether the jump flag should be true. Every 10 frames resets lowesty and
  */
 function detectJump() {
     // Thresholds for jump flag are 50 and -50
-    if (highestacc > 25) {
+    if (lowesty < -50 && highesty > 50) {
         jump = true;
     }
     refresher++;
     if (refresher === 10) { // The frame count at which it refreshes
         refresher = 0;
-        highestacc = 0;
+        highesty = 0;
+        lowesty = 0;
         jump = false;
     }
 
