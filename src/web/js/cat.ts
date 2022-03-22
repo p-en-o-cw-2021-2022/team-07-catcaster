@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { Scene, Vector3 } from 'three';
 import { boolean } from 'yargs';
 import { Planet } from './planet';
+import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
 
 export class Cat {
 
@@ -16,7 +17,7 @@ export class Cat {
     jump: boolean = false;
     planet: Planet;
     sphere: THREE.SphereGeometry;
-    animation: THREE.Mesh;
+    animation: THREE.Object3D | undefined;
 
     constructor(scene: Scene, id: number, radius: number, planet: Planet, mass: number = 10) {
         this.id = id;
@@ -24,11 +25,11 @@ export class Cat {
         this.radius = radius;
         this.position = new Vector3(0, 0, radius);
         this.planet = planet;
-
         this.sphere = new THREE.SphereGeometry( 0.5, 32, 16 );
-        this.animation = new THREE.Mesh( this.sphere, new THREE.MeshNormalMaterial());
-        scene.add( this.animation );
+        // this.animation = new THREE.Mesh( this.sphere, new THREE.MeshNormalMaterial());
+        // scene.add( this.animation );
     }
+
 
     setPlanet(planet: Planet) {
         this.planet = planet;
@@ -85,7 +86,7 @@ export class Cat {
         // this.position.applyAxisAngle(new Vector3(0,1,0), -dgamma);
         // this.position.applyAxisAngle(new Vector3(1,0,0), -dbeta);
 
-        this.animation.position.copy(this.position);
+        //        this.animation!.position.copy(this.position);
 
     }
 
