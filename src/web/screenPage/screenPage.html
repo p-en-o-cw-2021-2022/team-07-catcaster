@@ -84,14 +84,15 @@
                     });
                     peer.on('connection', function (c) {
                         connections[c.peer] = c;
-                        let p = new document.createElement('p');
+                        let p = document.createElement('p');
                         gyrodatasHTML.appendChild(p);
-                        p.id = 'gyrodata' + String(Object.keys(connections).length);
+                        p.id = 'gyrodata_' + String(Object.keys(connections).length);
                         status.innerHTML = onConnChange();
+                        gyrodatas[c.peer] = p
                         // Data received
                         c.on('data', function (data) {
                             console.log("Data received");
-                            addMessage(data);
+                            addMessage(data, c);
                         });
                         // Connection closed
                         c.on('close', function () {
@@ -141,7 +142,7 @@
                     return connectionString;
                 }
 
-                function addMessage(msg) {
+                function addMessage(msg, c) {
                     if (msg == '') {
                         //pass
                     }
@@ -149,9 +150,9 @@
                         jump.innerText = msg;
                     }
                     else {
-                        gyrodata.innerText = msg;
+                        gyrodatas[c.peer].innerText = msg
                     }
-                  console.log("message: " + msg);
+                  console.log(String(c.peer)+ ": " + msg);
                 }
 
                 recvId.addEventListener('DOMSubtreeModified', initialize);

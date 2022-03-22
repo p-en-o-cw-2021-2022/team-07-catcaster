@@ -38,7 +38,7 @@ function animate() {
         cat.jump = false;
     }
     const gyrodata = document.getElementById('gyro-data')?.innerText;
-    if (gyrodata !== '') {
+    if ((gyrodata !== '') || (gyrodata !== undefined)) {
         const datalist = gyrodata!.split(' ');
         const beta = datalist[0];
         const gamma = datalist[1];
