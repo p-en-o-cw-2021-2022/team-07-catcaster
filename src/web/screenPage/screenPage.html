@@ -32,7 +32,8 @@
                 <td><div id="status" class="status"></div></td>
             </tr>
         </table>
-        <p id="gyro-data"></p>
+        <div id="gyrodatas">
+        </div>
         <p id="jump">false</p>
         <p>X-force: <span id="xF">n/a</span></p>
         <p>Y-force: <span id="yF">n/a</span></p>
@@ -51,9 +52,9 @@
                 var peer = null; // Own peer object
                 var recvId = document.getElementById("receiver-id");
                 var status = document.getElementById("status");
-                var gyrodata = document.getElementById("gyro-data");
+                var gyrodatas = new Object();
                 var jumpdata = document.getElementById("jump");
-                
+                var gyrodatasHTML = document.getElementById("gyrodatas");
                 let connections = new Object();
 
                 /**
@@ -83,11 +84,13 @@
                     });
                     peer.on('connection', function (c) {
                         connections[c.peer] = c;
+                        let p = new document.createElement('p');
+                        gyrodatasHTML.appendChild(p);
+                        p.id = 'gyrodata' + String(Object.keys(connections).length);
                         status.innerHTML = onConnChange();
                         // Data received
                         c.on('data', function (data) {
-                            console.log("Data recieved");
-                            var cueString = "<span class=\"cueMsg\">Cue: </span>";
+                            console.log("Data received");
                             addMessage(data);
                         });
                         // Connection closed
@@ -139,7 +142,10 @@
                 }
 
                 function addMessage(msg) {
-                    if (msg == 'true' || msg == 'false'){
+                    if (msg == '') {
+                        //pass
+                    }
+                    else if (msg == 'true' || msg == 'false'){
                         jump.innerText = msg;
                     }
                     else {
