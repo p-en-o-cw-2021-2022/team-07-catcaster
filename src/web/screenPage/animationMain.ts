@@ -37,16 +37,16 @@ function animate() {
     } else {
         cat.jump = false;
     }
-    const gyrodata = document.getElementById('gyro-data')?.innerText;
-    if ((gyrodata !== '') || (gyrodata !== undefined)) {
-        const datalist = gyrodata!.split(' ');
-        const beta = datalist[0];
-        const gamma = datalist[1];
-        console.log(beta);
-        console.log(gamma);
-        cat.xF = Number(gamma);
-        cat.yF = Number(beta);
-    }
+    // const gyrodata = document.getElementById('gyro-data')?.innerText;
+    // if ((gyrodata !== '') || (gyrodata !== undefined)) {
+    //     const datalist = gyrodata!.split(' ');
+    //     const beta = datalist[0];
+    //     const gamma = datalist[1];
+    //     console.log(beta);
+    //     console.log(gamma);
+    //     cat.xF = Number(gamma);
+    //     cat.yF = Number(beta);
+    // }
     cat.updatePosition(dt);
     renderer.render( scene, camera );
     setInnerText('xF', cat.xF);

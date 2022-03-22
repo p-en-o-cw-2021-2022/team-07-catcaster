@@ -92,7 +92,7 @@
                         // Data received
                         c.on('data', function (data) {
                             console.log("Data received");
-                            addMessage(data, c);
+                            addMessage(data, c.peer);
                         });
                         // Connection closed
                         c.on('close', function () {
@@ -142,7 +142,8 @@
                     return connectionString;
                 }
 
-                function addMessage(msg, c) {
+                function addMessage(msg, peer) {
+                    console.log('addmessage' + String(peer))
                     if (msg == '') {
                         //pass
                     }
@@ -150,9 +151,9 @@
                         jump.innerText = msg;
                     }
                     else {
-                        gyrodatas[c.peer].innerText = msg
+                        gyrodatas[peer].innerText = msg
                     }
-                  console.log(String(c.peer)+ ": " + msg);
+                    console.log(String(c.peer)+ ": " + msg);
                 }
 
                 recvId.addEventListener('DOMSubtreeModified', initialize);
