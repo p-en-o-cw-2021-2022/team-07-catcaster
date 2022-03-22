@@ -15,7 +15,7 @@
     "lint": "eslint --ext .ts src",
     "lint-fix": "eslint --ext .ts --fix src",
     "test": "jest",
-    "start": "npm run tsc-web && npm run copy-files-web && npx http-server -S -C cert1/cert.crt -K cert1/cert.key -c-1 dist/webroot",
+    "animation-test": "npm run tsc-web && npm run copy-files-web && npx http-server -S -C cert1/cert.crt -K cert1/cert.key -c-1 dist/webroot",
     "start-server": "npm run tsc && npm run copy-files-web && node dist/server/index.js"
   },
   "author": "P&O CW 2021-2022",
