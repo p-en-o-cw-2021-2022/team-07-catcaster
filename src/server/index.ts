@@ -35,7 +35,7 @@ export var database = new IdDatabase();
 
 // Configure some REST points:
 router
-    .get('/catcaster/screen/', (ctx: request.context) => {
+    .get('/catcaster/screen', (ctx: request.context) => {
         request.getScreenRedirectPage(ctx);
         //serve page with QR code here;
     })

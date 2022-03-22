@@ -1,4 +1,3 @@
-
 var myId = <HTMLDivElement>document.getElementById("receiver-id");
 myId.innerHTML = getIdScreen();
 var controllerId = null;
@@ -33,5 +32,3 @@ function eventHandlersScreen() {
         }
     };
 };
-
-export {myId, controllerId}

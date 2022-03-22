@@ -60,6 +60,7 @@
     "@types/jquery": "^3.5.9",
     "@types/yargs": "^17.0.3",
     "jquery": "^3.6.0",
+    "jsqr": "^1.4.0",
     "koa": "^2.13.3",
     "koa-logger": "^3.2.1",
     "koa-mount": "^4.0.0",
