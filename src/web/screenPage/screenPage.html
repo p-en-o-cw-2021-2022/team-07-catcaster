@@ -56,6 +56,7 @@
                 var jumpdata = document.getElementById("jump");
                 var gyrodatasHTML = document.getElementById("gyrodatas");
                 let connections = new Object();
+                let connection_count = 0
 
                 /**
                  * Create the Peer object for our end of the connection.
@@ -86,7 +87,7 @@
                         connections[c.peer] = c;
                         let p = document.createElement('p');
                         gyrodatasHTML.appendChild(p);
-                        p.id = 'gyrodata_' + String(Object.keys(connections).length);
+                        p.id = 'gyrodata_' + String(c.peer);
                         status.innerHTML = onConnChange();
                         gyrodatas[c.peer] = p
                         // Data received
