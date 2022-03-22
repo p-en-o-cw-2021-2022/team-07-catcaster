@@ -23,7 +23,7 @@ function getIdScreen(){
 */
 
 function eventHandlersScreen() {
-    let url = 'ws://localhost:3000/catcaster/controller/' + myId.innerHTML;
+    let url = "wss" + window.location.href.substr(5);
 
     const websocket = new WebSocket(url);
     console.log("Starting Websocket connection...");
