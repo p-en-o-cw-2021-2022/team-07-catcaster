@@ -41,9 +41,6 @@ router
         request.getControllerRedirectPage(ctx);
         //serve page with controls here;
     })
-    .get('/catcaster/controller/:id', (ctx:request.context) => {
-        request.getControllerPage(ctx);
-    })
     .get('/catcaster/game/screen/', (ctx: request.context) => {
         request.getGamePage(ctx);
         //serve game page;

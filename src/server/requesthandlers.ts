@@ -39,10 +39,6 @@ export function getControllerRedirectPage(ctx: context){
 
 }
 
-export function getControllerPage(ctx: context) {
-
-}
-
 export function sendControllerId(ctx: context) {
     let id = database.generateId(8);
     database.addController(id);
