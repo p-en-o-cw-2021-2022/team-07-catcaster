@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import * as THREE from 'three';
 import { Scene, Vector3 } from 'three';
 import { Cat } from '../js/cat.js';
@@ -11,6 +12,9 @@ const scene = new THREE.Scene();
 scene.background = new THREE.Color('white');
 const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
 camera.position.z = 10;
+const cats : Cat[] = [];
+const catsData : HTMLElement[][] = [];
+let controllers_count = 0;
 // camera.rotateX(-Math.PI/2);
 
 // Initialize renderer
@@ -27,83 +31,75 @@ const planet: Planet = new Planet(scene, 0, 5, 10, [0,0,0]);
 const planet2: Planet = new Planet(scene, 1, 5, 10, [10,0,0]);
 planet.addNeighbour(planet2, new Vector3(3,0,0));
 planet2.addNeighbour(planet, new Vector3(-3,0,0));
-//const cat: Cat = new Cat(scene, 0, 0.5, planet);
-//planet.setCat(cat);
-let cats = [];
+renderer.render( scene, camera );
+
+function addCat(id: string) {
+    const cat: Cat = new Cat(scene, Number(id), 0.5, planet);
+    planet.setCat(cat);
+    cats.push(cat);
+    animate();
+    console.log('Cat added wih id: ' + String(parseInt(id, 16)));
+    console.log(catsData);
+    console.log(cats);
+}
 
 function animate() {
-    const jumpdata = document.getElementById('jump')?.innerText;
-    // if (jumpdata === 'true') {
-    //     cat.jump = true;
-    // } else {
-    //     cat.jump = false;
-    // }
-    let i = 5;
-    while (i>0) {
-        const gyrodata = document.getElementById('gyrodata_' + i)?.innerText;
-        if (typeof gyrodata !== 'undefined') {
-            if(cats.length<i){
-                eval('const cat' + i + ': Cat = new Cat(scene, 0, 0.5, planet);');
-                planet.setCat(eval('cat'+i));
-                cats.push(eval('cat'+i));
-            }
-            if (gyrodata !== '') {
-                const datalist = gyrodata!.split(' ');
-                const beta = datalist[0];
-                const gamma = datalist[1];
-                console.log(beta);
-                console.log(gamma);
-                eval('cat'+i).xF = Number(gamma);
-                eval('cat'+i).yF = Number(beta);
-            }
-            eval('cat'+i).updatePosition(dt);
-            renderer.render( scene, camera );
-            setInnerText('xF', eval('cat'+i).xF);
-            setInnerText('yF', eval('cat'+i).yF);
-            setInnerText('xP', eval('cat'+i).position.x.toFixed(3));
-            setInnerText('yP', eval('cat'+i).position.y.toFixed(3));
-            setInnerText('zP', eval('cat'+i).position.z.toFixed(3));
-            setInnerText('angle', [planet.alpha, planet.beta, planet.gamma].toString());
-        
-            requestAnimationFrame( animate );
+    for (let i = 0, len = cats.length; i < len; i++) {
+        const cat = cats[i];
+        const jumpdata = catsData[i][1].innerText;
+        if (jumpdata === 'true') {
+            cat.jump = true;
+        } else {
+            cat.jump = false;
         }
-        i--;
+        const gyrodata = catsData[i][0].innerText;
+        if ((gyrodata !== '') || (gyrodata !== undefined)) {
+            const datalist = gyrodata?.split(' ');
+            const beta = datalist[0];
+            const gamma = datalist[1];
+            cat.xF = Number(gamma);
+            cat.yF = Number(beta);
+        }
+        cat.updatePosition(dt);
+        renderer.render( scene, camera );
+        setInnerText('xF', cat.xF);
+        setInnerText('yF', cat.yF);
+        setInnerText('xP', cat.position.x.toFixed(3));
+        setInnerText('yP', cat.position.y.toFixed(3));
+        setInnerText('zP', cat.position.z.toFixed(3));
+        setInnerText('angle', [planet.alpha, planet.beta, planet.gamma].toString());
+        requestAnimationFrame( animate );
     }
 }
 
-// function update(e: KeyboardEvent) {
-
-//     switch(e.key) {
-//     case 'd' :
-//         // cat.updateForce('x', cat.xF + 5);
-//         cat.xVel += 1;
-//         break;
-//     case 's' :
-//         // cat.updateForce('y', cat.yF - 5);
-//         cat.yVel -= 1;
-//         break;
-//     case 'w' :
-//         // cat.updateForce('y', cat.yF + 5);
-//         cat.yVel += 1;
-//         break;
-//     case 'a' :
-//         // cat.updateForce('x', cat.xF - 5);
-//         cat.xVel -= 1;
-//         break;
-//     }
-// }
+function update(e: KeyboardEvent) {
+    switch(e.key) {
+    case 'd' :
+        // cat.updateForce('x', cat.xF + 5);
+        cats[0].xVel += 1;
+        break;
+    case 's' :
+        // cat.updateForce('y', cat.yF - 5);
+        cats[0].yVel -= 1;
+        break;
+    case 'w' :
+        // cat.updateForce('y', cat.yF + 5);
+        cats[0].yVel += 1;
+        break;
+    case 'a' :
+        // cat.updateForce('x', cat.xF - 5);
+        cats[0].xVel -= 1;
+        break;
+    }
+}
 
 function update2(e: DeviceOrientationEvent) {
-    let i = 5;
-    while (i>0) {
-        const gyrodata = document.getElementById('gyrodata_' + i)?.innerText;
-        if (typeof gyrodata !== 'undefined') {
-            eval('cat'+i).updateForce('x', e.gamma!);
-            eval('cat'+i).updateForce('y', -e.beta!);
-            }
-        }
-        i--;
+    for (let i = 0, len = cats.length; i < len; i++) {
+        const cat = cats[i];
+        cat.updateForce('x', e.gamma!);
+        cat.updateForce('y', -e.beta!);
     }
+}
 
 function firstTouch() {
     window.removeEventListener('touchend', firstTouch);
@@ -115,6 +111,24 @@ function firstTouch() {
     });
 }
 
-//document.addEventListener('keypress', update);
+function newController() {
+    const controllers = document.getElementById('gyrodatas')?.children;
+    if (controllers) {
+        if (Math.floor(controllers_count) === controllers_count) {
+            const id = controllers[controllers_count*2 - 1].id.slice(5);
+            catsData.push([<HTMLElement>controllers[controllers_count*2 - 2], <HTMLElement>controllers[controllers_count*2 - 1]]);
+            addCat(id);
+        }
+    }
+}
+
+document.addEventListener('keypress', update);
 window.addEventListener('touchend', firstTouch);
+document.getElementById('gyrodatas')?.addEventListener( 'DOMNodeInserted', function ( event ) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    if( ((event.target!) as any).parentNode.id === 'gyrodatas' ) {
+        controllers_count += 0.5;
+        newController();
+    }
+}, false );
 animate();
