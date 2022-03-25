@@ -32,6 +32,7 @@
                 <td><div id="status" class="status"></div></td>
             </tr>
         </table>
+        <div id="controllers"></div>
         <div id="gyrodatas"></div>
         <p>X-force: <span id="xF">n/a</span></p>
         <p>Y-force: <span id="yF">n/a</span></p>
@@ -54,6 +55,7 @@
                 var jumpdatas = new Object();
                 var jumpdata = document.getElementById("jump");
                 var gyrodatasHTML = document.getElementById("gyrodatas");
+                var controllersHTML = document.getElementById("controllers");
                 let connections = new Object();
                 let connection_count = 0
 
@@ -86,19 +88,25 @@
                         status.innerHTML = "Connections: <br>";
                     });
                     peer.on('connection', function (c) {
+                        // Collects the different controllers in an array
                         connections[c.peer] = c;
+                        status.innerHTML = onConnChange();
+                        // 
+                        let controller_id = document.createElement('p');
+                        controller_id.innerText = String(c.peer);
+                        controllersHTML.appendChild(controller_id)
+                        // Creates gyrodata paragraph for the controller
                         let p1 = document.createElement('p');
                         gyrodatasHTML.appendChild(p1);
                         p1.id = 'gyrodata_' + String(c.peer);
-                        status.innerHTML = onConnChange();
                         gyrodatas[c.peer] = p1;
+                        // Creates jump paragraph for the controller
                         let p2 = document.createElement('p');
                         gyrodatasHTML.appendChild(p2);
                         p2.id = 'jump_' + String(c.peer);
                         jumpdatas[c.peer] = p2;
                         // Data received
                         c.on('data', function (data) {
-                            console.log("Data received");
                             addMessage(data, c.peer);
                         });
                         // Connection closed
@@ -150,7 +158,6 @@
                 }
 
                 function addMessage(msg, peer) {
-                    console.log('addmessage' + String(peer))
                     if (msg == '') {
                         //pass
                     }

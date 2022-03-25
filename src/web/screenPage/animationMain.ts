@@ -6,6 +6,10 @@ import { setInnerText } from '../js/dom-util.js';
 import { askPermissionIfNeeded } from '../js/motion-events.js';
 import { Planet } from '../js/planet.js';
 
+interface HTMLJSON {
+    string: any;
+    'id': string;
+}
 
 // Initialize animation scene and camera
 const scene = new THREE.Scene();
@@ -26,18 +30,18 @@ document.body.appendChild( renderer.domElement );
 
 // Create planet and cat objects with default values
 const dt = 0.01;
-
 const planet: Planet = new Planet(scene, 0, 5, 10, [0,0,0]);
 const planet2: Planet = new Planet(scene, 1, 5, 10, [10,0,0]);
 planet.addNeighbour(planet2, new Vector3(3,0,0));
 planet2.addNeighbour(planet, new Vector3(-3,0,0));
 renderer.render( scene, camera );
 
-function addCat(id: string) {
-    const cat: Cat = new Cat(scene, Number(id), 0.5, planet);
+function addCat() {
+    const controllers = document.getElementById('controllers')!.children;
+    const id = (controllers[controllers_count - 1] as HTMLParagraphElement).innerText;
+    const cat: Cat = new Cat(scene, parseInt(id, 16), 0.5, planet);
     planet.setCat(cat);
     cats.push(cat);
-    animate();
     console.log('Cat added wih id: ' + String(parseInt(id, 16)));
     console.log(catsData);
     console.log(cats);
@@ -68,8 +72,8 @@ function animate() {
         setInnerText('yP', cat.position.y.toFixed(3));
         setInnerText('zP', cat.position.z.toFixed(3));
         setInnerText('angle', [planet.alpha, planet.beta, planet.gamma].toString());
-        requestAnimationFrame( animate );
     }
+    requestAnimationFrame(animate);
 }
 
 function update(e: KeyboardEvent) {
@@ -115,9 +119,8 @@ function newController() {
     const controllers = document.getElementById('gyrodatas')?.children;
     if (controllers) {
         if (Math.floor(controllers_count) === controllers_count) {
-            const id = controllers[controllers_count*2 - 1].id.slice(5);
             catsData.push([<HTMLElement>controllers[controllers_count*2 - 2], <HTMLElement>controllers[controllers_count*2 - 1]]);
-            addCat(id);
+            addCat();
         }
     }
 }
