@@ -32,8 +32,8 @@
                 <td><div id="status" class="status"></div></td>
             </tr>
         </table>
-        <p id="gyro-data"></p>
-        <p id="jump">false</p>
+        <div id="controllers"></div>
+        <div id="gyrodatas"></div>
         <p>X-force: <span id="xF">n/a</span></p>
         <p>Y-force: <span id="yF">n/a</span></p>
         <p>X-coord: <span id="xP">n/a</span></p>
@@ -51,10 +51,13 @@
                 var peer = null; // Own peer object
                 var recvId = document.getElementById("receiver-id");
                 var status = document.getElementById("status");
-                var gyrodata = document.getElementById("gyro-data");
+                var gyrodatas = new Object();
+                var jumpdatas = new Object();
                 var jumpdata = document.getElementById("jump");
-                
+                var gyrodatasHTML = document.getElementById("gyrodatas");
+                var controllersHTML = document.getElementById("controllers");
                 let connections = new Object();
+                let connection_count = 0
 
                 /**
                  * Create the Peer object for our end of the connection.
@@ -85,13 +88,26 @@
                         status.innerHTML = "Connections: <br>";
                     });
                     peer.on('connection', function (c) {
+                        // Collects the different controllers in an array
                         connections[c.peer] = c;
                         status.innerHTML = onConnChange();
+                        // 
+                        let controller_id = document.createElement('p');
+                        controller_id.innerText = String(c.peer);
+                        controllersHTML.appendChild(controller_id)
+                        // Creates gyrodata paragraph for the controller
+                        let p1 = document.createElement('p');
+                        gyrodatasHTML.appendChild(p1);
+                        p1.id = 'gyrodata_' + String(c.peer);
+                        gyrodatas[c.peer] = p1;
+                        // Creates jump paragraph for the controller
+                        let p2 = document.createElement('p');
+                        gyrodatasHTML.appendChild(p2);
+                        p2.id = 'jump_' + String(c.peer);
+                        jumpdatas[c.peer] = p2;
                         // Data received
                         c.on('data', function (data) {
-                            console.log("Data recieved");
-                            var cueString = "<span class=\"cueMsg\">Cue: </span>";
-                            addMessage(data);
+                            addMessage(data, c.peer);
                         });
                         // Connection closed
                         c.on('close', function () {
@@ -141,16 +157,18 @@
                     return connectionString;
                 }
 
-                function addMessage(msg) {
-                    if (msg == 'true' || msg == 'false'){
-                        jump.innerText = msg;
+                function addMessage(msg, peer) {
+                    if (msg == '') {
+                        //pass
+                    }
+                    else if (msg == 'true' || msg == 'false'){
+                        jumpdatas[peer].innerText = msg;
                     }
                     else {
-                        gyrodata.innerText = msg;
+                        gyrodatas[peer].innerText = msg
                     }
-                  console.log("message: " + msg);
+                    console.log(String(peer)+ ": " + msg);
                 }
-
                 recvId.addEventListener('DOMSubtreeModified', initialize);
             })();
         </script>
