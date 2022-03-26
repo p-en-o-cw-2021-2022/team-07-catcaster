@@ -20,6 +20,7 @@ const screenPage = 'dist/webroot/web/screenPage';
 const controllerRedirect = 'dist/webroot/web/controllerRedirect';
 const controllerPage = 'dist/webroot/web/controllerPage';
 const animation = 'dist/webroot/web/js';
+const startscreen_controller = 'dist/webroot/web/QR-test'
 const router = new Router();
 
 // When we run this server we serve you all of our `dist/webroot` folder.
@@ -29,6 +30,7 @@ app.use(mount('/catcaster/screen/', serve(screenPage)));
 app.use(mount('/catcaster/controller/', serve(controllerRedirect)));
 app.use(mount('/catcaster/controller/', serve(controllerPage)));
 app.use(mount('/catcaster/js/', serve(animation)));
+app.use(mount('/catcaster/QR-test/', serve(startscreen_controller)));
 app.use(router.routes()).use(router.allowedMethods());
 
 export var database = new IdDatabase();

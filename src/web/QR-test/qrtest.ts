@@ -16,6 +16,8 @@ qr_button.addEventListener('click',  function() {
     const qrcode = <HTMLImageElement>document.getElementById('qrcode');
     qrcode.src = 'https://chart.googleapis.com/chart?cht=qr&chl="TESTESTESTESTEST&chs=160x160&chld=L|0';
 });
+
+
 camera_button.addEventListener('click',  async function() {
     const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
     video.srcObject = stream;
@@ -105,9 +107,6 @@ async function QR(number: number) {
         const image2: ImageData = new ImageData(data, width, height);
         ctx2?.putImageData(image2, 0, 0);
         
-
-
-
         current_number++;
     }
     console.log(qrlocations);
