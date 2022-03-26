@@ -34,11 +34,11 @@ export function websocketEventHandlers(websocket:ws.Server) {
                 }
 
                 //Send the controller the ID of the screen, as to establish a webRTC connection
-                let controllerid = database.getControllerId();
+                let controllerid = database.getControllerIds();
                 websocket.clients.forEach(function(client){
                     client.send(JSON.stringify({client: 'controller', id:controllerid}))
                 });
-                let screenid = database.getScreenId();
+                let screenid = database.getScreenIds();
                 for(let sid of screenid!){
                     ws.send(JSON.stringify({client : 'screen', id : sid}))
                 }

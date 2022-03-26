@@ -3,6 +3,13 @@ myId.innerHTML = getIdScreen();
 var controllerId = null;
 eventHandlersScreen();
 
+function getIdScreen() {
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    const id: any = urlParams.get('id');
+    return id
+}
+/*
 function getIdScreen(){
     let currentUrl = window.location.href;
     let result:string = "";
@@ -12,12 +19,13 @@ function getIdScreen(){
     };
     return result;
 }
+*/
 
 function eventHandlersScreen() {
     let url = "wss" + window.location.href.substr(5);
 
     const websocket = new WebSocket(url);
-    console.log("Starting Websocket connection...")
+    console.log("Starting Websocket connection...");
 
     websocket.onopen = (event) => {
         console.log('Connection established.');
