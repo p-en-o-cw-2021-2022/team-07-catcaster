@@ -11,7 +11,7 @@ async function requestScreenID(){
 
     if (response.ok) {
         let id = await response.json();
-        window.location.href = '/catcaster/screen/'+id;
+        window.location.href = '/catcaster/screen/?id='+id;
     };
 };
 

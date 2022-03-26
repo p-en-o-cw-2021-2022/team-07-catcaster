@@ -11,6 +11,6 @@ async function requestControllerID(){
 
     if (response.ok) {
         let id = await response.json();
-        window.location.href = '/catcaster/controller/'+id;
+        window.location.href = '/catcaster/controller/?id='+id;
     };
 };
