@@ -1,25 +1,26 @@
-const myId = <HTMLDivElement>document.getElementById('receiver-id');
-myId.innerHTML = getIdScreen();
-let controllerId = null;
-eventHandlersScreen();
 
-function getIdScreen() {
+const myId = <HTMLDivElement>document.getElementById('receiver-id');
+let controllerId = null;
+
+interface Message {
+    'id': string;
+    'client': string;
+}
+
+interface WebSocketMessage {
+    'data': string;
+}
+
+function getIdScreen(): string | null {
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
-    const id: any = urlParams.get('id');
-    return id;
+    const id: string | null = urlParams.get('id');
+    if (id) {
+        return id;
+    } else {
+        return null;
+    }
 }
-/*
-function getIdScreen(){
-    let currentUrl = window.location.href;
-    let result:string = "";
-    for(let i = 0; i < 8;i++){
-        let index = currentUrl.length - 8 + i;
-        result = result + currentUrl[index];
-    };
-    return result;
-}
-*/
 
 function eventHandlersScreen() {
     const url = 'wss' + window.location.href.substr(5);
@@ -27,15 +28,15 @@ function eventHandlersScreen() {
     const websocket = new WebSocket(url);
     console.log('Starting Websocket connection...');
 
-    websocket.onopen = (event) => {
+    websocket.onopen = () => {
         console.log('Connection established.');
         websocket.send(JSON.stringify({client: 'screen', id: myId.innerHTML}));
     };
 
-    websocket.onmessage = (message:any) => {
-        const mes = JSON.parse(message.data);
+    websocket.onmessage = (message:WebSocketMessage) => {
+        const mes = <Message>JSON.parse(message.data);
         console.log('received message from : ', mes.id, '  |  client is: ', mes.client);
-        if(mes.client == 'controller') {
+        if(mes.client === 'controller') {
             controllerId = mes.id;
         }
         if(mes.client == 'disconnect' && mes.id == myId.innerHTML){
@@ -44,3 +45,10 @@ function eventHandlersScreen() {
         }
     };
 }
+
+if (getIdScreen() !== null) {
+    myId.innerHTML = <string>getIdScreen();
+}
+eventHandlersScreen();
+
+export {myId, controllerId};
