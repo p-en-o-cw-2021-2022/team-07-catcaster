@@ -38,5 +38,9 @@ function eventHandlersScreen() {
         if(mes.client == 'controller') {
             controllerId = mes.id;
         }
+        if(mes.client == 'disconnect' && mes.id == myId.innerHTML){
+            console.log('Illegal ID, removing websocket connection.');
+            websocket.close();
+        }
     };
 }
