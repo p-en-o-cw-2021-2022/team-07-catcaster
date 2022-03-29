@@ -6,19 +6,19 @@ import { database } from './index';
 export type context = Koa.ParameterizedContext<Koa.DefaultState, Koa.DefaultContext & Router.RouterParamContext<Koa.DefaultState, Koa.DefaultContext>, unknown>;
 
 export function getScreenRedirectPage(ctx: context){
-    ctx.response.status = 200;
-    ctx.type = 'html';
-    ctx.body = fs.createReadStream('dist/webroot/web/redirectPage/redirectPage.html'); //replace placeholder
-}
-
-export function getScreenPage(ctx: context){
-    ctx.response.status = 200;
-    ctx.type = 'html';
-    ctx.body = fs.createReadStream('dist/webroot/web/screenPage/screenPage.html');
+    if (ctx.request.querystring == '') {
+        ctx.response.status = 200;
+        ctx.type = 'html';
+        ctx.body = fs.createReadStream('dist/webroot/web/redirectPage/redirectPage.html');
+    }
+    else {
+        ctx.response.status = 200;
+        ctx.type = 'html';
+        ctx.body = fs.createReadStream('dist/webroot/web/screenPage/screenPage.html');
+    }
 }
 
 export function sendScreenId(ctx: context) {
-    
     let id = database.generateId(8);
     database.addScreen(id);
     ctx.response.status = 200;
@@ -26,15 +26,17 @@ export function sendScreenId(ctx: context) {
 }
 
 export function getControllerRedirectPage(ctx: context){
-    ctx.response.status = 200;
-    ctx.type = 'html';
-    ctx.body = fs.createReadStream('dist/webroot/web/controllerRedirect/controllerRedirect.html'); //replace placeholder
-}
+    if (ctx.request.querystring == '') {
+        ctx.response.status = 200;
+        ctx.type = 'html';
+        ctx.body = fs.createReadStream('dist/webroot/web/controllerRedirect/controllerRedirect.html');
+    }
+    else {
+        ctx.response.status = 200;
+        ctx.type = 'html';
+        ctx.body = fs.createReadStream('dist/webroot/web/controllerPage/controllerPage.html');
+    }
 
-export function getControllerPage(ctx: context) {
-    ctx.response.status = 200;
-    ctx.type = 'html';
-    ctx.body = fs.createReadStream('dist/webroot/web/controllerPage/controllerPage.html');
 }
 
 export function sendControllerId(ctx: context) {

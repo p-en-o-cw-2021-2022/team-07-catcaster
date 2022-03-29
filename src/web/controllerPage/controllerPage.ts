@@ -6,17 +6,14 @@ id.innerHTML = getIdController();
 eventHandlersController();
 
 function getIdController(){
-    let currentUrl = window.location.href;
-    let result:string = "";
-    for(let i = 0; i < 8;i++){
-        let index = currentUrl.length - 8 + i;
-        result = result + currentUrl[index];
-    };
-    return result;
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    const id: any = urlParams.get('id');
+    return id;
 }
 
 function eventHandlersController() {
-    let url = 'ws://localhost:3000/catcaster/controller/' + id.innerHTML;
+    let url = "wss" + window.location.href.substr(5);
 
     const websocket = new WebSocket(url);
     console.log("Starting Websocket connection...")
