@@ -5,21 +5,21 @@ import {IdDatabase} from './classes';
 */
 
 describe('IdDatabase Tests', () => {
-    
+
     const idDatabase = new IdDatabase();
 
     test('Generating an ID.', () => {
-        let id = idDatabase.generateId(8);
+        const id = idDatabase.generateId(8);
         expect(id.length).toEqual(8);
-        for(let i = 0; i<id.length; i++){
+        for(let i = 0; i<id.length; i++) {
             expect(idDatabase.stringChars).toContain(id[i]);
         }
-    }); 
+    });
 
     test('Adding and removing IDs and their uniqueness.', () => {
-        let id1 = "aaaaaaaa";
+        const id1 = 'aaaaaaaa';
         idDatabase.addScreen(id1);
-        let id2 = idDatabase.generateId(8);
+        const id2 = idDatabase.generateId(8);
         expect(idDatabase.addScreen(id1)).toBeFalse;
         expect(idDatabase.addController(id1)).toBeFalse;
         expect(idDatabase.addController(id2)).toBeTrue;

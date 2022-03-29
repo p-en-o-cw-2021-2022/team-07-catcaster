@@ -6,24 +6,22 @@ Classes used by the server.
 /*
 This class stores all ID's and helps to check if they are unique.
 */
-export class IdDatabase
-{
+export class IdDatabase {
     public ids:any;
 
-    public stringChars:string = "0123456789abcdef";
+    public stringChars:string = '0123456789abcdef';
 
     public constructor() {
         this.ids = new Map();
-        this.ids.set("","default");
+        this.ids.set('','default');
     }
 
-    public generateId(length:number)
-    {
-        let result:string = "";
-        while(this.doesIdExist(result)){
+    public generateId(length:number) {
+        let result:string = '';
+        while(this.doesIdExist(result)) {
             for(let i = 0; i<length;i++) {
-                let index = this.getRandomInt(this.stringChars.length);
-                let character:string = this.stringChars[index];
+                const index = this.getRandomInt(this.stringChars.length);
+                const character:string = this.stringChars[index];
                 result = result + character;
             }
         }
@@ -33,8 +31,7 @@ export class IdDatabase
     public doesIdExist(id:string) {
         if(this.ids.has(id)) {
             return true;
-        }
-        else {
+        } else {
             return false;
         }
     }
@@ -44,7 +41,7 @@ export class IdDatabase
             return false;
         }
 
-        this.ids.set(id,"screen");
+        this.ids.set(id,'screen');
         return true;
     }
 
@@ -53,7 +50,7 @@ export class IdDatabase
             return false;
         }
 
-        this.ids.set(id,"controller");
+        this.ids.set(id,'controller');
         return true;
     }
 
@@ -61,7 +58,7 @@ export class IdDatabase
         if(!this.doesIdExist(id)) {
             return false;
         }
-        
+
         this.ids.delete(id);
         return true;
     }
@@ -70,25 +67,25 @@ export class IdDatabase
         if(!this.doesIdExist(id)) {
             return false;
         }
-        
+
         this.ids.delete(id);
         return true;
     }
 
-    public getScreenIds(){
-        let list = [];
-        for (let [key, value] of this.ids.entries()) {
-            if (value == 'screen'){
+    public getScreenIds() {
+        const list = [];
+        for (const [key, value] of this.ids.entries()) {
+            if (value == 'screen') {
                 list.push(key);
             }
         }
         return list;
     }
 
-    public getControllerIds(){
-        let list = [];
-        for (let [key, value] of this.ids.entries()) {
-            if (value == 'controller'){
+    public getControllerIds() {
+        const list = [];
+        for (const [key, value] of this.ids.entries()) {
+            if (value == 'controller') {
                 list.push(key);
             }
         }

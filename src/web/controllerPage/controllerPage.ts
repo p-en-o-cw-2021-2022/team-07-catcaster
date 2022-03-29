@@ -1,30 +1,40 @@
-var id = <HTMLDivElement>document.getElementById('sender-id');
-var screenId = <HTMLDivElement>document.getElementById('receiver-id');
-var connectiondiv = <HTMLDivElement>document.getElementById('connection-div');
+const id = <HTMLDivElement>document.getElementById('sender-id');
+const screenId = <HTMLDivElement>document.getElementById('receiver-id');
+const connectiondiv = <HTMLDivElement>document.getElementById('connection-div');
 
-id.innerHTML = getIdController();
-eventHandlersController();
+interface Message {
+    'id': string;
+    'client': string;
+}
 
-function getIdController(){
+interface WebSocketMessage {
+    'data': string;
+}
+
+function getIdController(): string | null {
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
-    const id: any = urlParams.get('id');
-    return id;
+    const id: string | null = urlParams.get('id');
+    if (id) {
+        return id;
+    } else {
+        return null;
+    }
 }
 
 function eventHandlersController() {
-    let url = "wss" + window.location.href.substr(5);
+    const url = 'wss' + window.location.href.substr(5);
 
     let websocket = new WebSocket(url);
     console.log("Starting Websocket connection...")
 
-    websocket.onopen = (event) => {
+    websocket.onopen = () => {
         console.log('Connection established.');
         websocket.send(JSON.stringify({client: 'controller', id: id.innerHTML}));
     };
 
-    websocket.onmessage = (message:any) => {
-        let mes = JSON.parse(message.data);
+    websocket.onmessage = (message:WebSocketMessage) => {
+        const mes = <Message>JSON.parse(message.data);
         console.log('received message from : ', mes.id, '  |  client is: ', mes.client);
         if(mes.client == 'disconnect' && mes.id == id.innerHTML){
             console.log('Illegal ID, removing websocket connection.');
@@ -34,7 +44,7 @@ function eventHandlersController() {
         if (mes.client == 'connect'){
             connectiondiv.innerHTML = 'connect';
         }
-        if(mes.client == 'screen'){
+        if(mes.client === 'screen') {
             screenId.innerHTML += mes.id;
         }
     };
@@ -64,3 +74,8 @@ function sleep(milliseconds: any) {
       currentDate = Date.now();
     } while (currentDate - date < milliseconds);
 };
+
+if (getIdController() !== null) {
+    id.innerHTML = <string>getIdController();
+}
+eventHandlersController();
