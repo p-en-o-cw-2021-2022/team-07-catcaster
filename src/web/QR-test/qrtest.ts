@@ -24,7 +24,10 @@ camera_button.addEventListener('click',  async function() {
 });
 
 click_button.addEventListener('click', function() {
-    const number = parseInt(prompt('Enter the amount of QR codes:')!);
+    let number = parseInt(prompt('Enter the amount of QR codes:')!);
+    while (number < 2){
+        let number = parseInt(prompt('Enter the amount of QR codes:')!);
+    }
     QR(number);
 });
 

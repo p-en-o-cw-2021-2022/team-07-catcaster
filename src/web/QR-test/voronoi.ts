@@ -6,11 +6,11 @@ export function findNeighborsVoronoi(sites: {x: number; y: number; id: string}[]
     const bbox = {xl: 0, xr: 800, yt: 0, yb: 600}; // xl is x-left, xr is x-right, yt is y-top, and yb is y-bottom
 
     const diagram = voronoi.compute(sites, bbox);
-    console.log(diagram.edges)
+    
     
 
     const neighbors: Array<[[number, number], [number, number]]> = [];
-    console.log(neighbors)
+    
 
     for (let i = 0; i < diagram.edges.length; i++) {
         const currentEdge = diagram.edges[i];
@@ -22,7 +22,7 @@ export function findNeighborsVoronoi(sites: {x: number; y: number; id: string}[]
             }
         }
     }
-    console.log(neighbors)
+    
 
     return neighbors;
 

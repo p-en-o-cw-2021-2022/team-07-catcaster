@@ -6,45 +6,47 @@ const single_screen_button = <HTMLButtonElement>document.getElementById('single-
 const multiple_screen_button = <HTMLButtonElement>document.getElementById('multiple-screen-button');
 const video = <HTMLVideoElement>document.getElementById('video');
 const canvas : HTMLCanvasElement = <HTMLCanvasElement>document.getElementById('canvas');
-const camera_button = <HTMLButtonElement>document.getElementById('start-camera');
+const take_photo = <HTMLButtonElement>document.getElementById('take-photo');
+let number: number;
 
 
 single_screen_button.addEventListener('click',  function() {
     /* server code */
 });
 
-camera_button.addEventListener('click',  async function() {
-    const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
-    video.srcObject = stream;
-});
-
-multiple_screen_button.addEventListener('click', async function() {
-    
-    //const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
-    //video.srcObject = stream;
-
-    const number = parseInt(prompt('Enter the amount of QR codes:')!);
 
 
-    const promise = Promise.resolve(QR(number));
-    promise.then(function(val) {
-        console.log(val);
-        const qrlocations = val;
-        const neighbours = findNeighborsVoronoi(qrlocations!);
-        console.log(neighbours)
-    }).catch((error) => {
-        console.log(error);
-      });
+take_photo.addEventListener('click',  async function() {
+    const qrlocations = QR(number)
+    console.log(qrlocations);
 
-    //const neighbours = findNeighborsVoronoi(qrlocations);
-    //console.log(neighbours)
 
+    const neighbours = findNeighborsVoronoi(qrlocations);
+    console.log(neighbours);
 
     /* server code */
 });
 
+
+
+multiple_screen_button.addEventListener('click', async function() {
+    
+    
+    number = parseInt(prompt('Enter the amount of QR codes:')!);
+    while (number < 2){
+        number = parseInt(prompt('Please enter more than one screen:')!);
+    }
+
+    const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+    video.srcObject = stream;
+
+    take_photo.style.visibility = 'visible';
+
+    
+});
+
 //returns an Array<[[number, number], [number, number]]>, containing the pairs of neighbors ((x1,y1),(x2,y2)) (edges of voronoi diagram)
-async function QR(number: number) {
+function QR(number: number) {
     let ctx = canvas.getContext('2d');
     ctx?.drawImage(video, 0, 0, canvas.width, canvas.height);
     let imageData = ctx?.getImageData(0, 0, canvas.width, canvas.height);
@@ -67,8 +69,9 @@ async function QR(number: number) {
         let qr = jsQR(data.slice(), canvas.width, canvas.height, {inversionAttempts: 'dontInvert'});
 
         if (qr == null) {
-            QR(number);
-            return;
+            const qrlocs: { x: number; y: number; id: string}[] = QR(number);
+            return qrlocs
+            
         }
 
         const topLeftCorner: Point = qr.location.topLeftCorner;
@@ -120,7 +123,7 @@ async function QR(number: number) {
         current_number++;
     }
 
-    console.log(qrlocations)
+    
    
     return qrlocations;
 
