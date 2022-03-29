@@ -22,10 +22,10 @@ export class Cat {
         this.id = id;
         this.mass = mass;
         this.radius = radius;
-        this.position = new Vector3(0, 0, radius);
+        this.position = new Vector3(planet.coordinates[0], planet.coordinates[1], 1);
         this.planet = planet;
 
-        this.sphere = new THREE.SphereGeometry( 0.5, 32, 16 );
+        this.sphere = new THREE.SphereGeometry( 30, 32, 16 );
         this.animation = new THREE.Mesh( this.sphere, new THREE.MeshNormalMaterial());
         scene.add( this.animation );
     }
