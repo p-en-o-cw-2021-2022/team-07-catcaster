@@ -1,7 +1,7 @@
 requestControllerID();
 
-async function requestControllerID(){
-    let response = await fetch("/catcaster/controller/", {
+async function requestControllerID() {
+    const response = await fetch('/catcaster/controller/', {
         method : 'POST',
         headers : {
             'Content-Type': 'application/json;charset=utf-8'
@@ -10,7 +10,7 @@ async function requestControllerID(){
     });
 
     if (response.ok) {
-        let id = await response.json();
+        const id = await response.json();
         window.location.href = '/catcaster/controller/?id='+id;
-    };
-};
+    }
+}

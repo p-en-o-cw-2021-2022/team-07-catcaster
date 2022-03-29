@@ -20,7 +20,7 @@ const screenPage = 'dist/webroot/web/screenPage';
 const controllerRedirect = 'dist/webroot/web/controllerRedirect';
 const controllerPage = 'dist/webroot/web/controllerPage';
 const animation = 'dist/webroot/web/js';
-const startscreen_controller = 'dist/webroot/web/QR-test'
+const startscreen_controller = 'dist/webroot/web/QR-test';
 const router = new Router();
 
 // When we run this server we serve you all of our `dist/webroot` folder.
@@ -54,7 +54,7 @@ router
     })
     .post('/catcaster/controller/', (ctx:request.context) => {
         request.sendControllerId(ctx);
-    })
+    });
 
 const options = {
     key: fs.readFileSync('dist/webroot/web/key.pem'),
