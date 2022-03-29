@@ -68,6 +68,7 @@ export class Cat {
             // this.yF = 0;
             this.position.x = this.planet.coordinates[0];
             this.position.y = this.planet.coordinates[1];
+            this.position.z = this.planet.coordinates[2];
             return;
         }
 
@@ -75,19 +76,18 @@ export class Cat {
             this.planet.checkTP(this);
         }
 
-        // const oldGamma = this.planet.gamma;
-        // const oldBeta = this.planet.beta;
+        const oldGamma = this.planet.gamma;
+        const oldBeta = this.planet.beta;
 
-        // this.planet.updateAngles();
+        this.planet.updateAngles();
 
-        // const dgamma = oldGamma - this.planet.gamma;
-        // const dbeta = oldBeta - this.planet.beta;
+        const dgamma = oldGamma - this.planet.gamma;
+        const dbeta = oldBeta - this.planet.beta;
 
-        // this.position.applyAxisAngle(new Vector3(0,1,0), -dgamma);
-        // this.position.applyAxisAngle(new Vector3(1,0,0), -dbeta);
+        this.position.applyAxisAngle(new Vector3(0,1,0), -dgamma);
+        this.position.applyAxisAngle(new Vector3(1,0,0), -dbeta);
 
         this.mesh!.position.copy(this.position);
-
     }
 
     // Check if the given position is on planet

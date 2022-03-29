@@ -12,8 +12,9 @@ const scene = new THREE.Scene();
 scene.background = new THREE.Color('white');
 const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
 // const camera = new THREE.OrthographicCamera( window.innerWidth/-2, window.innerWidth / 2, window.innerHeight / 2, window.innerHeight / - 2, 1, 50 );
-// camera.rotateX(-Math.PI/2);
 camera.position.z = 10;
+// camera.position.y = 10;
+// camera.rotateX(-Math.PI/4);
 
 // Initialize renderer
 const renderer = new THREE.WebGLRenderer();
@@ -32,7 +33,10 @@ const planet: Planet = new Planet(scene, 0, 5, 10, [0,0,0]);
 // planet.addNeighbour(planet2, new Vector3(3,0,0));
 // planet2.addNeighbour(planet, new Vector3(-3,0,0));
 const cat: Cat = new Cat(scene, 0, 0.5, planet);
+// const cat2: Cat = new Cat(scene, 1, 0.5, planet);
+// cat2.position = new Vector3(4, 0, 0.5);
 planet.setCat(cat);
+// planet.setCat(cat2);
 
 function animate() {
     // const jumpdata = document.getElementById('jump')?.innerText;

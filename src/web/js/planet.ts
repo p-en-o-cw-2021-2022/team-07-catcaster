@@ -84,11 +84,19 @@ export class Planet {
         const oldGamma = this.gamma;
         const oldBeta = this.beta;
 
-        //TODO: Make this work with the Map of cats
+        // TODO: Make this work with the Map of cats
         // update gamma x
-        // this.gamma = this.MAX_ANGLE * (this.cat!.position.x / this.radius);
+        let xRatio: number = 0;
+        let yRatio: number = 0;
+
+        for (const cat of this.cats.values()) {
+            xRatio += (cat.position.x - this.coordinates[0]) / this.radius;
+            yRatio += (cat.position.y - this.coordinates[1]) / this.radius;
+        }
+
+        this.gamma = this.MAX_ANGLE * xRatio;
         // // update beta y
-        // this.beta = -this.MAX_ANGLE * (this.cat!.position.y / this.radius);
+        this.beta = -this.MAX_ANGLE * yRatio;
 
         const dgamma = oldGamma - this.gamma;
         const dbeta = oldBeta - this.beta;
