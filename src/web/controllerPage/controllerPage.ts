@@ -26,6 +26,10 @@ function eventHandlersController() {
     websocket.onmessage = (message:any) => {
         let mes = JSON.parse(message.data);
         console.log('received message from : ', mes.id, '  |  client is: ', mes.client);
+        if(mes.client == 'disconnect' && mes.id == id.innerHTML){
+            console.log('Illegal ID, removing websocket connection.');
+            websocket.close();
+        }
         if (mes.client == 'connect'){
             connectiondiv.innerHTML = 'connect';
         }

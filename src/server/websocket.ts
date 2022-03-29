@@ -18,8 +18,8 @@ export function websocketEventHandlers(websocket:ws.Server) {
                 
                 //Het id dat door de client wordt doorgestuurd moet reeds bestaan.
                 if (!database.doesIdExist(mes.id)){
-                    console.log('Received ID is not in the database.');
-                    return;
+                    console.log('Received ID is not in the database, closing connection to client.');
+                    ws.send(JSON.stringify({client : 'disconnect', id : mes.id}))
                 }
                 //ws.send(JSON.stringify({type: 'ControllerID', id: mes.id}));
                 break
@@ -29,8 +29,8 @@ export function websocketEventHandlers(websocket:ws.Server) {
 
                 //Het id dat door de client wordt doorgestuurd moet reeds bestaan.
                 if (!database.doesIdExist(mes.id)){
-                    console.log('Received ID is not in the database.');
-                    return;
+                    console.log('Received ID is not in the database, closing connection to client.');
+                    ws.send(JSON.stringify({client : 'disconnect', id : mes.id}))
                 }
 
                 //Send the controller the ID of the screen, as to establish a webRTC connection
