@@ -1,25 +1,25 @@
-var id = <HTMLDivElement>document.getElementById('sender-id');
-var screenId = <HTMLDivElement>document.getElementById('receiver-id');
-var connectiondiv = <HTMLDivElement>document.getElementById('connection-div');
+const id = <HTMLDivElement>document.getElementById('sender-id');
+const screenId = <HTMLDivElement>document.getElementById('receiver-id');
+const connectiondiv = <HTMLDivElement>document.getElementById('connection-div');
 
 id.innerHTML = getIdController();
 eventHandlersController();
 
-function getIdController(){
-    let currentUrl = window.location.href;
-    let result:string = "";
-    for(let i = 0; i < 8;i++){
-        let index = currentUrl.length - 8 + i;
+function getIdController() {
+    const currentUrl = window.location.href;
+    let result:string = '';
+    for(let i = 0; i < 8;i++) {
+        const index = currentUrl.length - 8 + i;
         result = result + currentUrl[index];
-    };
+    }
     return result;
 }
 
 function eventHandlersController() {
-    let url = "wss" + window.location.href.substr(5);
+    const url = 'wss' + window.location.href.substr(5);
 
     const websocket = new WebSocket(url);
-    console.log("Starting Websocket connection...")
+    console.log('Starting Websocket connection...');
 
     websocket.onopen = (event) => {
         console.log('Connection established.');
@@ -27,13 +27,13 @@ function eventHandlersController() {
     };
 
     websocket.onmessage = (message:any) => {
-        let mes = JSON.parse(message.data);
+        const mes = JSON.parse(message.data);
         console.log('received message from : ', mes.id, '  |  client is: ', mes.client);
-        if (mes.client == 'connect'){
+        if (mes.client == 'connect') {
             connectiondiv.innerHTML = 'connect';
         }
-        if(mes.client == 'screen'){
+        if(mes.client == 'screen') {
             screenId.innerHTML += mes.id;
         }
     };
-};
+}

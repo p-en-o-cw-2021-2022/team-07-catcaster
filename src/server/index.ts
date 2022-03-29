@@ -58,7 +58,7 @@ router
     })
     .post('/catcaster/controller/', (ctx:request.context) => {
         request.sendControllerId(ctx);
-    })
+    });
 
 const options = {
     key: fs.readFileSync('dist/webroot/web/key.pem'),

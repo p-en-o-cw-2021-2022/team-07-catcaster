@@ -1,7 +1,7 @@
 requestScreenID();
 
-async function requestScreenID(){
-    let response = await fetch("/catcaster/screen/", {
+async function requestScreenID() {
+    const response = await fetch('/catcaster/screen/', {
         method : 'POST',
         headers : {
             'Content-Type': 'application/json;charset=utf-8'
@@ -10,9 +10,9 @@ async function requestScreenID(){
     });
 
     if (response.ok) {
-        let id = await response.json();
+        const id = await response.json();
         window.location.href = '/catcaster/screen/'+id;
-    };
-};
+    }
+}
 
 

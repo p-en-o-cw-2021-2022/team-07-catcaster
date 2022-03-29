@@ -15,40 +15,40 @@ export function websocketEventHandlers(websocket:ws.Server) {
 
             case 'screen':
                 console.log('Newly connected ID is from a screen.');
-                
+
                 //Het id dat door de client wordt doorgestuurd moet reeds bestaan.
-                if (!database.doesIdExist(mes.id)){
+                if (!database.doesIdExist(mes.id)) {
                     console.log('Received ID is not in the database.');
                     return;
                 }
                 //ws.send(JSON.stringify({type: 'ControllerID', id: mes.id}));
-                break
+                break;
 
             case 'controller':
                 console.log('Newly connected ID is from a controller.');
 
                 //Het id dat door de client wordt doorgestuurd moet reeds bestaan.
-                if (!database.doesIdExist(mes.id)){
+                if (!database.doesIdExist(mes.id)) {
                     console.log('Received ID is not in the database.');
                     return;
                 }
 
                 //Send the controller the ID of the screen, as to establish a webRTC connection
-                let controllerid = database.getControllerId();
-                websocket.clients.forEach(function(client){
-                    client.send(JSON.stringify({client: 'controller', id:controllerid}))
+                const controllerid = database.getControllerId();
+                websocket.clients.forEach(function(client) {
+                    client.send(JSON.stringify({client: 'controller', id:controllerid}));
                 });
-                let screenid = database.getScreenId();
-                for(let sid of screenid!){
-                    ws.send(JSON.stringify({client : 'screen', id : sid}))
+                const screenid = database.getScreenId();
+                for(const sid of screenid) {
+                    ws.send(JSON.stringify({client : 'screen', id : sid}));
                 }
-                setTimeout((event) => {ws.send(JSON.stringify({client : 'connect', id : 0}))}, 500);
-                break
+                setTimeout((event) => {ws.send(JSON.stringify({client : 'connect', id : 0}));}, 500);
+                break;
             }
-        })
+        });
     });
 
     websocket.on('close', () => {
         console.log('Websocket connection closed.');
-    })
+    });
 }
