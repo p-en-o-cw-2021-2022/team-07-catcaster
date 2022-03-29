@@ -16,28 +16,43 @@ single_screen_button.addEventListener('click',  function() {
 
 
 
-take_photo.addEventListener('click',  async function() {
-    //Scan camera for locations and contents of QR codes
-    const qrlocations = QR(number);
+take_photo.addEventListener('click', function() {
+    try {
+        //Scan camera for locations and contents of QR codes
+        const qrlocations = QR(number);
 
-    //console.log(qrlocations);
+        console.log(qrlocations);
 
-    //Create voronoi triangulation, neighbours contains edges
-    const neighbours = findNeighborsVoronoi(qrlocations);
+        //Create voronoi triangulation, neighbours contains edges
+        const neighbours = findNeighborsVoronoi(qrlocations);
 
-    //console.log(neighbours);
+        console.log(neighbours);
 
-    /* server code */
+        /* server code */
+    } catch {
+        console.log('Something went wrong, try taking a clearer photo.');
+    }
 });
 
 
 
+// eslint-disable-next-line @typescript-eslint/no-misused-promises
 multiple_screen_button.addEventListener('click', async function() {
 
     //Enter amount of screens
-    number = parseInt(prompt('Enter the amount of QR codes:')!);
-    while (number < 2) {
-        number = parseInt(prompt('Please enter more than one screen:')!);
+    let input: string | null = prompt('Enter the amount of QR codes:');
+    while (input === null) {
+        input = prompt('Enter the amount of QR codes:');
+    }
+
+    number = parseInt(input);
+    input = null;
+
+    while (number < 2 || number === null || number === undefined) {
+        while (input === null) {
+            input = prompt('Please enter more than one screen:');
+        }
+        number = parseInt(input);
     }
 
     //Start camera
@@ -58,11 +73,13 @@ function QR(number: number) {
     const ctx = canvas.getContext('2d');
     ctx?.drawImage(video, 0, 0, canvas.width, canvas.height);
     const imageData = ctx?.getImageData(0, 0, canvas.width, canvas.height);
-    const data = imageData!.data;
+    if (imageData === null || imageData === undefined) {
+        throw new Error('imageData was null');
+    }
+    const data = imageData.data;
 
     const qrlocations: { x: number; y: number; id: string}[] = [];
     let current_number = 0;
-
 
     //Search image until the desired number of QR codes is found
     while (current_number < number) {
@@ -70,7 +87,7 @@ function QR(number: number) {
         const qr = jsQR(data.slice(), canvas.width, canvas.height, {inversionAttempts: 'dontInvert'});
 
         //If the scan fails, create a new image, try again
-        if (qr == null) {
+        if (qr === null) {
             const qrlocs: { x: number; y: number; id: string}[] = QR(number);
             return qrlocs;
 
@@ -118,13 +135,8 @@ function QR(number: number) {
                 }
             }
         }
-
         current_number++;
     }
 
-
-
     return qrlocations;
-
-
 }

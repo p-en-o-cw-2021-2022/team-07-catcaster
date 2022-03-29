@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 import {Voronoi} from 'voronoi';
 
 export function findNeighborsVoronoi(sites: {x: number; y: number; id: string}[]) {
@@ -12,9 +15,8 @@ export function findNeighborsVoronoi(sites: {x: number; y: number; id: string}[]
     const neighbors: Array<[[number, number], [number, number]]> = [];
 
 
-    for (let i = 0; i < diagram.edges.length; i++) {
-        const currentEdge = diagram.edges[i];
-        if (currentEdge.lSite != null && currentEdge.rSite != null) {
+    for (const currentEdge of diagram.edges) {
+        if (currentEdge.lSite !== null && currentEdge.rSite !== null) {
             const neighborPair: [[number, number], [number, number]] = [[currentEdge.lSite.x, currentEdge.lSite.y], [currentEdge.rSite.x, currentEdge.rSite.y]];
             const reverseNeighborPair: [[number, number], [number, number]] = [[currentEdge.rSite.x, currentEdge.rSite.y], [currentEdge.lSite.x, currentEdge.lSite.y]];
             if (!neighbors.includes(neighborPair) && !neighbors.includes(reverseNeighborPair)) {
@@ -32,29 +34,32 @@ export function findNeighborsVoronoi(sites: {x: number; y: number; id: string}[]
 export function drawGraph(canvas : HTMLCanvasElement, sites: {x: number;y: number; id: string}[], neighbors: Array<[[number, number], [number, number]]>) {
 
     const context = canvas.getContext('2d');
-    context!.clearRect(0, 0, canvas.width, canvas.height);
+    if (context === null) {
+        throw new Error('canvas context was null');
+    }
+    context.clearRect(0, 0, canvas.width, canvas.height);
 
 
-    for (let i = 0; i < sites.length; i++) {
-        drawPoint(context!, sites[i].x, sites[i].y, sites[i].id, '#505050', 5);
+    for (const site of sites) {
+        drawPoint(context, site.x, site.y, site.id, '#505050', 5);
     }
 
     //draw lines
-    for (let i = 0; i < neighbors.length; i++) {
-        const n1x = neighbors[i][0][0];
-        const n1y = neighbors[i][0][1];
-        const n2x = neighbors[i][1][0];
-        const n2y = neighbors[i][1][1];
-        drawLine(context!, [n1x, n1y], [n2x, n2y], '#505050', 1);
+    for (const neighbor of neighbors) {
+        const n1x = neighbor[0][0];
+        const n1y = neighbor[0][1];
+        const n2x = neighbor[1][0];
+        const n2y = neighbor[1][1];
+        drawLine(context, [n1x, n1y], [n2x, n2y], '#505050', 1);
     }
 }
 
 //adapted from: https://dirask.com/posts/JavaScript-how-to-draw-point-on-canvas-element-PpOBLD
 function drawPoint(context: CanvasRenderingContext2D, x: number, y: number, label: string, color: string, size: number) {
-    if (color == null) {
+    if (color === null) {
         color = '#000';
     }
-    if (size == null) {
+    if (size === null) {
         size = 5;
     }
 
