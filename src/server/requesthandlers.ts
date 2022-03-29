@@ -47,7 +47,7 @@ export function sendControllerId(ctx: context) {
 }
 
 export function getErrorPage(ctx: context) {
-    ctx.response.status = 401;
+    ctx.response.status = 200;
     ctx.type = 'html'
     ctx.body = fs.createReadStream('dist/webroot/web/errorPage/errormessage.html')
 }
