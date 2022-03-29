@@ -14,7 +14,9 @@
       "noImplicitAny": true,
       "sourceMap": true,
       "listEmittedFiles": true,
-      "moduleResolution": "node"
+      "moduleResolution": "node",
+      "allowJs": true
+      
     }
 
 }

@@ -15,7 +15,7 @@
     "lint": "eslint --ext .ts src",
     "lint-fix": "eslint --ext .ts --fix src",
     "test": "jest",
-    "start": "npm run tsc-web && npm run copy-files-web && npx http-server -S -C cert1/cert.crt -K cert1/cert.key -c-1 dist/webroot",
+    "animation-test": "npm run tsc-web && npm run copy-files-web && npx http-server -S -C cert1/cert.crt -K cert1/cert.key -c-1 dist/webroot",
     "start-server": "npm run tsc && npm run copy-files-web && node dist/server/index.js"
   },
   "author": "P&O CW 2021-2022",
@@ -60,6 +60,7 @@
     "@types/jquery": "^3.5.9",
     "@types/yargs": "^17.0.3",
     "jquery": "^3.6.0",
+    "jsqr": "^1.4.0",
     "koa": "^2.13.3",
     "koa-logger": "^3.2.1",
     "koa-mount": "^4.0.0",
