@@ -46,8 +46,9 @@ export function sendControllerId(ctx: context) {
     ctx.body = JSON.stringify(id);
 }
 
-export function getGamePage(ctx: context){
-    ctx.type = 'html';
-    ctx.body = fs.createReadStream('placeholder'); //replace placeholder
+export function getErrorPage(ctx: context) {
+    ctx.response.status = 401;
+    ctx.type = 'html'
+    ctx.body = fs.createReadStream('dist/webroot/web/errorPage/errormessage.html')
 }
 
