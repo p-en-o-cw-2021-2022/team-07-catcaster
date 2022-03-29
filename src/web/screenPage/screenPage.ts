@@ -1,3 +1,6 @@
+const qr = <HTMLImageElement>document.getElementById("qrcode");
+qr.style.width = 45 + '%';
+
 var myId = <HTMLDivElement>document.getElementById("receiver-id");
 myId.innerHTML = getIdScreen();
 var controllerId = null;
