@@ -19,7 +19,25 @@
         <script type="module" src="./qr-code.js"></script>
     </head>
     <body>
-        <img id="qrcode"></img>
+        <img id="qrcode", style="width: 15%; display: none;" ></img>
+        
+        <div id="overlay" , style="position: fixed;
+                                    display: BLOCK;
+                                    width: 100%;
+                                    height: 100%;
+                                    top: 0;
+                                    left: 0;
+                                    right: 0;
+                                    bottom: 0;
+                                    background-color: rgba(0,0,0,0.5);
+                                    z-index: 100;
+                                    cursor: pointer;">
+            <img id="qrcodelarge" , style="position: absolute;
+            display: BLOCK;
+            left: 50%;
+            margin-right: -50%;transform: translate(-50%);height: 100%;
+            z-index: 101;">
+        </div>
         <table id = "table" class="display">
             <tr>
                 <td class="title">Status:</td>
@@ -63,6 +81,7 @@
                 let connections = new Object();
                 let connection_count = 0
                 let qr = document.getElementById("qrcode");
+                let overlay = document.getElementById("overlay");
 
                 /**
                  * Create the Peer object for our end of the connection.
@@ -93,7 +112,8 @@
                         status.innerHTML = "Connections: <br>";
                     });
                     peer.on('connection', function (c) {
-                        qr.style.width = 15 + "%";
+                        overlay.style.display = "none"
+                        qr.style.display = "inline"
 
                         // Collects the different controllers in an array
                         connections[c.peer] = c;
