@@ -46,10 +46,10 @@ export function websocketEventHandlers(websocket:ws.Server) {
                 break;
 
             case 'multi-screen':
-                const screenids = database.getScreenIds();
-                for(const sid of screenids) {
-                    ws.send(JSON.stringify({client : 'multi-screen', id : sid}));
-                }
+                console.log('ABCD')
+                websocket.clients.forEach((client) => {
+                    client.send(JSON.stringify({client : 'multi-screen'}));
+                });
             }
         });
     });

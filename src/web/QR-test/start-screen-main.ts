@@ -27,6 +27,12 @@ function send_multiscreen(){
         const id: string | null = urlParams.get('id');
         websocket.send(JSON.stringify({client: 'multi-screen', id: id}));
     };
+
+    websocket.onmessage = (message:WebSocketMessage) => {
+        const mes = <Message>JSON.parse(message.data);
+        console.log('received message from : ', mes.id, '  |  client is: ', mes.client);
+
+    };
 }
 
 take_photo.addEventListener('click', function() {

@@ -46,6 +46,7 @@ function eventHandlersScreen() {
             websocket.close();
         }
         if(mes.client == 'multi-screen'){
+            console.log('Received message');
             const qrcode = <HTMLImageElement>document.getElementById('qrcode');
             qrcode.src = 'https://chart.googleapis.com/chart?cht=qr&chl=' + getIdScreen() + '&chs=160x160&chld=L|0';
         }
