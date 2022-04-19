@@ -30,39 +30,39 @@ const screenCount = 1;
 const maxPlanets = 3*screenCount;
 const minPlanets = 1;
 // let noOfPlanets = Math.floor(Math.random() * (maxPlanets-minPlanets+1)+minPlanets);
-let noOfPlanets = 3;
+const noOfPlanets = 3;
 for (let planetID = 1; planetID <= noOfPlanets; planetID++) {
-    let [planet_x, planet_y, planet_r] = generatePlanetCoo();
+    const [planet_x, planet_y, planet_r] = generatePlanetCoo();
     const planet: Planet = new Planet(scene, planetID, planet_r, 10, [planet_x,planet_y,0]);
     allPlanets.push(planet);
-    console.log('Created planet at: ', String([planet_x, planet_y, planet_r]))
+    console.log('Created planet at: ', String([planet_x, planet_y, planet_r]));
 }
 for (let i = 0, len = allPlanets.length; i < len; i++) {
     const shortestPlanet: Planet | null = allPlanets[i].seekShortestPlanet(allPlanets);
-    if (shortestPlanet !== null){
-        let [myX,myY,myZ] = allPlanets[i].coordinates;
-        let [yourX,yourY,yourZ] = shortestPlanet.coordinates;
-        let myPlanetR = allPlanets[i].radius;
-        let yourPlanetR = shortestPlanet.radius;
-        let myShortestVectorNormalized = new Vector3(yourX-myX, yourY-myY, yourZ-myZ).normalize();
+    if (shortestPlanet !== null) {
+        const [myX,myY,myZ] = allPlanets[i].coordinates;
+        const [yourX,yourY,yourZ] = shortestPlanet.coordinates;
+        const myPlanetR = allPlanets[i].radius;
+        const yourPlanetR = shortestPlanet.radius;
+        const myShortestVectorNormalized = new Vector3(yourX-myX, yourY-myY, yourZ-myZ).normalize();
         console.log('normalized vector: ', myShortestVectorNormalized);
         console.log('not normalized vector: ', new Vector3(yourX-myX, yourY-myY, yourZ-myZ));
         allPlanets[i].addNeighbour(shortestPlanet, myShortestVectorNormalized.multiplyScalar(myPlanetR-2));
-        let yourShortestVectorNormalized = new Vector3(myX-yourX, myY-yourY, myZ-yourZ).normalize();
+        const yourShortestVectorNormalized = new Vector3(myX-yourX, myY-yourY, myZ-yourZ).normalize();
         shortestPlanet.addNeighbour(allPlanets[i], yourShortestVectorNormalized.multiplyScalar(yourPlanetR-2));
     }
 }
 
-function generatePlanetCoo() : number[]{
-    const max_r = 220;
-    const min_r = 80;
+function generatePlanetCoo() : number[] {
+    const max_r = 280;
+    const min_r = 120;
     const planet_r = Math.floor(Math.random() * (max_r-min_r+1)+min_r);
 
-    let max_x_window = window.innerWidth/2 - 80;
-    let planet_x = Math.ceil(Math.random() * (max_x_window-planet_r)) * (Math.round(Math.random()) ? 1 : -1);
+    const max_x_window = window.innerWidth/2 - 80;
+    const planet_x = Math.ceil(Math.random() * (max_x_window-planet_r)) * (Math.round(Math.random()) ? 1 : -1);
 
-    let max_y_window = window.innerHeight/2;
-    let planet_y = Math.ceil(Math.random() * (max_y_window-planet_r)) * (Math.round(Math.random()) ? 1 : -1);
+    const max_y_window = window.innerHeight/2;
+    const planet_y = Math.ceil(Math.random() * (max_y_window-planet_r)) * (Math.round(Math.random()) ? 1 : -1);
 
     if(!isValidPosition(planet_x, planet_y, planet_r)) {
         return generatePlanetCoo();
@@ -71,13 +71,13 @@ function generatePlanetCoo() : number[]{
     }
 }
 
-function isValidPosition(thisX:number, thisY:number, thisR:number){
+function isValidPosition(thisX:number, thisY:number, thisR:number) {
     let isValid = true;
-    for (let i = 0, len = allPlanets.length; i < len; i++){
-        let planetRadius = allPlanets[i].radius;
-        let [p_x,p_y,p_z] = allPlanets[i].coordinates;
-        let distance = Math.sqrt(Math.pow(thisX-p_x, 2)+Math.pow(thisY-p_y, 2));
-        if (distance-(thisR+planetRadius)<0){
+    for (let i = 0, len = allPlanets.length; i < len; i++) {
+        const planetRadius = allPlanets[i].radius;
+        const [p_x,p_y,p_z] = allPlanets[i].coordinates;
+        const distance = Math.sqrt(Math.pow(thisX-p_x, 2)+Math.pow(thisY-p_y, 2));
+        if (distance-(thisR+planetRadius)<0) {
             isValid = false;
         }
     }
@@ -97,7 +97,7 @@ function addCat() {
     const controllers = document.getElementById('controllers')!.children;
     const id = (controllers[controllers_count - 1] as HTMLParagraphElement).innerText;
     const cat: Cat = new Cat(scene, parseInt(id, 16), allPlanets[0].radius, allPlanets[0]);
-    console.log(allPlanets)
+    console.log(allPlanets);
     allPlanets[0].setCat(cat);
     cats.push(cat);
     console.log('Cat added wih id: ' + String(parseInt(id, 16)));
