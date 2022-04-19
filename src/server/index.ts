@@ -20,6 +20,8 @@ const screenPage = 'dist/webroot/web/screenPage';
 const controllerRedirect = 'dist/webroot/web/controllerRedirect';
 const controllerPage = 'dist/webroot/web/controllerPage';
 const animation = 'dist/webroot/web/js';
+const startscreen_controller = 'dist/webroot/web/QR-test'
+const errorMessage = 'dist/webroot/web/errorPage'
 const router = new Router();
 
 // When we run this server we serve you all of our `dist/webroot` folder.
@@ -28,14 +30,16 @@ app.use(mount('/catcaster/screen/', serve(redirectPage)));
 app.use(mount('/catcaster/screen/', serve(screenPage)));
 app.use(mount('/catcaster/controller/', serve(controllerRedirect)));
 app.use(mount('/catcaster/controller/', serve(controllerPage)));
+app.use(mount('/catcaster/error/', serve(errorMessage)));
 app.use(mount('/catcaster/js/', serve(animation)));
+app.use(mount('/catcaster/QR-test/', serve(startscreen_controller)));
 app.use(router.routes()).use(router.allowedMethods());
 
 export var database = new IdDatabase();
 
 // Configure some REST points:
 router
-    .get('/catcaster/screen/', (ctx: request.context) => {
+    .get('/catcaster/screen', (ctx: request.context) => {
         request.getScreenRedirectPage(ctx);
         //serve page with QR code here;
     })
@@ -43,16 +47,15 @@ router
         request.getControllerRedirectPage(ctx);
         //serve page with controls here;
     })
-    .get('/catcaster/game/screen/', (ctx: request.context) => {
-        request.getGamePage(ctx);
-        //serve game page;
+    .get('/catcaster/error/', (ctx: request.context) => {
+        request.getErrorPage(ctx)
     })
     .post('/catcaster/screen/', (ctx: request.context) => {
         request.sendScreenId(ctx);
     })
     .post('/catcaster/controller/', (ctx:request.context) => {
         request.sendControllerId(ctx);
-    })
+    });
 
 const options = {
     key: fs.readFileSync('dist/webroot/web/key.pem'),
