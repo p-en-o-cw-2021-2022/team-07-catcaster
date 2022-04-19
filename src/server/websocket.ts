@@ -44,6 +44,12 @@ export function websocketEventHandlers(websocket:ws.Server) {
                 }
                 setTimeout((event) => {ws.send(JSON.stringify({client : 'connect', id : 0}));}, 500);
                 break;
+
+            case 'multi-screen':
+                const screenids = database.getScreenIds();
+                for(const sid of screenids) {
+                    ws.send(JSON.stringify({client : 'multi-screen', id : sid}));
+                }
             }
         });
     });

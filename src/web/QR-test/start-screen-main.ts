@@ -14,7 +14,20 @@ single_screen_button.addEventListener('click',  function() {
     /* server code */
 });
 
+function send_multiscreen(){
+    const url = 'wss' + window.location.href.substr(5);
 
+    const websocket = new WebSocket(url);
+    console.log('Starting Websocket connection...');
+
+    websocket.onopen = () => {
+        console.log('Connection established.');
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        const id: string | null = urlParams.get('id');
+        websocket.send(JSON.stringify({client: 'multi-screen', id: id}));
+    };
+}
 
 take_photo.addEventListener('click', function() {
     try {
@@ -54,6 +67,8 @@ multiple_screen_button.addEventListener('click', async function() {
         }
         number = parseInt(input);
     }
+
+    send_multiscreen();
 
     //Start camera
     const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });

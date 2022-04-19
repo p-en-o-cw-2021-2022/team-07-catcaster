@@ -42,6 +42,10 @@ function eventHandlersScreen() {
             console.log('Illegal ID, removing websocket connection.');
             websocket.close();
         }
+        if(mes.client == 'multi-screen'){
+            const qrcode = <HTMLImageElement>document.getElementById('qrcode');
+            qrcode.src = 'https://chart.googleapis.com/chart?cht=qr&chl=' + getIdScreen() + '&chs=160x160&chld=L|0';
+        }
     };
 }
 
