@@ -10,12 +10,30 @@ const cameraTrigger = <HTMLButtonElement>document.getElementById('camera--trigge
 const cameraMain = <HTMLElement>document.getElementById('camera');
 const single_screen_button = <HTMLButtonElement>document.getElementById('single-screen-button');
 const multiple_screen_button = <HTMLButtonElement>document.getElementById('multiple-screen-button');
-const video = <HTMLVideoElement>document.getElementById('video');
-const canvas : HTMLCanvasElement = <HTMLCanvasElement>document.getElementById('canvas');
 let number: number;
 const queryString = window.location.search;
 const urlParams = new URLSearchParams(queryString);
 const id: string | null = urlParams.get('id');
+
+export class QRlocation {
+    id : string;
+    middle_location: {x: number, y:number};
+    topleft_location: {x: number, y:number};
+    bottomright_location: {x: number, y:number};
+    neighbours: QRlocation[];
+
+    constructor(id: string, middle_location: {x: number, y:number}, topleft_location: {x: number, y:number}, bottomright_location: {x: number, y:number}) {
+        this.id = id;
+        this.middle_location = middle_location;
+        this.bottomright_location = bottomright_location;
+        this.topleft_location = topleft_location;
+        this.neighbours = [];
+    }
+
+    addNeighbour(qrloc: QRlocation) {
+        this.neighbours.push(qrloc);
+    }
+}
 
 
 single_screen_button.addEventListener('click',  function() {
@@ -32,6 +50,46 @@ function cameraStart() {
         .catch(function(error) {
             console.error('Oops. Something is broken.', error);
         });
+}
+
+function getQRLocations() {
+    try {
+        //Scan camera for locations and contents of QR codes
+        const qrlocations:Array<QRlocation> = QR(number);
+
+        const sites: {x: number; y: number; id: string}[] = [];
+
+        for (const qrloc of qrlocations) {
+            sites.push({x: qrloc.middle_location.x, y: qrloc.middle_location.y, id: qrloc.id});
+        }
+
+        //Create voronoi triangulation, neighbours contains edges
+        const neighboursPerID = findNeighborsVoronoi(sites);
+
+        for (const qrID of neighboursPerID) {
+            let qr: QRlocation;
+            let neighbour: QRlocation;
+            for (const qrloc of qrlocations) {
+                if (qrID.id === qrloc.id) {
+                    qr = qrloc;
+                }
+            }
+            for (const neighbourid of qrID.neighborsOfID) {
+                for (const qrloc of qrlocations) {
+                    if (neighbourid === qrloc.id) {
+                        neighbour = qrloc;
+                    }
+                }
+            qr!.addNeighbour(neighbour!);
+            }
+        }
+
+        console.log(qrlocations);
+
+        /* server code */
+    } catch {
+        console.log('Something went wrong, try taking a clearer photo.');
+    }
 }
 
 cameraTrigger.onclick = function() {
@@ -59,6 +117,7 @@ cameraTrigger.onclick = function() {
         number = parseInt(input);
     }
     send_multiscreen();
+    getQRLocations();
 };
 
 window.addEventListener('load', cameraStart, false);
@@ -81,26 +140,6 @@ function send_multiscreen() {
     };
 }
 
-// take_photo.addEventListener('click', function() {
-//     try {
-//         //Scan camera for locations and contents of QR codes
-//         const qrlocations = QR(number);
-
-//         console.log(qrlocations);
-
-//         //Create voronoi triangulation, neighbours contains edges
-//         const neighbours = findNeighborsVoronoi(qrlocations);
-
-//         console.log(neighbours);
-
-//         /* server code */
-//     } catch {
-//         console.log('Something went wrong, try taking a clearer photo.');
-//     }
-// });
-
-
-
 // eslint-disable-next-line @typescript-eslint/no-misused-promises
 multiple_screen_button.addEventListener('click', function() {
     cameraMain.style.display = 'block';
@@ -117,26 +156,23 @@ multiple_screen_button.addEventListener('click', function() {
 //If a QR code is found, it is removed from the image so others can be found
 //If not enough QR codes can be found (due to inaccuracies), take a new image, try again
 function QR(number: number) {
-    //Draw camera on canvas to get image data
-    const ctx = canvas.getContext('2d');
-    ctx?.drawImage(video, 0, 0, canvas.width, canvas.height);
-    const imageData = ctx?.getImageData(0, 0, canvas.width, canvas.height);
+    const imageData = cameraSensor.getContext('2d')!.getImageData(0, 0, cameraSensor.width, cameraSensor.height);
     if (imageData === null || imageData === undefined) {
         throw new Error('imageData was null');
     }
     const data = imageData.data;
 
-    const qrlocations: { x: number; y: number; id: string}[] = [];
+    const qrlocations: QRlocation[] = [];
     let current_number = 0;
 
     //Search image until the desired number of QR codes is found
     while (current_number < number) {
 
-        const qr = jsQR(data.slice(), canvas.width, canvas.height, {inversionAttempts: 'dontInvert'});
+        const qr = jsQR(data.slice(), cameraSensor.width, cameraSensor.height, {inversionAttempts: 'dontInvert'});
 
         //If the scan fails, create a new image, try again
         if (qr === null) {
-            const qrlocs: { x: number; y: number; id: string}[] = QR(number);
+            const qrlocs: QRlocation[] = QR(number);
             return qrlocs;
 
         }
@@ -147,8 +183,9 @@ function QR(number: number) {
         const middle_location_y: number = (topLeftCorner.y+bottomRightCorner.y)/2;
 
         const id: string = qr.data;
-        const middle_location: {x: number, y: number, id: string} = {x: middle_location_x, y: middle_location_y, id: id};
-        qrlocations.push(middle_location);
+        const middle_location: {x: number, y: number} = {x: middle_location_x, y: middle_location_y};
+        const qr_init = new QRlocation(id, middle_location, topLeftCorner, bottomRightCorner);
+        qrlocations.push(qr_init);
 
 
         const topRightCorner: Point = qr.location.topRightCorner;
@@ -163,7 +200,7 @@ function QR(number: number) {
         for (let x = Math.round(topLeftCorner.x); x <= Math.round(topLeftFinderPattern.x*2-topLeftCorner.x); x++) {
             for (let y = Math.round(topLeftCorner.y); y <= Math.round(topLeftFinderPattern.y*2-topLeftCorner.y); y++) {
                 for (let i = 0; i < 4; i++) {
-                    data[4*canvas.width*y+4*x+i] = 255;
+                    data[4*cameraSensor.width*y+4*x+i] = 255;
                 }
             }
         }
@@ -171,7 +208,7 @@ function QR(number: number) {
         for (let x = Math.round(topRightCorner.x-2*(topRightCorner.x-topRightFinderPattern.x)); x <= Math.round(topRightCorner.x); x++) {
             for (let y = Math.round(topRightCorner.y); y <= Math.round((topRightFinderPattern.y-topRightCorner.y)*2+topRightCorner.y); y++) {
                 for (let i = 0; i < 4; i++) {
-                    data[4*canvas.width*y+4*x+i] = 255;
+                    data[4*cameraSensor.width*y+4*x+i] = 255;
                 }
             }
         }
@@ -179,7 +216,7 @@ function QR(number: number) {
         for (let x = Math.round(bottomLeftCorner.x); x <= Math.round(bottomLeftFinderPattern.x*2-bottomLeftCorner.x); x++) {
             for (let y = Math.round(bottomLeftCorner.y-2*(bottomLeftCorner.y-bottomLeftFinderPattern.y)); y <= Math.round(bottomLeftCorner.y); y++) {
                 for (let i = 0; i < 4; i++) {
-                    data[4*canvas.width*y+4*x+i] = 255;
+                    data[4*cameraSensor.width*y+4*x+i] = 255;
                 }
             }
         }
