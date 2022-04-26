@@ -30,13 +30,11 @@ export function getControllerRedirectPage(ctx: context){
     let params = ctx.request.query;
     console.log(params)
     if (params.id == null) {
-        console.log('eyo')
         ctx.response.status = 200;
         ctx.type = 'html';
         ctx.body = fs.createReadStream('dist/webroot/web/controllerRedirect/controllerRedirect.html');
     }
     else if (params.id != null && params.mode == null) {
-        console.log('boe');
         ctx.response.status = 200;
         ctx.type = 'html';
         ctx.body = fs.createReadStream('dist/webroot/web/QR-test/controller-start-screen.html');
@@ -49,14 +47,8 @@ export function getControllerRedirectPage(ctx: context){
     else if (params.mode == 'singlescreen') {
         ctx.response.status = 200;
         ctx.type = 'html';
-        ctx.body = fs.createReadStream('placeholder');
-    }
-    else if (params.id != null && params.mode == null) {
-        ctx.response.status = 200;
-        ctx.type = 'html';
         ctx.body = fs.createReadStream('dist/webroot/web/controllerPage/controllerPage.html');
     }
-    else{console.log('abvcejz')}
 }
 
 export function sendControllerId(ctx: context) {
