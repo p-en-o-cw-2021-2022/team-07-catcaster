@@ -1,5 +1,8 @@
-var myId = <HTMLDivElement>document.getElementById("receiver-id");
-var controllerId = null;
+const qr = <HTMLImageElement>document.getElementById('qrcode');
+qr.style.width = '45' + '%';
+
+const myId = <HTMLDivElement>document.getElementById('receiver-id');
+let controllerId = null;
 
 interface Message {
     'id': string;
@@ -38,7 +41,7 @@ function eventHandlersScreen() {
         if(mes.client === 'controller') {
             controllerId = mes.id;
         }
-        if(mes.client == 'disconnect' && mes.id == myId.innerHTML){
+        if(mes.client === 'disconnect' && mes.id === myId.innerHTML) {
             console.log('Illegal ID, removing websocket connection.');
             websocket.close();
         }
