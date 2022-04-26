@@ -51,6 +51,10 @@ function eventHandlersScreen() {
             qrcode.src = 'https://chart.googleapis.com/chart?cht=qr&chl=' + getIdScreen() + '&chs=160x160&chld=L|0';
         }
     };
+
+    websocket.onclose = () => {
+        window.location.href = '/catcaster/error/'
+    }
 }
 
 if (getIdScreen() !== null) {

@@ -8,6 +8,7 @@ export function websocketEventHandlers(websocket:ws.Server) {
 
         console.log('Connection established.');
 
+
         ws.on('message', (message) => {
 
             const mes = JSON.parse(message.toString());
@@ -48,7 +49,10 @@ export function websocketEventHandlers(websocket:ws.Server) {
                 break;
 
             case 'multi-screen':
-                console.log('ABCD')
+                if (!database.doesIdExist(mes.id)){
+                    console.log('Received ID is not in the database, closing connection to client.');
+                    ws.send(JSON.stringify({client : 'disconnect', id : mes.id}))
+                }
                 websocket.clients.forEach((client) => {
                     client.send(JSON.stringify({client : 'multi-screen'}));
                 });
@@ -58,5 +62,12 @@ export function websocketEventHandlers(websocket:ws.Server) {
 
     websocket.on('close', () => {
         console.log('Websocket connection closed.');
+    });
+}
+
+function ping(clients: any) {
+    clients.forEach(function(client: any) {
+        client.send(JSON.stringify({client: '__ping__'}));
+
     });
 }
