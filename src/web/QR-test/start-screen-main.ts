@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/restrict-plus-operands */
 import jsQR from 'jsqr';
 import { Point } from 'jsqr/dist/locator';
 import { findNeighborsVoronoi } from './voronoi.js';
@@ -12,12 +13,31 @@ const queryString = window.location.search;
 const urlParams = new URLSearchParams(queryString);
 const id: string | null = urlParams.get('id');
 
+export class QRlocation{
+    id : string;
+    middle_location: {x: number, y:number};
+    topleft_location: {x: number, y:number};
+    bottomright_location: {x: number, y:number};
+    neighbours: QRlocation[];
 
+    constructor(id: string, middle_location: {x: number, y:number}, topleft_location: {x: number, y:number}, bottomright_location: {x: number, y:number}){
+        this.id = id;
+        this.middle_location = middle_location;
+        this.bottomright_location = bottomright_location;
+        this.topleft_location = topleft_location;
+        this.neighbours = [];
+    }
+
+    addNeighbour(qrloc: QRlocation){
+        this.neighbours.push(qrloc)
+    }
+}
+    
 single_screen_button.addEventListener('click',  function() {
     window.location.href = '/catcaster/controller/?id=' + id + '&mode=singlescreen';
 });
 
-function send_multiscreen(){
+function send_multiscreen() {
     const url = 'wss' + window.location.href.substr(5);
 
     let websocket = new WebSocket(url);
@@ -60,12 +80,34 @@ take_photo.addEventListener('click', function() {
         //Scan camera for locations and contents of QR codes
         const qrlocations = QR(number);
 
-        console.log(qrlocations);
+        let sites: {x: number; y: number; id: string}[] = [];
+
+        for (const qrloc of qrlocations){
+            sites.push({x: qrloc.middle_location.x, y: qrloc.middle_location.y, id: qrloc.id})
+        }
 
         //Create voronoi triangulation, neighbours contains edges
-        const neighbours = findNeighborsVoronoi(qrlocations);
+        const neighboursPerID = findNeighborsVoronoi(sites);
 
-        console.log(neighbours);
+        for (const qrID of neighboursPerID){
+            let qr: QRlocation
+            let neighbour: QRlocation
+            for (const qrloc of qrlocations){
+                if (qrID.id == qrloc.id){
+                    qr = qrloc;
+                }
+            }
+            for (const neighbourid of qrID.neighborsOfID){
+                for (const qrloc of qrlocations){
+                    if (neighbourid == qrloc.id){
+                        neighbour = qrloc;
+                    }
+                }
+            qr!.addNeighbour(neighbour!);
+            }
+        }
+
+        console.log(qrlocations)
 
         /* server code */
     } catch {
@@ -101,8 +143,8 @@ multiple_screen_button.addEventListener('click', async function() {
     video.srcObject = stream;
 
     take_photo.style.visibility = 'visible';
-    
-    window.location.href = '/catcaster/controller/?id=' + id + '&mode=multiscreen'
+
+    window.location.href = '/catcaster/controller/?id=' + id + '&mode=multiscreen';
 });
 
 //returns an array containing tuples of all found QR codes {x, y, id}
@@ -119,7 +161,7 @@ function QR(number: number) {
     }
     const data = imageData.data;
 
-    const qrlocations: { x: number; y: number; id: string}[] = [];
+    const qrlocations: QRlocation[] = [];
     let current_number = 0;
 
     //Search image until the desired number of QR codes is found
@@ -129,7 +171,7 @@ function QR(number: number) {
 
         //If the scan fails, create a new image, try again
         if (qr === null) {
-            const qrlocs: { x: number; y: number; id: string}[] = QR(number);
+            const qrlocs: QRlocation[] = QR(number);
             return qrlocs;
 
         }
@@ -139,9 +181,11 @@ function QR(number: number) {
         const middle_location_x: number = (topLeftCorner.x +bottomRightCorner.x)/2;
         const middle_location_y: number = (topLeftCorner.y+bottomRightCorner.y)/2;
 
+        
         const id: string = qr.data;
-        const middle_location: {x: number, y: number, id: string} = {x: middle_location_x, y: middle_location_y, id: id};
-        qrlocations.push(middle_location);
+        const middle_location: {x: number, y: number} = {x: middle_location_x, y: middle_location_y};
+        const qr_init = new QRlocation(id, middle_location, topLeftCorner, bottomRightCorner)
+        qrlocations.push(qr_init);
 
 
         const topRightCorner: Point = qr.location.topRightCorner;
