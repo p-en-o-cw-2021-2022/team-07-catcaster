@@ -10,11 +10,12 @@ import { Planet } from '../js/planet.js';
 // Initialize animation scene and camera
 const scene = new THREE.Scene();
 scene.background = new THREE.Color('white');
-const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
-// const camera = new THREE.OrthographicCamera( window.innerWidth/-2, window.innerWidth / 2, window.innerHeight / 2, window.innerHeight / - 2, 1, 50 );
-camera.position.z = 10;
-// camera.position.y = 10;
-// camera.rotateX(-Math.PI/4);
+// const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+// camera.position.z = 10;
+
+const camera = new THREE.OrthographicCamera( window.innerWidth/-40, window.innerWidth / 40, window.innerHeight / 40, window.innerHeight / -40, -50, 50 );
+// camera.position.y = -10;
+// camera.rotateX(Math.PI/4);
 
 // Initialize renderer
 const renderer = new THREE.WebGLRenderer();
@@ -22,8 +23,6 @@ const scaleFactor = 1; // Scale factor for the resolution of window
 renderer.setSize( window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(window.devicePixelRatio * scaleFactor);
 document.body.appendChild( renderer.domElement );
-
-
 
 // Create planet and cat objects with default values
 const dt = 0.01;
@@ -33,10 +32,10 @@ const planet: Planet = new Planet(scene, 0, 5, 10, [0,0,0]);
 // planet.addNeighbour(planet2, new Vector3(3,0,0));
 // planet2.addNeighbour(planet, new Vector3(-3,0,0));
 const cat: Cat = new Cat(scene, 0, 0.5, planet);
-// const cat2: Cat = new Cat(scene, 1, 0.5, planet);
-// cat2.position = new Vector3(4, 0, 0.5);
+const cat2: Cat = new Cat(scene, 1, 0.5, planet);
+// cat2.positionOnPlanet = new Vector3(3, 0, 0);
 planet.setCat(cat);
-// planet.setCat(cat2);
+planet.setCat(cat2);
 
 function animate() {
     // const jumpdata = document.getElementById('jump')?.innerText;
@@ -56,6 +55,7 @@ function animate() {
     //     cat.yF = Number(beta);
     // }
     cat.updatePosition(dt);
+    cat2.updatePosition(dt);
     renderer.render( scene, camera );
     setDebugInfo();
     requestAnimationFrame( animate );
@@ -80,12 +80,28 @@ function update(e: KeyboardEvent) {
         // cat.updateForce('x', cat.xF - 5);
         cat.xVel -= 1;
         break;
+    case 'l' :
+        // cat.updateForce('x', cat.xF + 5);
+        cat2.xVel += 1;
+        break;
+    case 'k' :
+        // cat.updateForce('y', cat.yF - 5);
+        cat2.yVel -= 1;
+        break;
+    case 'i' :
+        // cat.updateForce('y', cat.yF + 5);
+        cat2.yVel += 1;
+        break;
+    case 'j' :
+        // cat.updateForce('x', cat.xF - 5);
+        cat2.xVel -= 1;
+        break;
     }
 }
 
 function update2(e: DeviceOrientationEvent) {
     cat.updateForce('x', e.gamma!);
-    cat.updateForce('y', -e.beta!);
+    cat.updateForce('y', e.beta!);
 }
 
 function firstTouch() {
@@ -102,10 +118,11 @@ function setDebugInfo() {
 
     setInnerText('xF', cat.xF);
     setInnerText('yF', cat.yF);
-    setInnerText('xP', cat.position.x.toFixed(3));
-    setInnerText('yP', cat.position.y.toFixed(3));
-    setInnerText('zP', cat.position.z.toFixed(3));
-    setInnerText('angle', [planet.alpha, planet.beta, planet.gamma].toString());
+    setInnerText('xP', cat.positionOnPlanet.x.toFixed(3));
+    setInnerText('yP', cat.positionOnPlanet.y.toFixed(3));
+    setInnerText('zP', cat.positionOnPlanet.z.toFixed(3));
+    setInnerText('angle', [planet.alpha * (180/Math.PI), planet.beta* (180/Math.PI), planet.gamma* (180/Math.PI)].toString());
+    setInnerText('catPosAngle', [cat.catPositionAngle[0] * (180/Math.PI), cat.catPositionAngle[1] * (180/Math.PI)].toString());
 
 }
 
