@@ -8,10 +8,13 @@ const video = <HTMLVideoElement>document.getElementById('video');
 const canvas : HTMLCanvasElement = <HTMLCanvasElement>document.getElementById('canvas');
 const take_photo = <HTMLButtonElement>document.getElementById('take-photo');
 let number: number;
+const queryString = window.location.search;
+const urlParams = new URLSearchParams(queryString);
+const id: string | null = urlParams.get('id');
 
 
 single_screen_button.addEventListener('click',  function() {
-    /* server code */
+    window.location.href = '/catcaster/controller/?id=' + id + '&mode=singlescreen';
 });
 
 function send_multiscreen(){
@@ -22,9 +25,6 @@ function send_multiscreen(){
 
     websocket.onopen = () => {
         console.log('Connection established.');
-        const queryString = window.location.search;
-        const urlParams = new URLSearchParams(queryString);
-        const id: string | null = urlParams.get('id');
         websocket.send(JSON.stringify({client: 'multi-screen', id: id}));
     };
 
@@ -81,8 +81,8 @@ multiple_screen_button.addEventListener('click', async function() {
     video.srcObject = stream;
 
     take_photo.style.visibility = 'visible';
-
-
+    
+    window.location.href = '/catcaster/controller/?id=' + id + '&mode=multiscreen'
 });
 
 //returns an array containing tuples of all found QR codes {x, y, id}
