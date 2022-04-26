@@ -2,11 +2,16 @@ import jsQR from 'jsqr';
 import { Point } from 'jsqr/dist/locator';
 import { findNeighborsVoronoi } from './voronoi.js';
 
+const constraints = { video: { facingMode: 'environment' }, audio: false };
+const cameraView = <HTMLVideoElement>document.querySelector('#camera--view');
+const cameraOutput = <HTMLImageElement>document.querySelector('#camera--output');
+const cameraSensor = <HTMLCanvasElement>document.querySelector('#camera--sensor');
+const cameraTrigger = <HTMLButtonElement>document.getElementById('camera--trigger');
+const cameraMain = <HTMLElement>document.getElementById('camera');
 const single_screen_button = <HTMLButtonElement>document.getElementById('single-screen-button');
 const multiple_screen_button = <HTMLButtonElement>document.getElementById('multiple-screen-button');
 const video = <HTMLVideoElement>document.getElementById('video');
 const canvas : HTMLCanvasElement = <HTMLCanvasElement>document.getElementById('canvas');
-const take_photo = <HTMLButtonElement>document.getElementById('take-photo');
 let number: number;
 const queryString = window.location.search;
 const urlParams = new URLSearchParams(queryString);
@@ -14,10 +19,51 @@ const id: string | null = urlParams.get('id');
 
 
 single_screen_button.addEventListener('click',  function() {
-    window.location.href = '/catcaster/controller/?id=' + id + '&mode=singlescreen';
+    window.location.href = '/catcaster/controller/?id=' + <string>id + '&mode=singlescreen';
 });
 
-function send_multiscreen(){
+function cameraStart() {
+    navigator.mediaDevices
+        .getUserMedia(constraints)
+        .then(function(stream) {
+            const track = stream.getTracks()[0];
+            cameraView.srcObject = stream;
+        })
+        .catch(function(error) {
+            console.error('Oops. Something is broken.', error);
+        });
+}
+
+cameraTrigger.onclick = function() {
+    cameraSensor.width = cameraView.videoWidth;
+    cameraSensor.height = cameraView.videoHeight;
+    cameraSensor.getContext('2d')!.drawImage(cameraView, 0, 0);
+    cameraOutput.src = cameraSensor.toDataURL('image/webp');
+    cameraOutput.classList.add('taken');
+    cameraMain.style.display = 'block';
+    cameraView.style.display = 'none';
+    cameraTrigger.style.display = 'none';
+    //Enter amount of screens
+    let input: string | null = prompt('Enter the amount of QR codes:');
+    while (input === null) {
+        input = prompt('Enter the amount of QR codes:');
+    }
+
+    number = parseInt(input);
+    input = null;
+
+    while (number < 2 || number === null || number === undefined) {
+        while (input === null) {
+            input = prompt('Please enter more than one screen:');
+        }
+        number = parseInt(input);
+    }
+    send_multiscreen();
+};
+
+window.addEventListener('load', cameraStart, false);
+
+function send_multiscreen() {
     const url = 'wss' + window.location.href.substr(5);
 
     const websocket = new WebSocket(url);
@@ -35,54 +81,35 @@ function send_multiscreen(){
     };
 }
 
-take_photo.addEventListener('click', function() {
-    try {
-        //Scan camera for locations and contents of QR codes
-        const qrlocations = QR(number);
+// take_photo.addEventListener('click', function() {
+//     try {
+//         //Scan camera for locations and contents of QR codes
+//         const qrlocations = QR(number);
 
-        console.log(qrlocations);
+//         console.log(qrlocations);
 
-        //Create voronoi triangulation, neighbours contains edges
-        const neighbours = findNeighborsVoronoi(qrlocations);
+//         //Create voronoi triangulation, neighbours contains edges
+//         const neighbours = findNeighborsVoronoi(qrlocations);
 
-        console.log(neighbours);
+//         console.log(neighbours);
 
-        /* server code */
-    } catch {
-        console.log('Something went wrong, try taking a clearer photo.');
-    }
-});
+//         /* server code */
+//     } catch {
+//         console.log('Something went wrong, try taking a clearer photo.');
+//     }
+// });
 
 
 
 // eslint-disable-next-line @typescript-eslint/no-misused-promises
-multiple_screen_button.addEventListener('click', async function() {
-
-    //Enter amount of screens
-    let input: string | null = prompt('Enter the amount of QR codes:');
-    while (input === null) {
-        input = prompt('Enter the amount of QR codes:');
-    }
-
-    number = parseInt(input);
-    input = null;
-
-    while (number < 2 || number === null || number === undefined) {
-        while (input === null) {
-            input = prompt('Please enter more than one screen:');
-        }
-        number = parseInt(input);
-    }
-
-    send_multiscreen();
-
+multiple_screen_button.addEventListener('click', function() {
+    cameraMain.style.display = 'block';
+    cameraTrigger.style.display = 'block';
+    cameraView.style.display = 'block';
+    multiple_screen_button.style.display = 'none';
+    single_screen_button.style.display = 'none';
     //Start camera
-    const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
-    video.srcObject = stream;
-
-    take_photo.style.visibility = 'visible';
-    
-    window.location.href = '/catcaster/controller/?id=' + id + '&mode=multiscreen'
+    // window.location.href = '/catcaster/controller/?id=' + <string>id + '&mode=multiscreen';
 });
 
 //returns an array containing tuples of all found QR codes {x, y, id}
