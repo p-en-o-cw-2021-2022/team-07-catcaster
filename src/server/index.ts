@@ -32,7 +32,7 @@ app.use(mount('/catcaster/controller/', serve(controllerRedirect)));
 app.use(mount('/catcaster/controller/', serve(controllerPage)));
 app.use(mount('/catcaster/error/', serve(errorMessage)));
 app.use(mount('/catcaster/js/', serve(animation)));
-app.use(mount('/catcaster/QR-test/', serve(startscreen_controller)));
+app.use(mount('/catcaster/controller/', serve(startscreen_controller)));
 app.use(router.routes()).use(router.allowedMethods());
 
 export var database = new IdDatabase();
