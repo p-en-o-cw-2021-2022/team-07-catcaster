@@ -6,14 +6,11 @@ import {Voronoi} from 'voronoi';
 export function findNeighborsVoronoi(sites: {x: number; y: number; id: string}[]) {
 
     const voronoi = new Voronoi();
-    const bbox = {xl: 0, xr: 800, yt: 0, yb: 600}; // xl is x-left, xr is x-right, yt is y-top, and yb is y-bottom
+    const bbox = {xl: 0, xr: 8000, yt: 0, yb: 6000}; // xl is x-left, xr is x-right, yt is y-top, and yb is y-bottom
 
     const diagram = voronoi.compute(sites, bbox);
 
-
-
     const neighbors: Array<[[number, number], [number, number]]> = [];
-
 
     for (const currentEdge of diagram.edges) {
         if (currentEdge.lSite !== null && currentEdge.rSite !== null) {
@@ -24,11 +21,41 @@ export function findNeighborsVoronoi(sites: {x: number; y: number; id: string}[]
             }
         }
     }
+    const neighbors_ids: Array<[string, string]> = [];
 
+    for (const neighbor of neighbors){
+        let left_id: string;
+        let right_id: string;
+        for (const site of sites){
+            if ((site.x == neighbor[0][0]) && (site.y == neighbor[0][1])){
+                left_id = site.id;
+            }
+            if ((site.x == neighbor[1][0]) && (site.y == neighbor[1][1])){
+                right_id = site.id;
+            }
+        }
 
-    return neighbors;
+        const pair_ids: [string, string] = [left_id!, right_id!];
+        neighbors_ids.push(pair_ids)
+    }
 
+    let neighborsPerId: {id:string; neighborsOfID: string[]}[] = [];
+    for (const site of sites){
+        let neighborsOfID: string[] = [];
+        for (const pair of neighbors_ids){
+            if (pair[0] == site.id) {
+                neighborsOfID.push(pair[1])
+            }
+            else if (pair[1] == site.id) {
+                neighborsOfID.push(pair[0])
+            }
+        }
+        const id = site.id;
+        const neighborsId = {id, neighborsOfID};
+        neighborsPerId.push(neighborsId);
+    }
 
+    return neighborsPerId;
 }
 
 export function drawGraph(canvas : HTMLCanvasElement, sites: {x: number;y: number; id: string}[], neighbors: Array<[[number, number], [number, number]]>) {
