@@ -23,31 +23,30 @@ export function findNeighborsVoronoi(sites: {x: number; y: number; id: string}[]
     }
     const neighbors_ids: Array<[string, string]> = [];
 
-    for (const neighbor of neighbors){
+    for (const neighbor of neighbors) {
         let left_id: string;
         let right_id: string;
-        for (const site of sites){
-            if ((site.x == neighbor[0][0]) && (site.y == neighbor[0][1])){
+        for (const site of sites) {
+            if ((site.x === neighbor[0][0]) && (site.y === neighbor[0][1])) {
                 left_id = site.id;
             }
-            if ((site.x == neighbor[1][0]) && (site.y == neighbor[1][1])){
+            if ((site.x === neighbor[1][0]) && (site.y === neighbor[1][1])) {
                 right_id = site.id;
             }
         }
 
         const pair_ids: [string, string] = [left_id!, right_id!];
-        neighbors_ids.push(pair_ids)
+        neighbors_ids.push(pair_ids);
     }
 
-    let neighborsPerId: {id:string; neighborsOfID: string[]}[] = [];
-    for (const site of sites){
-        let neighborsOfID: string[] = [];
-        for (const pair of neighbors_ids){
-            if (pair[0] == site.id) {
-                neighborsOfID.push(pair[1])
-            }
-            else if (pair[1] == site.id) {
-                neighborsOfID.push(pair[0])
+    const neighborsPerId: {id:string; neighborsOfID: string[]}[] = [];
+    for (const site of sites) {
+        const neighborsOfID: string[] = [];
+        for (const pair of neighbors_ids) {
+            if (pair[0] === site.id) {
+                neighborsOfID.push(pair[1]);
+            } else if (pair[1] === site.id) {
+                neighborsOfID.push(pair[0]);
             }
         }
         const id = site.id;
