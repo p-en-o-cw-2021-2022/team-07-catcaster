@@ -3,7 +3,6 @@ import { Planet } from '../js/planet.js';
 import {allPlanets} from './animationMain.js';
 
 const qr = <HTMLImageElement>document.getElementById('qrcode');
-qr.style.width = '45' + '%';
 
 const myId = <HTMLDivElement>document.getElementById('receiver-id');
 let controllerId = null;
