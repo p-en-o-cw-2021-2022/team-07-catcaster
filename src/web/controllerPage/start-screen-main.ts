@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/restrict-plus-operands */
 import jsQR from 'jsqr';
 import { Point } from 'jsqr/dist/locator';
 import { findNeighborsVoronoi } from './voronoi.js';
@@ -30,15 +31,43 @@ export class QRlocation {
         this.neighbours = [];
     }
 
-    addNeighbour(qrloc: QRlocation) {
-        this.neighbours.push(qrloc);
+    addNeighbour(qrloc: QRlocation){
+        this.neighbours.push(qrloc)
     }
 }
-
-
+    
 single_screen_button.addEventListener('click',  function() {
-    window.location.href = '/catcaster/controller/?id=' + <string>id + '&mode=singlescreen';
+    window.location.href = '/catcaster/controller/?id=' + id + '&mode=singlescreen';
 });
+
+function send_multiscreen() {
+    const url = 'wss' + window.location.href.substr(5);
+
+    const websocket = new WebSocket(url);
+    console.log('Starting Websocket connection...');
+
+    websocket.onopen = () => {
+        console.log('Connection established.');
+        websocket.send(JSON.stringify({client: 'multi-screen', id: id}));
+    };
+
+    websocket.onmessage = (message:WebSocketMessage) => {
+        const mes = <Message>JSON.parse(message.data);
+        console.log('received message from : ', mes.id, '  |  client is: ', mes.client);
+
+    };
+}
+// function send_multiscreen() {
+//     const url = 'wss' + window.location.href.substr(5);
+
+//     const websocket = new WebSocket(url);
+//     console.log('Starting Websocket connection...');
+
+
+// single_screen_button.addEventListener('click',  function() {
+//     window.location.href = '/catcaster/controller/?id=' + <string>id + '&mode=singlescreen';
+// });
+// }
 
 function cameraStart() {
     navigator.mediaDevices
@@ -122,23 +151,6 @@ cameraTrigger.onclick = function() {
 
 window.addEventListener('load', cameraStart, false);
 
-function send_multiscreen() {
-    const url = 'wss' + window.location.href.substr(5);
-
-    const websocket = new WebSocket(url);
-    console.log('Starting Websocket connection...');
-
-    websocket.onopen = () => {
-        console.log('Connection established.');
-        websocket.send(JSON.stringify({client: 'multi-screen', id: id}));
-    };
-
-    websocket.onmessage = (message:WebSocketMessage) => {
-        const mes = <Message>JSON.parse(message.data);
-        console.log('received message from : ', mes.id, '  |  client is: ', mes.client);
-
-    };
-}
 
 // eslint-disable-next-line @typescript-eslint/no-misused-promises
 multiple_screen_button.addEventListener('click', function() {
@@ -149,6 +161,9 @@ multiple_screen_button.addEventListener('click', function() {
     single_screen_button.style.display = 'none';
     //Start camera
     // window.location.href = '/catcaster/controller/?id=' + <string>id + '&mode=multiscreen';
+    // take_photo.style.visibility = 'visible';
+
+    // window.location.href = '/catcaster/controller/?id=' + id + '&mode=multiscreen';
 });
 
 //returns an array containing tuples of all found QR codes {x, y, id}
@@ -182,6 +197,7 @@ function QR(number: number) {
         const middle_location_x: number = (topLeftCorner.x +bottomRightCorner.x)/2;
         const middle_location_y: number = (topLeftCorner.y+bottomRightCorner.y)/2;
 
+        
         const id: string = qr.data;
         const middle_location: {x: number, y: number} = {x: middle_location_x, y: middle_location_y};
         const qr_init = new QRlocation(id, middle_location, topLeftCorner, bottomRightCorner);
