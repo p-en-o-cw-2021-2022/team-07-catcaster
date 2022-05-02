@@ -9,7 +9,9 @@ import { Planet } from '../js/planet.js';
 
 // Initialize animation scene and camera
 const scene = new THREE.Scene();
-scene.background = new THREE.Color('white');
+const light = new THREE.AmbientLight(); // soft white light
+scene.add( light );
+scene.background = new THREE.Color(0x919bab);
 // const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
 // camera.position.z = 10;
 
@@ -31,8 +33,8 @@ const planet: Planet = new Planet(scene, 0, 5, 10, [0,0,0]);
 // const planet2: Planet = new Planet(scene, 1, 5, 10, [10,0,0]);
 // planet.addNeighbour(planet2, new Vector3(3,0,0));
 // planet2.addNeighbour(planet, new Vector3(-3,0,0));
-const cat: Cat = new Cat(scene, 0, 0.5, planet);
-const cat2: Cat = new Cat(scene, 1, 0.5, planet);
+const cat: Cat = new Cat(scene, 0, 2, planet);
+const cat2: Cat = new Cat(scene, 1, 2, planet);
 // cat2.positionOnPlanet = new Vector3(3, 0, 0);
 planet.setCat(cat);
 planet.setCat(cat2);

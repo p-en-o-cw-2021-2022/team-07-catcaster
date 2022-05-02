@@ -26,8 +26,9 @@ export class Cat {
         this.radius = radius;
         this.positionOnPlanet = new Vector3(0, 0, 0);
         this.planet = planet;
-        this.sphere = new THREE.SphereGeometry( 0.5, 32, 16 );
-        this.mesh = new THREE.Mesh( this.sphere, new THREE.MeshNormalMaterial());
+        this.sphere = new THREE.SphereGeometry( 1, 32, 16 );
+        const material = new THREE.MeshLambertMaterial( { color: 0x0a912a } );
+        this.mesh = new THREE.Mesh( this.sphere, material);
         this.catPositionAngle = [0,0];
         scene.add( this.mesh );
     }
