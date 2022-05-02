@@ -28,7 +28,7 @@ renderer.domElement.style.top = '0';
 document.body.appendChild( renderer.domElement );
 
 //-------------------------------------------------------------------------------------
-const allPlanets : Planet[] = [];
+export const allPlanets : Planet[] = [];
 const screenCount = 1;
 const maxPlanets = 3*screenCount;
 const minPlanets = 1;

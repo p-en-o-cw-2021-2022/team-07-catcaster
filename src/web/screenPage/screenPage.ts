@@ -1,5 +1,8 @@
-const qr = <HTMLImageElement>document.getElementById('qrcode');
+import { Planet } from '../js/planet.js';
 
+import {allPlanets} from './animationMain.js';
+
+const qr = <HTMLImageElement>document.getElementById('qrcode');
 
 const myId = <HTMLDivElement>document.getElementById('receiver-id');
 let controllerId = null;
@@ -24,6 +27,13 @@ function getIdScreen(): string | null {
     }
 }
 
+function sendDataforMulti(websocket: WebSocket, planets: Array<Planet>) {
+    const innerHeight = window.innerHeight;
+    const jsonString = JSON.stringify({client: 'screenMultiData', id: myId.innerHTML, innerHeight: innerHeight, planets: planets});
+    websocket.send(jsonString);
+    console.log('ok');
+}
+
 function eventHandlersScreen() {
     const url = 'wss' + window.location.href.substr(5);
 
@@ -45,10 +55,12 @@ function eventHandlersScreen() {
             console.log('Illegal ID, removing websocket connection.');
             websocket.close();
         }
-        if(mes.client == 'multi-screen'){
+        if(mes.client === 'multi-screen') {
             console.log('Received message');
             const qrcode = <HTMLImageElement>document.getElementById('qrcode');
-            qrcode.src = 'https://chart.googleapis.com/chart?cht=qr&chl=' + getIdScreen() + '&chs=160x160&chld=L|0';
+            qrcode.src = 'https://chart.googleapis.com/chart?cht=qr&chl=' + String(getIdScreen()) + '&chs=160x160&chld=L|0';
+            sendDataforMulti(websocket, allPlanets);
+
         }
     };
 }
