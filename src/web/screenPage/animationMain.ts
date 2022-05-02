@@ -22,6 +22,9 @@ const renderer = new THREE.WebGLRenderer();
 const scaleFactor = 1; // Scale factor for the resolution of window
 renderer.setSize( window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(window.devicePixelRatio * scaleFactor);
+renderer.domElement.style.zIndex = '-1';
+renderer.domElement.style.position = 'absolute';
+renderer.domElement.style.top = '0';
 document.body.appendChild( renderer.domElement );
 
 //-------------------------------------------------------------------------------------
