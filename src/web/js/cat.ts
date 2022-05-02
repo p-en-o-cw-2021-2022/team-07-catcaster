@@ -79,8 +79,6 @@ export class Cat {
         // const oldGamma = this.planet.gamma;
         // const oldBeta = this.planet.beta;
 
-        const dAngles = this.planet.updateAngles();
-
         // const dgamma = oldGamma - this.planet.gamma;
         // const dbeta = oldBeta - this.planet.beta;
 

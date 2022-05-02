@@ -79,7 +79,7 @@ export class Planet {
         }
     }
 
-    updateAngles() {
+    updateAngles(dt: number) {
 
         // TODO: Make this work with the Map of cats
         // update gamma x
@@ -91,6 +91,10 @@ export class Planet {
             yRatio += (cat.positionOnPlanet.y) / this.radius;
         }
 
+        // Adjust ratio scaling so that it doesn't exceed 1
+        xRatio = xRatio / this.cats.size;
+        yRatio = yRatio / this.cats.size;
+
         this.gamma = this.MAX_ANGLE * xRatio;
         this.beta = -this.MAX_ANGLE * yRatio;
 
@@ -101,6 +105,10 @@ export class Planet {
         newCircle.rotateY(this.gamma);
 
         this.mesh.geometry.copy(newCircle);
+
+        for (const cat of this.cats.values()) {
+            cat.updatePosition(dt);
+        }
     }
 
     checkTP(cat: Cat) {

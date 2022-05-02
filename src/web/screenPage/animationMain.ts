@@ -54,8 +54,7 @@ function animate() {
     //     cat.xF = Number(gamma);
     //     cat.yF = Number(beta);
     // }
-    cat.updatePosition(dt);
-    cat2.updatePosition(dt);
+    planet.updateAngles(dt); // This needs to be done for all planets on this screen
     renderer.render( scene, camera );
     setDebugInfo();
     requestAnimationFrame( animate );
