@@ -10,7 +10,7 @@
     </head>
     <body>
         <h1>Sender</h1>
-
+        
         <table class="control">
             <tr>
                 <td class="title">Status:</td>
@@ -61,7 +61,10 @@
                 function initialize() {
                     // Create own peer object with connection to shared PeerJS server
                     peer = new Peer(senderId.innerHTML, {
-                        debug: 2
+                        debug: 2,
+                        secure: true,
+                        host: 'peerjs-server-catcaster.herokuapp.com',
+                        port: 443
                     });
 
                     peer.on('open', function (id) {

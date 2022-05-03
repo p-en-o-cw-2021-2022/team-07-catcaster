@@ -7,7 +7,6 @@ export class Planet {
     radius: number;
     coordinates: Vector3;
     cats: Map<number, Cat>;
-    // cat: Cat | undefined = undefined; // Should be removed later
     friction: number;
     alpha:number = 0;
     beta:number = 0;
@@ -43,6 +42,8 @@ export class Planet {
             const y = this.coordinates.y;
             const z = this.coordinates.z;
             const portalCoords = new Vector3(x,y,z);
+            console.log('portalvetor: ', portalVector);
+            console.log('portalcoordinates: ', portalCoords);
             this.portals.set(newNeighbour.id, portalVector.add(portalCoords));
         }
     }
@@ -76,6 +77,25 @@ export class Planet {
         if (!this.cats.has(cat.id)) {
             // this.cat = cat;
             this.cats.set(cat.id, cat);
+        }
+    }
+
+    seekShortestPlanet(allPlanets: Planet[]) {
+        const [myX, myY, myZ] = this.coordinates;
+        let shortestDistance: number = Number.POSITIVE_INFINITY;
+        let shortestPlanet: Planet = this;
+        for (let i = 0, len = allPlanets.length; i < len; i++) {
+            let [yourX, yourY, yourZ] = allPlanets[i].coordinates;
+            let distance = Math.pow(myX-yourX, 2) + Math.pow(myY-yourY, 2);
+            if ((distance < shortestDistance) && (distance !== 0)) {
+                shortestDistance = distance;
+                shortestPlanet = allPlanets[i];
+            }
+        }
+        if (shortestDistance !== Number.POSITIVE_INFINITY) {
+            return shortestPlanet;
+        } else {
+            return null;
         }
     }
 
@@ -119,7 +139,8 @@ export class Planet {
             const planetId = entry[0];
             const portalVec3 = entry[1];
 
-            if(tmp.distanceTo(portalVec3) <= 2) {
+            if(tmp.distanceTo(portalVec3) <= 120) {
+                console.log('goeie');
                 const neighbour: Planet = this.neighbours.get(planetId)!;
                 cat.setPlanet(neighbour);
                 const x = neighbour.coordinates.x;

@@ -1,17 +1,37 @@
+import { Planet } from '../js/planet.js';
+
+import {allPlanets} from './animationMain.js';
+
+const qr = <HTMLImageElement>document.getElementById('qrcode');
 
 const myId = <HTMLDivElement>document.getElementById('receiver-id');
-myId.innerHTML = getIdScreen();
 let controllerId = null;
-eventHandlersScreen();
 
-function getIdScreen() {
-    const currentUrl = window.location.href;
-    let result:string = '';
-    for(let i = 0; i < 8;i++) {
-        const index = currentUrl.length - 8 + i;
-        result = result + currentUrl[index];
+interface Message {
+    'id': string;
+    'client': string;
+}
+
+interface WebSocketMessage {
+    'data': string;
+}
+
+function getIdScreen(): string | null {
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    const id: string | null = urlParams.get('id');
+    if (id) {
+        return id;
+    } else {
+        return null;
     }
-    return result;
+}
+
+function sendDataforMulti(websocket: WebSocket, planets: Array<Planet>) {
+    const innerHeight = window.innerHeight;
+    const jsonString = JSON.stringify({client: 'screenMultiData', id: myId.innerHTML, innerHeight: innerHeight, planets: planets});
+    websocket.send(jsonString);
+    console.log('ok');
 }
 
 function eventHandlersScreen() {
@@ -20,18 +40,34 @@ function eventHandlersScreen() {
     const websocket = new WebSocket(url);
     console.log('Starting Websocket connection...');
 
-    websocket.onopen = (event) => {
+    websocket.onopen = () => {
         console.log('Connection established.');
         websocket.send(JSON.stringify({client: 'screen', id: myId.innerHTML}));
     };
 
-    websocket.onmessage = (message:any) => {
-        const mes = JSON.parse(message.data);
+    websocket.onmessage = (message:WebSocketMessage) => {
+        const mes = <Message>JSON.parse(message.data);
         console.log('received message from : ', mes.id, '  |  client is: ', mes.client);
-        if(mes.client == 'controller') {
+        if(mes.client === 'controller') {
             controllerId = mes.id;
+        }
+        if(mes.client === 'disconnect' && mes.id === myId.innerHTML) {
+            console.log('Illegal ID, removing websocket connection.');
+            websocket.close();
+        }
+        if(mes.client === 'multi-screen') {
+            console.log('Received message');
+            const qrcode = <HTMLImageElement>document.getElementById('qrcode');
+            qrcode.src = 'https://chart.googleapis.com/chart?cht=qr&chl=' + String(getIdScreen()) + '&chs=160x160&chld=L|0';
+            sendDataforMulti(websocket, allPlanets);
+
         }
     };
 }
+
+if (getIdScreen() !== null) {
+    myId.innerHTML = <string>getIdScreen();
+}
+eventHandlersScreen();
 
 export {myId, controllerId};
