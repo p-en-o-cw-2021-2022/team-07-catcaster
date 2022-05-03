@@ -18,13 +18,13 @@ button {
     border-radius: 25px;
     position: absolute;
 }
-
+/*
 .button:hover {background-color: gray}
 
 .button:active {
   background-color: gray;
   box-shadow: 0 5px #666;
   transform: translateY(4px);
-}
+}*/
 
 
