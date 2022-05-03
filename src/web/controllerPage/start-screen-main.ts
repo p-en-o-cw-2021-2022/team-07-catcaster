@@ -17,7 +17,7 @@ let number: number;
 const queryString = window.location.search;
 const urlParams = new URLSearchParams(queryString);
 const id: string | null = urlParams.get('id');
-let qrlocations: QRlocation[]|null = null;
+let qrlocationsweb: QRlocation[]|null = null;
 
 export class QRlocation {
     id : string;
@@ -43,51 +43,42 @@ single_screen_button.addEventListener('click',  function() {
     window.location.href = '/catcaster/controller/?id=' + id + '&mode=singlescreen';
 });
 
-function send_multiscreen() {
-    const url = 'wss' + window.location.href.substr(5);
+const url = 'wss' + window.location.href.substr(5);
 
-    let websocket = new WebSocket(url);
-    console.log('Starting Websocket connection...');
+let websocket = new WebSocket(url);
+console.log('Starting Websocket connection...');
 
-    websocket.onopen = () => {
-        console.log('Connection established.');
-        websocket.send(JSON.stringify({client: 'multi-screen', id: id}));
+websocket.onopen = () => {
+    console.log('Connection established.');
+};
+
+websocket.onmessage = async (message:WebSocketMessage) => {
+    const mes = <Message>JSON.parse(message.data);
+    console.log('received message from : ', mes.id, '  |  client is: ', mes.client);
+    if(mes.client == 'disconnect' && mes.id == id){
+        console.log('Illegal ID, removing websocket connection.');
+        websocket.close();
+        window.location.href = '/catcaster/error/'
+    }
+};
+
+websocket.onclose = (event) => {
+    websocket.send(JSON.stringify({client: 'disconnected', id: id}))
+    console.log('Connection lost, attempting to reconnect...') //ADD TO HTML PAGE !!!!
+    let tries = 0
+    while (websocket.readyState == 3 && tries <= 10) {
+        websocket = new WebSocket(url);
+        tries += 1;
     };
-
-    websocket.onmessage = async (message:WebSocketMessage) => {
-        const mes = <Message>JSON.parse(message.data);
-        console.log('received message from : ', mes.id, '  |  client is: ', mes.client);
-        if(mes.client == 'disconnect' && mes.id == id){
-            console.log('Illegal ID, removing websocket connection.');
-            websocket.close();
-            window.location.href = '/catcaster/error/'
-        }
-        else if (mes.client == 'multiscreen-send') {
-            while (qrlocations == null) {
-                sleep(50);
-            }
-            websocket.send(JSON.stringify({client:'qrlocations', data:qrlocations}))
-            window.location.href = '/catcaster/controller/?id=' + id + '&mode=multiscreen';
-        }
-    };
-
-    websocket.onclose = (event) => {
-        websocket.send(JSON.stringify({client: 'disconnected', id: id}))
-        console.log('Connection lost, attempting to reconnect...') //ADD TO HTML PAGE !!!!
-        let tries = 0
-        while (websocket.readyState == 3 && tries <= 10) {
-            websocket = new WebSocket(url);
-            tries += 1;
-            sleep(50)
-        };
-        if (websocket.readyState == 1) {
-            console.log('Reconnected succesfully.') //ADD TO HTML PAGE !!!!
-        }
-        else {
-            console.log('Reconnection failed, terminating...') //ADD TO HTML PAGE !!!!
-        }
+    if (websocket.readyState == 1) {
+        console.log('Reconnected succesfully.') //ADD TO HTML PAGE !!!!
+    }
+    else {
+        console.log('Reconnection failed, terminating...') //ADD TO HTML PAGE !!!!
     }
 }
+
+
 // function send_multiscreen() {
 //     const url = 'wss' + window.location.href.substr(5);
 
@@ -116,7 +107,7 @@ function getQRLocations() {
     try {
         //Scan camera for locations and contents of QR codes
         const qrlocations:Array<QRlocation> = QR(number);
-
+        alert('HIER');
         const sites: {x: number; y: number; id: string}[] = [];
 
         for (const qrloc of qrlocations) {
@@ -144,11 +135,11 @@ function getQRLocations() {
             }
         }
 
-        console.log(qrlocations);
+        websocket.send(JSON.stringify({client:'qrlocations', data: qrlocations}))
 
         /* server code */
-    } catch {
-        console.log('Something went wrong, try taking a clearer photo.');
+    } catch(e) {
+        alert(e);
     }
 }
 
@@ -176,7 +167,7 @@ cameraTrigger.onclick = function() {
         }
         number = parseInt(input);
     }
-    send_multiscreen();
+    
     getQRLocations();
 };
 
@@ -190,9 +181,9 @@ multiple_screen_button.addEventListener('click', function() {
     cameraView.style.display = 'block';
     multiple_screen_button.style.display = 'none';
     single_screen_button.style.display = 'none';
+    websocket.send(JSON.stringify({client: 'multi-screen', id: id}));
     //Start camera
     // window.location.href = '/catcaster/controller/?id=' + <string>id + '&mode=multiscreen';
-    // take_photo.style.visibility = 'visible';
 
     // window.location.href = '/catcaster/controller/?id=' + id + '&mode=multiscreen';
 });
@@ -203,6 +194,8 @@ multiple_screen_button.addEventListener('click', function() {
 //If not enough QR codes can be found (due to inaccuracies), take a new image, try again
 function QR(number: number) {
     const imageData = cameraSensor.getContext('2d')!.getImageData(0, 0, cameraSensor.width, cameraSensor.height);
+    cameraSensor.getContext('2d')!.drawImage(cameraView, 0, 0);
+    alert('doet niks jonge')
     if (imageData === null || imageData === undefined) {
         throw new Error('imageData was null');
     }

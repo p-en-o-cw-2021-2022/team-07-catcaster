@@ -57,8 +57,9 @@ function eventHandlersScreen() {
         }
         if(mes.client === 'multi-screen') {
             console.log('Received message');
-            const qrcode = <HTMLImageElement>document.getElementById('qrcode');
-            qrcode.src = 'https://chart.googleapis.com/chart?cht=qr&chl=' + String(getIdScreen()) + '&chs=160x160&chld=L|0';
+            const qrcodelarge = <HTMLImageElement>document.getElementById('qrcodelarge');
+            qrcodelarge.src = 'https://api.qrserver.com/v1/create-qr-code/?size=500x500&data=' + String(getIdScreen());
+
             sendDataforMulti(websocket, allPlanets);
 
         }
