@@ -27,7 +27,7 @@ export class Cat {
         this.positionOnPlanet = new Vector3(0, 0, 0);
         this.planet = planet;
         this.sphere = new THREE.SphereGeometry( 1, 32, 16 );
-        const material = new THREE.MeshLambertMaterial( { color: 0x0a912a } );
+        const material = new THREE.MeshLambertMaterial( { color: 0x0a912a } ); // This should be taken in as a constructor argument, but might break things when that happens
         this.mesh = new THREE.Mesh( this.sphere, material);
         this.catPositionAngle = [0,0];
         scene.add( this.mesh );
