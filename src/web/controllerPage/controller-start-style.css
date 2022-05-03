@@ -25,14 +25,14 @@ button {
   transform: translateY(4px);
 }
 
-.single-screen-button {
-  top: 30%;
+#single-screen-button {
+  top: 10%;
   left: 10%;
 }
 
-.multiple-screen-button {
+#multiple-screen-button {
   top: 50%;
-  left: 20%;
+  left: 10%;
 }
 
 
