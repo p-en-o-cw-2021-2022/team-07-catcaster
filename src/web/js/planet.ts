@@ -85,8 +85,8 @@ export class Planet {
         let shortestDistance: number = Number.POSITIVE_INFINITY;
         let shortestPlanet: Planet = this;
         for (let i = 0, len = allPlanets.length; i < len; i++) {
-            let [yourX, yourY, yourZ] = allPlanets[i].coordinates;
-            let distance = Math.pow(myX-yourX, 2) + Math.pow(myY-yourY, 2);
+            const [yourX, yourY, yourZ] = allPlanets[i].coordinates;
+            const distance = Math.pow(myX-yourX, 2) + Math.pow(myY-yourY, 2);
             if ((distance < shortestDistance) && (distance !== 0)) {
                 shortestDistance = distance;
                 shortestPlanet = allPlanets[i];

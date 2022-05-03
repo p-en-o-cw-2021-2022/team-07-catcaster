@@ -27,7 +27,7 @@ export class Cat {
         this.positionOnPlanet = new Vector3(0, 0, 0);
         this.planet = planet;
         this.sphere = new THREE.SphereGeometry( 1, 32, 16 );
-        const material = new THREE.MeshLambertMaterial( { color: 0x0a912a } ); // This should be taken in as a constructor argument, but might break things when that happens
+        const material = new THREE.MeshLambertMaterial( { color: this.generateColor(id) } ); // This should be taken in as a constructor argument, but might break things when that happens
         this.mesh = new THREE.Mesh( this.sphere, material);
         this.catPositionAngle = [0,0];
         scene.add( this.mesh );
@@ -109,7 +109,24 @@ export class Cat {
 
         return vector.distanceTo(new Vector3(0,0,0)) <= this.planet.radius;
     }
+
+    generateColor(id: number): THREE.ColorRepresentation | undefined {
+
+        let hash: number = 5381;
+
+        for (let i = 0; i < id.toString().length; i++) {
+            hash = ((hash << 5) + hash) + id.toString().charCodeAt(i); /* hash * 33 + c */
+        }
+
+        const r = (hash & 0xFF0000) >> 16;
+        const g = (hash & 0x00FF00) >> 8;
+        const b = hash & 0x0000FF;
+
+        return '#' + ('0' + r.toString(16)).substr(-2) + ('0' + g.toString(16)).substr(-2) + ('0' + b.toString(16)).substr(-2);
+    }
 }
+
+
 
 
 // calcFriction(axis: string, force: number):number {
