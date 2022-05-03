@@ -24,7 +24,7 @@ export class QRlocation {
     middle_location: {x: number, y:number};
     topleft_location: {x: number, y:number};
     bottomright_location: {x: number, y:number};
-    neighbours: QRlocation[];
+    neighbours: string[];
 
     constructor(id: string, middle_location: {x: number, y:number}, topleft_location: {x: number, y:number}, bottomright_location: {x: number, y:number}) {
         this.id = id;
@@ -35,7 +35,7 @@ export class QRlocation {
     }
 
     addNeighbour(qrloc: QRlocation){
-        this.neighbours.push(qrloc)
+        this.neighbours.push(qrloc.id)
     }
 }
     
