@@ -5,11 +5,9 @@ body {
 }
 
 button {
-    top: 30%;
-    left: 10%;
     height: 30%;
     width: 35%; 
-    background: ivory;
+    background: turquoise;
     color: ivory;
     font-family: "Times New Roman", sans-serif;
     font-weight: 400;
@@ -18,13 +16,23 @@ button {
     border-radius: 25px;
     position: absolute;
 }
-/*
+
 .button:hover {background-color: gray}
 
 .button:active {
   background-color: gray;
   box-shadow: 0 5px #666;
   transform: translateY(4px);
-}*/
+}
+
+.single-screen-button {
+  top: 30%;
+  left: 10%;
+}
+
+.multiple-screen-button {
+  top: 50%;
+  left: 20%;
+}
 
 
