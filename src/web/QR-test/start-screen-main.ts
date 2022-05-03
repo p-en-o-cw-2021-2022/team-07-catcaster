@@ -1,4 +1,6 @@
 /* eslint-disable @typescript-eslint/restrict-plus-operands */
+import { writeSync } from 'fs';
+import { waitForDebugger } from 'inspector';
 import jsQR from 'jsqr';
 import { Point } from 'jsqr/dist/locator';
 import { findNeighborsVoronoi } from './voronoi.js';
@@ -12,6 +14,7 @@ let number: number;
 const queryString = window.location.search;
 const urlParams = new URLSearchParams(queryString);
 const id: string | null = urlParams.get('id');
+let qrlocations: QRlocation[]|null = null;
 
 export class QRlocation{
     id : string;
@@ -48,13 +51,25 @@ function send_multiscreen() {
         websocket.send(JSON.stringify({client: 'multi-screen', id: id}));
     };
 
-    websocket.onmessage = (message:WebSocketMessage) => {
+    websocket.onmessage = async (message:WebSocketMessage) => {
         const mes = <Message>JSON.parse(message.data);
         console.log('received message from : ', mes.id, '  |  client is: ', mes.client);
         if(mes.client == 'disconnect' && mes.id == id){
             console.log('Illegal ID, removing websocket connection.');
             websocket.close();
             window.location.href = '/catcaster/error/'
+        }
+        else if (mes.client == 'multiscreen-send') {
+            const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+            video.srcObject = stream;
+        
+            take_photo.style.visibility = 'visible';
+            
+            while (qrlocations == null) {
+                sleep(50);
+            }
+            websocket.send(JSON.stringify({client:'qrlocations', data:qrlocations}))
+            window.location.href = '/catcaster/controller/?id=' + id + '&mode=multiscreen';
         }
     };
 
@@ -73,7 +88,8 @@ function send_multiscreen() {
         else {
             console.log('Reconnection failed, terminating...') //ADD TO HTML PAGE !!!!
         }
-    }}
+    }
+}
 
 take_photo.addEventListener('click', function() {
     try {
@@ -137,14 +153,6 @@ multiple_screen_button.addEventListener('click', async function() {
     }
 
     send_multiscreen();
-
-    //Start camera
-    const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
-    video.srcObject = stream;
-
-    take_photo.style.visibility = 'visible';
-
-    window.location.href = '/catcaster/controller/?id=' + id + '&mode=multiscreen';
 });
 
 //returns an array containing tuples of all found QR codes {x, y, id}

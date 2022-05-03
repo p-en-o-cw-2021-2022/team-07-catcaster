@@ -56,7 +56,13 @@ export function websocketEventHandlers(websocket:ws.Server) {
                 websocket.clients.forEach((client) => {
                     client.send(JSON.stringify({client : 'multi-screen'}));
                 });
+                ws.send(JSON.stringify({client: 'multiscreen-send'}))
+
+            case 'qrlocations':
+                console.log('received qr data',mes.data);
             }
+
+            
         });
     });
 
