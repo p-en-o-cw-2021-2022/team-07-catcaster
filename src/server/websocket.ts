@@ -3,6 +3,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import ws, { WebSocketServer } from 'ws';
 import { database } from './index';
+import { z } from 'zod';
 
 const multiScreenData:{ [key: string]: Array<string> } = {};
 
@@ -11,6 +12,7 @@ export function websocketEventHandlers(websocket:ws.Server) {
     websocket.on('connection', (ws : ws.WebSocket) => {
 
         console.log('Connection established.');
+
 
         ws.on('message', (message) => {
             const mes : any = <string>JSON.parse(message.toString());
@@ -51,20 +53,36 @@ export function websocketEventHandlers(websocket:ws.Server) {
                 break;
 
             case 'multi-screen':
-                console.log('ABCD');
+                if (!database.doesIdExist(mes.id)){
+                    console.log('Received ID is not in the database, closing connection to client.');
+                    ws.send(JSON.stringify({client : 'disconnect', id : mes.id}))
+                }
                 websocket.clients.forEach((client) => {
                     client.send(JSON.stringify({client : 'multi-screen'}));
                 });
-                break;
+                ws.send(JSON.stringify({client: 'multiscreen-send'}))
+
+            case 'qrlocations':
+                console.log('qrlocations ontvangen')
+                console.log(mes.data)
 
             case 'screenMultiData':
                 multiScreenData[id] = [mes.innerHeight, mes.planets];
-                console.log(multiScreenData);
+                //console.log(multiScreenData);
             }
+
+            
         });
     });
 
     websocket.on('close', () => {
         console.log('Websocket connection closed.');
+    });
+}
+
+function ping(clients: any) {
+    clients.forEach(function(client: any) {
+        client.send(JSON.stringify({client: '__ping__'}));
+
     });
 }

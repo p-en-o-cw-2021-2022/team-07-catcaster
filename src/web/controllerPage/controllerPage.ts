@@ -56,7 +56,6 @@ function eventHandlersController() {
         while (websocket.readyState === 3 && tries <= 10) {
             websocket = new WebSocket(url);
             tries += 1;
-            sleep(50);
         }
         if (websocket.readyState === 1) {
             console.log('Reconnected succesfully.'); //ADD TO HTML PAGE !!!!
@@ -64,14 +63,6 @@ function eventHandlersController() {
             console.log('Reconnection failed, terminating...'); //ADD TO HTML PAGE !!!!
         }
     };
-}
-
-function sleep(milliseconds: any) {
-    const date = Date.now();
-    let currentDate = null;
-    do {
-        currentDate = Date.now();
-    } while (currentDate - date < milliseconds);
 }
 
 if (getIdController() !== null) {
