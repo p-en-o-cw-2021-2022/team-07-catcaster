@@ -7,11 +7,11 @@ import { Planet } from './planet'
 export class Portal {
     otherScreen: string;
     myCoordinates: Vector3;
-    otherPlanet: number;
+    otherPlanet: Planet;
     // circle: THREE.CircleGeometry;
     // animation: THREE.Mesh;
 
-    constructor(otherScreen: string, myCoordinates: Vector3, otherPlanet: number) {
+    constructor(otherScreen: string, myCoordinates: Vector3, otherPlanet: Planet) {
         this.otherScreen = otherScreen;
         this.myCoordinates  = myCoordinates;
         this.otherPlanet = otherPlanet;

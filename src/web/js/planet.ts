@@ -33,7 +33,7 @@ export class Planet {
         scene.add( this.animation );
     }
 
-    setPortal(portal: Portal){
+    addPortal(portal: Portal){
         this.portals.push(portal);
     }
 

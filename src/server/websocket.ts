@@ -7,6 +7,7 @@ import { Planet } from '../web/js/planet';
 import { Portal } from '../web/js/portal';
 import { database } from './index';
 import { findNeighborsVoronoi } from '../web/controllerPage/voronoi'
+import { Vector2Tuple, Vector3 } from 'three';
 
 const multiScreenData:{[key: string]: [number, Planet[]]} = {};
 
@@ -81,6 +82,23 @@ function findPlanet(id: number){
     }
 }
 
+function findScreenCoordinates(id: string){
+    for (const qr of qrlocations){
+        if(qr.id == id){
+            return qr.middle_location;
+        }
+    }
+}
+
+function calculatePortalCoordinates(myPlanet: Planet, otherPlanet: Planet, ratio: number, screenCoordinates: Vector3){
+    let vector = otherPlanet.coordinates - myPlanet.coordinates;
+    vector.normalize();
+    vector.multiplyScalar(myPlanet.radius-2);
+    // planet.coordinates = [qrloc.middle_location.x + planet.coordinates[0] * ratio[id], qrloc.middle_location.y + planet.coordinates[1]*ratio[id], 0];
+    const localPlanetCoordinates = (myPlanet.coordinates - screenCoordinates)/ratio;
+    return localPlanetCoordinates + vector;
+}
+
 function generateSites(qrlocations: QRlocation[]) {
     let ratio = Object();
     let sites: Array<{x: number; y: number; id: string}> = [];
@@ -101,17 +119,17 @@ function generateSites(qrlocations: QRlocation[]) {
     // const Portals = Portal[];
     for(const planet of neighbors){
         const myID = planet.id;
-        const myPlanet = findPlanet(Number(myID))
+        const myPlanet = findPlanet(Number(myID))!;
+        const myCoordinates = myPlanet!.coordinates;
         const neighborsToAdd = planet.neighborsOfID;
         for(const neighborToAdd of neighborsToAdd){
-            const [otherScreen, otherPlanet] = planetsIDs[Number(neighborToAdd)];
-            const portalCoordinates = ;
-            // neighborToAdd -> int -> local;
+            const [otherScreen, otherPlanetID] = planetsIDs[Number(neighborToAdd)];
+            const screenID = planetsIDs[Number(myID)][0];
+            const otherPlanet = findPlanet(otherPlanetID)!;
+            const screenCoordinates = findScreenCoordinates(screenID);
+            const portalCoordinates = calculatePortalCoordinates(myPlanet, otherPlanet, ratio[screenID], screenCoordinates);
             const portal = new Portal(otherScreen, portalCoordinates, otherPlanet);
-            for (const planet of multiScreenData[id][1]){
-                if(planet.id = myID){
-
-                }
+            myPlanet.addPortal(portal);
             }
         }
     }
