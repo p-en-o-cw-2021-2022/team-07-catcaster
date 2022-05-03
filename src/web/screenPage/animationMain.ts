@@ -1,6 +1,7 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+import { loadavg } from 'os';
 import * as THREE from 'three';
-import { Scene, Vector3 } from 'three';
+import { Mesh, MeshBasicMaterial, MeshNormalMaterial, Scene, Vector3 } from 'three';
+import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
 import { Cat } from '../js/cat.js';
 import { setInnerText } from '../js/dom-util.js';
 import { askPermissionIfNeeded } from '../js/motion-events.js';
@@ -8,14 +9,17 @@ import { Planet } from '../js/planet.js';
 
 // Initialize animation scene and camera
 const scene = new THREE.Scene();
-scene.background = new THREE.Color('white');
-const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
-camera.position.z = 800;
-// const camera = new THREE.OrthographicCamera( (window.innerWidth / - 2) + 80, (window.innerWidth / 2) - 80, window.innerHeight / 2, window.innerHeight / - 2, 0, 50 );
+const light = new THREE.AmbientLight(); // soft white light
+scene.add( light );
+scene.background = new THREE.Color(0x919bab);
+// const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+// camera.position.z = 10;
 const cats : Cat[] = [];
 const catsData : HTMLElement[][] = [];
 let controllers_count = 0;
-// camera.rotateX(-Math.PI/2);
+const camera = new THREE.OrthographicCamera( window.innerWidth/-40, window.innerWidth / 40, window.innerHeight / 40, window.innerHeight / -40, -50, 50 );
+// camera.position.y = -10;
+// camera.rotateX(Math.PI/4);
 
 // Initialize renderer
 const renderer = new THREE.WebGLRenderer();
@@ -127,12 +131,7 @@ function animate() {
         }
         cat.updatePosition(dt);
         renderer.render( scene, camera );
-        setInnerText('xF', cat.xF);
-        setInnerText('yF', cat.yF);
-        setInnerText('xP', cat.position.x.toFixed(3));
-        setInnerText('yP', cat.position.y.toFixed(3));
-        setInnerText('zP', cat.position.z.toFixed(3));
-        setInnerText('angle', [allPlanets[0].alpha, allPlanets[0].beta, allPlanets[0].gamma].toString());
+        setDebugInfo();
     }
     requestAnimationFrame(animate);
 }
@@ -155,6 +154,22 @@ function update(e: KeyboardEvent) {
         // cat.updateForce('x', cat.xF - 5);
         cats[0].xVel -= 1;
         break;
+    case 'l' :
+        // cat.updateForce('x', cat.xF + 5);
+        cat2.xVel += 1;
+        break;
+    case 'k' :
+        // cat.updateForce('y', cat.yF - 5);
+        cat2.yVel -= 1;
+        break;
+    case 'i' :
+        // cat.updateForce('y', cat.yF + 5);
+        cat2.yVel += 1;
+        break;
+    case 'j' :
+        // cat.updateForce('x', cat.xF - 5);
+        cat2.xVel -= 1;
+        break;
     }
 }
 
@@ -175,6 +190,16 @@ function firstTouch() {
         if (ok) {window.addEventListener('deviceorientation', update2);}
     });
 }
+
+function setDebugInfo() {
+
+    setInnerText('xF', cat.xF);
+    setInnerText('yF', cat.yF);
+    setInnerText('xP', cat.positionOnPlanet.x.toFixed(3));
+    setInnerText('yP', cat.positionOnPlanet.y.toFixed(3));
+    setInnerText('zP', cat.positionOnPlanet.z.toFixed(3));
+    setInnerText('angle', [planet.alpha * (180/Math.PI), planet.beta* (180/Math.PI), planet.gamma* (180/Math.PI)].toString());
+    setInnerText('catPosAngle', [cat.catPositionAngle[0] * (180/Math.PI), cat.catPositionAngle[1] * (180/Math.PI)].toString());
 
 function newController() {
     const controllers = document.getElementById('gyrodatas')?.children;
