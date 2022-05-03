@@ -8,15 +8,17 @@ import { Portal } from '../web/js/portal';
 import { database } from './index';
 import { findNeighborsVoronoi } from '../web/controllerPage/voronoi'
 import { Vector2Tuple, Vector3 } from 'three';
+import { z } from 'zod';
 
 const multiScreenData:{[key: string]: [number, Planet[]]} = {};
-const qrlocations: QRlocation[] = Array();
+let qrlocations: QRlocation[] = Array();
 
 export function websocketEventHandlers(websocket: ws.Server) {
 
     websocket.on('connection', (ws : ws.WebSocket) => {
 
         console.log('Connection established.');
+
 
         ws.on('message', (message) => {
             const mes : any = <string>JSON.parse(message.toString());
@@ -57,16 +59,26 @@ export function websocketEventHandlers(websocket: ws.Server) {
                 break;
 
             case 'multi-screen':
-                console.log('ABCD');
+                if (!database.doesIdExist(mes.id)){
+                    console.log('Received ID is not in the database, closing connection to client.');
+                    ws.send(JSON.stringify({client : 'disconnect', id : mes.id}));
+                }
                 websocket.clients.forEach((client) => {
                     client.send(JSON.stringify({client : 'multi-screen'}));
                 });
-                break;
+                ws.send(JSON.stringify({client: 'multiscreen-send'}));
+
+            case 'qrlocations':
+                console.log('qrlocations ontvangen');
+                qrlocations = mes.data;
+                console.log(mes.data);
 
             case 'screenMultiData':
                 multiScreenData[id] = [mes.innerHeight, mes.planets];
-                console.log(multiScreenData);
+                //console.log(multiScreenData);
             }
+
+            
         });
     });
 
@@ -144,4 +156,11 @@ function generateSites() {
             myPlanet.addPortal(portal);
         }
     }
+}
+
+function ping(clients: any) {
+    clients.forEach(function(client: any) {
+        client.send(JSON.stringify({client: '__ping__'}));
+
+    });
 }
