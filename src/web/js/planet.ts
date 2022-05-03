@@ -81,12 +81,12 @@ export class Planet {
     }
 
     seekShortestPlanet(allPlanets: Planet[]) {
-        const [myX, myY, myZ] = this.coordinates;
+        const my: Vector3 = this.coordinates;
         let shortestDistance: number = Number.POSITIVE_INFINITY;
         let shortestPlanet: Planet = this;
         for (let i = 0, len = allPlanets.length; i < len; i++) {
-            const [yourX, yourY, yourZ] = allPlanets[i].coordinates;
-            const distance = Math.pow(myX-yourX, 2) + Math.pow(myY-yourY, 2);
+            const your: Vector3= allPlanets[i].coordinates;
+            const distance = Math.pow(my.x-your.x, 2) + Math.pow(my.y-your.y, 2);
             if ((distance < shortestDistance) && (distance !== 0)) {
                 shortestDistance = distance;
                 shortestPlanet = allPlanets[i];
