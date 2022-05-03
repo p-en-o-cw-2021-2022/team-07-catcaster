@@ -201,6 +201,8 @@ function setDebugInfo() {
     setInnerText('angle', [planet.alpha * (180/Math.PI), planet.beta* (180/Math.PI), planet.gamma* (180/Math.PI)].toString());
     setInnerText('catPosAngle', [cat.catPositionAngle[0] * (180/Math.PI), cat.catPositionAngle[1] * (180/Math.PI)].toString());
 
+}
+
 function newController() {
     const controllers = document.getElementById('gyrodatas')?.children;
     if (controllers) {
