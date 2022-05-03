@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { Plane, Scene, Vector3 } from 'three';
 import { Cat } from './cat.js';
+import { Portal } from './portal.js';
 export class Planet {
 
     id: number;
@@ -15,7 +16,7 @@ export class Planet {
     MAX_ANGLE: number = 2 * Math.PI/9;
     animation: THREE.Mesh;
     circle: THREE.CircleGeometry;
-    portals: Map<number, Vector3>;
+    portals: Portal[];
     neighbours: Map<number, Planet>;
 
     constructor(scene: Scene, id: number, radius: number, friction: number, coordinates: number[] = [0,0,0]) {
@@ -24,29 +25,33 @@ export class Planet {
         this.radius = radius;
         this.friction = friction;
         this.neighbours = new Map<number, Planet>();
-        this.portals = new Map<number, Vector3>();
         this.cats = new Map<number, Cat>();
-
+        this.portals = new Array();
         this.circle = new THREE.CircleGeometry( this.radius, 32 );
         this.circle.translate(coordinates[0], coordinates[1], coordinates[2]);
         this.animation = new THREE.Mesh( this.circle, new THREE.MeshNormalMaterial() );
         scene.add( this.animation );
     }
 
+    setPortal(portal: Portal){
+        this.portals.push(portal);
+    }
+
+
     // Add a new neighbouring planet if not already added.
     // Portal vector is relative to center of the neightbour planet
-    addNeighbour(newNeighbour: Planet, portalVector: Vector3) {
-        if (!this.neighbours.has(newNeighbour.id)) {
-            this.neighbours.set(newNeighbour.id, newNeighbour);
-            const x = this.coordinates[0];
-            const y = this.coordinates[1];
-            const z = this.coordinates[2];
-            const portalCoords = new Vector3(x,y,z);
-            console.log('portalvetor: ', portalVector)
-            console.log('portalcoordinates: ', portalCoords)
-            this.portals.set(newNeighbour.id, portalVector.add(portalCoords));
-        }
-    }
+    // addNeighbour(newNeighbour: Planet, portalVector: Vector3) {
+    //     if (!this.neighbours.has(newNeighbour.id)) {
+    //         this.neighbours.set(newNeighbour.id, newNeighbour);
+    //         const x = this.coordinates[0];
+    //         const y = this.coordinates[1];
+    //         const z = this.coordinates[2];
+    //         const portalCoords = new Vector3(x,y,z);
+    //         console.log('portalvetor: ', portalVector)
+    //         console.log('portalcoordinates: ', portalCoords)
+    //         this.portals.set(newNeighbour.id, portalVector.add(portalCoords));
+    //     }
+    // }
 
     setAngle(axis: string, angle: number) {
 
@@ -121,13 +126,11 @@ export class Planet {
         const tmp = cat.position; // Current cat checking.
         // TODO Add logic to handle multiple cats
 
-        for (const entry of this.portals.entries()) {
-            const planetId = entry[0];
-            const portalVec3 = entry[1];
+        for (const entry of this.portals) {
+            const portalVec3 = entry.myCoordinates;
 
             if(tmp.distanceTo(portalVec3) <= 120) {
-                console.log('goeie');
-                const neighbour: Planet = this.neighbours.get(planetId)!;
+                const neighbour: Planet = entry.otherPlanet;
                 cat.setPlanet(neighbour);
                 const x = neighbour.coordinates[0];
                 const y = neighbour.coordinates[1];

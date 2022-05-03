@@ -2,11 +2,15 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import ws, { WebSocketServer } from 'ws';
+import { QRlocation } from '../web/controllerPage/start-screen-main';
+import { Planet } from '../web/js/planet';
+import { Portal } from '../web/js/portal';
 import { database } from './index';
+import { findNeighborsVoronoi } from '../web/controllerPage/voronoi'
 
-const multiScreenData:{ [key: string]: Array<string> } = {};
+const multiScreenData:{[key: string]: [number, Planet[]]} = {};
 
-export function websocketEventHandlers(websocket:ws.Server) {
+export function websocketEventHandlers(websocket: ws.Server) {
 
     websocket.on('connection', (ws : ws.WebSocket) => {
 
@@ -67,4 +71,48 @@ export function websocketEventHandlers(websocket:ws.Server) {
     websocket.on('close', () => {
         console.log('Websocket connection closed.');
     });
+}
+
+function findPlanet(id: number){
+    for (const planet of multiScreenData[id][1]){
+        if(planet.id == id){
+            return planet;
+        }
+    }
+}
+
+function generateSites(qrlocations: QRlocation[]) {
+    let ratio = Object();
+    let sites: Array<{x: number; y: number; id: string}> = [];
+    let planetsIDs: {[key: number]: [string, number]} = {};
+    let globalPlanetID = 0;
+    for (const qrloc of qrlocations){
+        let id = qrloc.id;
+        ratio[id] = Math.abs(qrloc.topleft_location.y - qrloc.bottomright_location.y) / multiScreenData[id][0];
+        for (const planet of multiScreenData[id][1]){
+            planetsIDs[globalPlanetID] = [id, planet.id];
+            planet.coordinates = [qrloc.middle_location.x + planet.coordinates[0] * ratio[id], qrloc.middle_location.y + planet.coordinates[1]*ratio[id], 0];
+            let site: {x: number; y: number; id: string} = {x: planet.coordinates[0], y: planet.coordinates[1], id: globalPlanetID.toString()};
+            sites.push(site);
+            globalPlanetID++;
+        }
+    }
+    const neighbors = findNeighborsVoronoi(sites);
+    // const Portals = Portal[];
+    for(const planet of neighbors){
+        const myID = planet.id;
+        const myPlanet = findPlanet(Number(myID))
+        const neighborsToAdd = planet.neighborsOfID;
+        for(const neighborToAdd of neighborsToAdd){
+            const [otherScreen, otherPlanet] = planetsIDs[Number(neighborToAdd)];
+            const portalCoordinates = ;
+            // neighborToAdd -> int -> local;
+            const portal = new Portal(otherScreen, portalCoordinates, otherPlanet);
+            for (const planet of multiScreenData[id][1]){
+                if(planet.id = myID){
+
+                }
+            }
+        }
+    }
 }
