@@ -1,6 +1,4 @@
 /* eslint-disable @typescript-eslint/restrict-plus-operands */
-import { writeSync } from 'fs';
-import { waitForDebugger } from 'inspector';
 import jsQR from 'jsqr';
 import { Point } from 'jsqr/dist/locator';
 import { findNeighborsVoronoi } from './voronoi.js';
@@ -138,7 +136,7 @@ function getQRLocations() {
 
         /* server code */
     } catch(e) {
-        alert(e);
+        alert('No QR-codes found\r\n' + e);
     }
 }
 
