@@ -2,6 +2,7 @@ import Koa from 'koa';
 import Router from '@koa/router';
 import fs from 'fs';
 import { database } from './index';
+import {nbusers} from './index';
 
 export type context = Koa.ParameterizedContext<Koa.DefaultState, Koa.DefaultContext & Router.RouterParamContext<Koa.DefaultState, Koa.DefaultContext>, unknown>;
 
@@ -32,7 +33,7 @@ export function getControllerRedirectPage(ctx: context) {
         ctx.response.status = 200;
         ctx.type = 'html';
         ctx.body = fs.createReadStream('dist/webroot/web/controllerRedirect/controllerRedirect.html');
-    } else if (params.id != null && params.mode == null) {
+    } else if (params.id != null && params.mode == null){
         ctx.response.status = 200;
         ctx.type = 'html';
         ctx.body = fs.createReadStream('dist/webroot/web/controllerPage/controller-start-screen.html');

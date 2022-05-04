@@ -36,6 +36,7 @@ app.use(mount('/catcaster/controller/', serve(startscreen_controller)));
 app.use(router.routes()).use(router.allowedMethods());
 
 export var database = new IdDatabase();
+export var nbusers = 0;
 
 // Configure some REST points:
 router
