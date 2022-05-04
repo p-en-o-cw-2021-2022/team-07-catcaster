@@ -143,7 +143,7 @@ function getQRLocations() {
     }
 }
 
-cameraTrigger.onclick = function() {
+cameraTrigger.addEventListener('click', function() {
     cameraSensor.width = cameraView.videoWidth;
     cameraSensor.height = cameraView.videoHeight;
     cameraSensor.getContext('2d')!.drawImage(cameraView, 0, 0);
@@ -167,9 +167,8 @@ cameraTrigger.onclick = function() {
         }
         number = parseInt(input);
     }
-    
     getQRLocations();
-};
+});
 
 window.addEventListener('load', cameraStart, false);
 
