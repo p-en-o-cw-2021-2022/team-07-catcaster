@@ -2,24 +2,11 @@ import { Planet } from '../js/planet.js';
 
 import {allPlanets} from './animationMain.js';
 const debug = <HTMLButtonElement>document.getElementById("debug-info");
-const xF =  <HTMLParagraphElement>document.getElementById("xF");
-const yF =  <HTMLParagraphElement>document.getElementById("yF");
-const xP =  <HTMLParagraphElement>document.getElementById("xP");
-const yP =  <HTMLParagraphElement>document.getElementById("yP");
-const zP =  <HTMLParagraphElement>document.getElementById("zP");
-const angle =  <HTMLParagraphElement>document.getElementById("angle");
-const catPosAngle =  <HTMLParagraphElement>document.getElementById("catPosAngle");
-const acc =  <HTMLParagraphElement>document.getElementById("acc");
 const gyrodata =  <HTMLElement>document.getElementById("gyrodata");
 
 debug.addEventListener('click',  function() {
     
     gyrodata.hidden = !gyrodata.hidden;
-    
-    
-    
-    
-    
     
 });
 

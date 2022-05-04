@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/restrict-plus-operands */
 import jsQR from 'jsqr';
 import { Point } from 'jsqr/dist/locator';
+import { string } from 'yargs';
 import { findNeighborsVoronoi } from './voronoi.js';
 
 
@@ -177,32 +178,26 @@ window.addEventListener('load', cameraStart, false);
 
 // eslint-disable-next-line @typescript-eslint/no-misused-promises
 multiple_screen_button.addEventListener('click', function() {
-    cameraMain.style.display = 'block';
-    cameraTrigger.style.display = 'block';
-    cameraView.style.display = 'block';
-    multiple_screen_button.style.display = 'none';
-    single_screen_button.style.display = 'none';
-    //Enter amount of screens
     let input: string | null = prompt('Enter the amount of QR codes:');
-    while (input === null) {
-        input = prompt('Enter the amount of QR codes:');
-    }
+    //Enter amount of screens
+    if (input !== null) {
+        number = parseInt(input!);
 
-    number = parseInt(input);
-    input = null;
-
-    while (number < 2 || number === null || number === undefined) {
-        while (input === null) {
-            input = prompt('Please enter more than one screen:');
+        while (number < 2 ||number === null || number === undefined) {
+            number = parseInt(prompt('Please enter more than one screen:')!);
         }
-        number = parseInt(input);
-    }
-    //change qr code
-    websocket.send(JSON.stringify({client: 'multi-screen', id: id}));
-    //Start camera
-    // window.location.href = '/catcaster/controller/?id=' + <string>id + '&mode=multiscreen';
+        cameraMain.style.display = 'block';
+        cameraTrigger.style.display = 'block';
+        cameraView.style.display = 'block';
+        multiple_screen_button.style.display = 'none';
+        single_screen_button.style.display = 'none';
 
-    // window.location.href = '/catcaster/controller/?id=' + id + '&mode=multiscreen';
+        //change qr code
+        websocket.send(JSON.stringify({client: 'multi-screen', id: id}));
+        //Start camera
+        // window.location.href = '/catcaster/controller/?id=' + <string>id + '&mode=multiscreen';
+        // window.location.href = '/catcaster/controller/?id=' + id + '&mode=multiscreen';
+    }
 });
 
 //returns an array containing tuples of all found QR codes {x, y, id}
