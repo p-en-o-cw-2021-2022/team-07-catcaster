@@ -71,11 +71,9 @@ export function websocketEventHandlers(websocket: ws.Server) {
                     break;
 
                 case 'qrlocations':
-                    if(qrlocations != undefined){
-                        console.log('qrlocations ontvangen', mes.data);
-                        qrlocations = mes.data;
-                        console.log(mes.data);
-                    }
+                    console.log('qrlocations ontvangen', mes.data);
+                    qrlocations = mes.data;
+                    console.log(mes.data);
                     break;
 
                 case 'screenMultiData':

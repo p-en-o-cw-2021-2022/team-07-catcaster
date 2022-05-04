@@ -180,6 +180,7 @@ multiple_screen_button.addEventListener('click', function() {
     cameraView.style.display = 'block';
     multiple_screen_button.style.display = 'none';
     single_screen_button.style.display = 'none';
+    //change qr code
     websocket.send(JSON.stringify({client: 'multi-screen', id: id}));
     //Start camera
     // window.location.href = '/catcaster/controller/?id=' + <string>id + '&mode=multiscreen';
@@ -194,8 +195,8 @@ multiple_screen_button.addEventListener('click', function() {
 function QR(number: number) {
     const imageData = cameraSensor.getContext('2d')!.getImageData(0, 0, cameraSensor.width, cameraSensor.height);
     cameraSensor.getContext('2d')!.drawImage(cameraView, 0, 0);
-    alert('doet niks jonge')
     if (imageData === null || imageData === undefined) {
+        alert('Image not found')
         throw new Error('imageData was null');
     }
     const data = imageData.data;
