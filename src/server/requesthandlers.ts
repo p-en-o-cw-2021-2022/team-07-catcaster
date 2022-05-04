@@ -60,3 +60,15 @@ export function getErrorPage(ctx: context) {
     ctx.type = 'html';
     ctx.body = fs.createReadStream('dist/webroot/web/errorPage/errormessage.html');
 }
+
+export function getMenuPage(ctx:context) {
+    ctx.response.status = 200;
+    ctx.type = 'html';
+    ctx.body = fs.createReadStream('dist/webroot/web/menuInGame/menu.html');
+}
+
+export function getEndGame(ctx: context) {
+    ctx.response.status = 200;
+    ctx.type = 'html';
+    ctx.body = fs.createReadStream('dist/webroot/web/endGamePage/endgame.html');
+}

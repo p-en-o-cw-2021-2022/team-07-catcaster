@@ -22,6 +22,8 @@ const controllerPage = 'dist/webroot/web/controllerPage';
 const animation = 'dist/webroot/web/js';
 const startscreen_controller = 'dist/webroot/web/QR-test'
 const errorMessage = 'dist/webroot/web/errorPage'
+const endGamePage = 'dist/webroot/web/endGamePage'
+const menuInGame = 'dist/webroot/web/menuInGame'
 const router = new Router();
 
 // When we run this server we serve you all of our `dist/webroot` folder.
@@ -33,6 +35,8 @@ app.use(mount('/catcaster/controller/', serve(controllerPage)));
 app.use(mount('/catcaster/error/', serve(errorMessage)));
 app.use(mount('/catcaster/js/', serve(animation)));
 app.use(mount('/catcaster/controller/', serve(startscreen_controller)));
+app.use(mount('/catcaster/menu/', serve(menuInGame)))
+app.use(mount('/catcaster/endgame/', serve(endGamePage)));
 app.use(router.routes()).use(router.allowedMethods());
 
 export var database = new IdDatabase();
@@ -49,7 +53,13 @@ router
         //serve page with controls here;
     })
     .get('/catcaster/error/', (ctx: request.context) => {
-        request.getErrorPage(ctx)
+        request.getErrorPage(ctx);
+    })
+    .get('/catcaster/menu/', (ctx: request.context) => {
+        request.getMenuPage(ctx);
+    })
+    .get('/catcaster/endgame/', (ctx:request.context) => {
+        request.getEndGame(ctx);
     })
     .post('/catcaster/screen/', (ctx: request.context) => {
         request.sendScreenId(ctx);

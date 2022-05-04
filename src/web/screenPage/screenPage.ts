@@ -61,7 +61,10 @@ function eventHandlersScreen() {
             qrcodelarge.src = 'https://api.qrserver.com/v1/create-qr-code/?size=500x500&data=' + String(getIdScreen());
 
             sendDataforMulti(websocket, allPlanets);
-
+        }
+        if(mes.client === 'endgame') {
+            console.log('The game was ended.')
+            window.location.href = '/catcaster/endgame/';
         }
     };
 

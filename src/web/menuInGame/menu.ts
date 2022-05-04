@@ -2,7 +2,7 @@ const playButton = <HTMLButtonElement>document.getElementById('play-multi-screen
 const deleteButton = <HTMLButtonElement>document.getElementById('delete-multi-screen');
 
 playButton.addEventListener('click', function() {
-    window.location.href = 'catcaster/controller/?id=' + id + '&mode=multiscreen';
+    window.location.href = '/catcaster/controller/?id=' + id + '&mode=multiscreen';
 });
 
 deleteButton.addEventListener('click', function() {
@@ -15,6 +15,7 @@ deleteButton.addEventListener('click', function() {
     websocket.onopen = () => {
     console.log('Connection established.');
     websocket.send(JSON.stringify({client: 'endgame', id:cid}))
+    window.location.href = '/catcaster/endgame/'
     };
 });
 
