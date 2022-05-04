@@ -150,6 +150,7 @@ cameraTrigger.onclick = function() {
     cameraOutput.src = cameraSensor.toDataURL('image/webp');
     cameraOutput.classList.add('taken');
     cameraMain.style.display = 'block';
+    cameraTrigger.style.display = 'hidden';
     cameraView.style.display = 'none';
     cameraTrigger.style.display = 'none';
     //Enter amount of screens

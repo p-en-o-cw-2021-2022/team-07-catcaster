@@ -73,7 +73,7 @@ export function websocketEventHandlers(websocket: ws.Server) {
                 case 'qrlocations':
                     console.log('qrlocations ontvangen', mes.data);
                     qrlocations = mes.data;
-                    console.log(mes.data);
+                    generateSites();
                     break;
 
                 case 'screenMultiData':
@@ -158,7 +158,10 @@ function generateSites() {
             const portalCoordinates = calculatePortalCoordinates(myPlanet, otherPlanet, ratio[screenID], screenVector);
             const portal = new Portal(otherScreen, portalCoordinates, otherPlanet);
             myPlanet.addPortal(portal);
+            console.log(portal);
+            
         }
+        console.log('planet: ', myPlanet);
     }
 }
 
