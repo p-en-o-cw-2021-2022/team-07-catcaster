@@ -10,16 +10,17 @@ const zP =  <HTMLParagraphElement>document.getElementById("zP");
 const angle =  <HTMLParagraphElement>document.getElementById("angle");
 const catPosAngle =  <HTMLParagraphElement>document.getElementById("catPosAngle");
 const acc =  <HTMLParagraphElement>document.getElementById("acc");
+const gyrodata =  <HTMLElement>document.getElementById("gyrodata");
 
 debug.addEventListener('click',  function() {
-    xF.style.display = 'block';
-    yF.style.display = 'block';
-    xP.style.display = 'block';
-    yP.style.display = 'block';
-    zP.style.display = 'block';
-    angle.style.display = 'block';
-    acc.style.display = 'block';
-    catPosAngle.style.display = 'block';
+    
+    gyrodata.hidden = !gyrodata.hidden;
+    
+    
+    
+    
+    
+    
 });
 
 const qr = <HTMLImageElement>document.getElementById('qrcode');
