@@ -58,7 +58,7 @@ function eventHandlersScreen() {
         if(mes.client === 'multi-screen') {
             console.log('Received message');
             let url = window.location.href;
-            url = url.slice(0,-19) + 'menu/';
+            url = url.slice(0,-19) + 'controller/';
             const qrcodelarge = <HTMLImageElement>document.getElementById('qrcodelarge');
             qrcodelarge.src = 'https://api.qrserver.com/v1/create-qr-code/?size=500x500&data=' + String(getIdScreen());
             const qrcodesmall = <HTMLImageElement>document.getElementById('qrcode');
