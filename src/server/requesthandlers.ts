@@ -40,7 +40,7 @@ export function getControllerRedirectPage(ctx: context) {
     } else if (params.mode == 'multiscreen') {
         ctx.response.status = 200;
         ctx.type = 'html';
-        ctx.body = fs.createReadStream('placeholder');
+        ctx.body = fs.createReadStream('dist/webroot/web/controllerPage/controllerPage.html');
     } else if (params.mode == 'singlescreen') {
         ctx.response.status = 200;
         ctx.type = 'html';

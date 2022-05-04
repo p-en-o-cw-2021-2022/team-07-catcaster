@@ -2,6 +2,7 @@ const playButton = <HTMLButtonElement>document.getElementById('play-multi-screen
 const deleteButton = <HTMLButtonElement>document.getElementById('delete-multi-screen');
 
 playButton.addEventListener('click', function() {
+    5 + 5;
     window.location.href = '/catcaster/controller/?id=' + id + '&mode=multiscreen';
 });
 
