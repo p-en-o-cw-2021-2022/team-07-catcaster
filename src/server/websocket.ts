@@ -5,6 +5,7 @@ import ws, { WebSocketServer } from 'ws';
 import { database } from './index';
 import { z } from 'zod';
 
+const IDtimers: Map<string, number> = new Map();
 const multiScreenData:{ [key: string]: Array<string> } = {};
 
 export function websocketEventHandlers(websocket:ws.Server) {
@@ -12,7 +13,7 @@ export function websocketEventHandlers(websocket:ws.Server) {
     websocket.on('connection', (ws : ws.WebSocket) => {
 
         console.log('Connection established.');
-
+        ws.send(JSON.stringify({client: '__ping__'}));
 
         ws.on('message', (message) => {
             const mes : any = <string>JSON.parse(message.toString());
@@ -72,6 +73,10 @@ export function websocketEventHandlers(websocket:ws.Server) {
                 multiScreenData[id] = [mes.innerHeight, mes.planets];
                 //console.log(multiScreenData);
                 break;
+            
+            case '__pong__':
+                IDtimers.set(id, 0)
+                break;
             }
 
             
@@ -83,9 +88,6 @@ export function websocketEventHandlers(websocket:ws.Server) {
     });
 }
 
-function ping(clients: any) {
-    clients.forEach(function(client: any) {
-        client.send(JSON.stringify({client: '__ping__'}));
-
-    });
-}
+setInterval(function ping(ws: any) {
+    ws.send(JSON.stringify({client: '__ping__'}));
+}, 1000)

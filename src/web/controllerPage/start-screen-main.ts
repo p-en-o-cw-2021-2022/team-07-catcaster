@@ -56,6 +56,8 @@ websocket.onmessage = async (message:WebSocketMessage) => {
         console.log('Illegal ID, removing websocket connection.');
         websocket.close();
         window.location.href = '/catcaster/error/'
+    } else if (mes.client == '__ping__'){
+        websocket.send(JSON.stringify({client: '__pong__', id: id}))
     }
 };
 
@@ -151,6 +153,7 @@ cameraTrigger.onclick = function() {
     cameraTrigger.style.display = 'none';
     
     getQRLocations();
+    window.location.href = '/catcaster/controller/?id=' + <string>id + '&mode=multiscreen';
 };
 
 window.addEventListener('load', cameraStart, false);
@@ -181,7 +184,6 @@ multiple_screen_button.addEventListener('click', function() {
     //change qr code
     websocket.send(JSON.stringify({client: 'multi-screen', id: id}));
     //Start camera
-    // window.location.href = '/catcaster/controller/?id=' + <string>id + '&mode=multiscreen';
 
     // window.location.href = '/catcaster/controller/?id=' + id + '&mode=multiscreen';
 });
