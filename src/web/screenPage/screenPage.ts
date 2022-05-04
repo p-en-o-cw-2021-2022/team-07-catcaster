@@ -1,6 +1,26 @@
 import { Planet } from '../js/planet.js';
 
 import {allPlanets} from './animationMain.js';
+const debug = <HTMLButtonElement>document.getElementById("debug-info");
+const xF =  <HTMLParagraphElement>document.getElementById("xF");
+const yF =  <HTMLParagraphElement>document.getElementById("yF");
+const xP =  <HTMLParagraphElement>document.getElementById("xP");
+const yP =  <HTMLParagraphElement>document.getElementById("yP");
+const zP =  <HTMLParagraphElement>document.getElementById("zP");
+const angle =  <HTMLParagraphElement>document.getElementById("angle");
+const catPosAngle =  <HTMLParagraphElement>document.getElementById("catPosAngle");
+const acc =  <HTMLParagraphElement>document.getElementById("acc");
+
+debug.addEventListener('click',  function() {
+    xF.style.display = 'block';
+    yF.style.display = 'block';
+    xP.style.display = 'block';
+    yP.style.display = 'block';
+    zP.style.display = 'block';
+    angle.style.display = 'block';
+    acc.style.display = 'block';
+    catPosAngle.style.display = 'block';
+});
 
 const qr = <HTMLImageElement>document.getElementById('qrcode');
 
