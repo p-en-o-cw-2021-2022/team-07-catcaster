@@ -16,11 +16,6 @@ button {
     border-radius: 25px;
     position: absolute;
 }
-.button:active {
-  background-color: gray;
-  box-shadow: 0 5px #666;
-  transform: translateY(4px);
-}
 
 #single-screen-button {
   top: 15%;
@@ -33,8 +28,10 @@ button {
 }
 
 #camera--trigger{
-  top: 40%;
-  left: 30%;
+  height: 20%;
+  width: 30%;
+  top: 50%;
+  left: 40%;
 }
 
 
