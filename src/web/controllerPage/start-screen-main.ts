@@ -3,6 +3,7 @@ import jsQR from 'jsqr';
 import { Point } from 'jsqr/dist/locator';
 import { findNeighborsVoronoi } from './voronoi.js';
 
+
 const constraints = { video: { facingMode: 'environment' }, audio: false };
 const cameraView = <HTMLVideoElement>document.querySelector('#camera--view');
 const cameraOutput = <HTMLImageElement>document.querySelector('#camera--output');
@@ -11,6 +12,9 @@ const cameraTrigger = <HTMLButtonElement>document.getElementById('camera--trigge
 const cameraMain = <HTMLElement>document.getElementById('camera');
 const single_screen_button = <HTMLButtonElement>document.getElementById('single-screen-button');
 const multiple_screen_button = <HTMLButtonElement>document.getElementById('multiple-screen-button');
+const loaderQR = <HTMLElement>document.getElementById('loaderQR');
+loaderQR.style.display = "none";
+
 let number: number;
 const queryString = window.location.search;
 const urlParams = new URLSearchParams(queryString);
@@ -141,16 +145,31 @@ function getQRLocations() {
 }
 
 cameraTrigger.onclick = function() {
-    cameraSensor.width = cameraView.videoWidth;
-    cameraSensor.height = cameraView.videoHeight;
-    cameraSensor.getContext('2d')!.drawImage(cameraView, 0, 0);
-    cameraOutput.src = cameraSensor.toDataURL('image/webp');
-    cameraOutput.classList.add('taken');
-    cameraMain.style.display = 'block';
-    cameraView.style.display = 'none';
-    cameraTrigger.style.display = 'none';
     
-    getQRLocations();
+    
+    let displayPromise = new Promise(function(displayResolve, displayReject) {
+        cameraTrigger.style.display = 'none';
+        loaderQR.style.display = "block";
+        cameraTrigger.disabled = true;
+
+        cameraSensor.width = cameraView.videoWidth;
+        cameraSensor.height = cameraView.videoHeight;
+        cameraSensor.getContext('2d')!.drawImage(cameraView, 0, 0);
+        cameraOutput.src = cameraSensor.toDataURL('image/webp');
+        cameraOutput.classList.add('taken');
+        cameraMain.style.display = 'block';
+        cameraView.style.display = 'none';
+        });
+        
+        displayPromise.then(
+          function() { getQRLocations(); 
+                        loaderQR.style.display = "none";
+                    }
+          
+        );
+    
+    
+    
 };
 
 window.addEventListener('load', cameraStart, false);
