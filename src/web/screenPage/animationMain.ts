@@ -1,6 +1,7 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+import { loadavg } from 'os';
 import * as THREE from 'three';
-import { Scene, Vector3 } from 'three';
+import { Mesh, MeshBasicMaterial, MeshNormalMaterial, Scene, Vector3 } from 'three';
+import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
 import { Cat } from '../js/cat.js';
 import { setInnerText } from '../js/dom-util.js';
 import { askPermissionIfNeeded } from '../js/motion-events.js';
@@ -8,14 +9,17 @@ import { Planet } from '../js/planet.js';
 
 // Initialize animation scene and camera
 const scene = new THREE.Scene();
-scene.background = new THREE.Color('white');
-const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
-camera.position.z = 800;
-// const camera = new THREE.OrthographicCamera( (window.innerWidth / - 2) + 80, (window.innerWidth / 2) - 80, window.innerHeight / 2, window.innerHeight / - 2, 0, 50 );
+const light = new THREE.AmbientLight(); // soft white light
+scene.add( light );
+scene.background = new THREE.Color(0x919bab);
+// const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+// camera.position.z = 10;
 const cats : Cat[] = [];
 const catsData : HTMLElement[][] = [];
 let controllers_count = 0;
-// camera.rotateX(-Math.PI/2);
+const camera = new THREE.OrthographicCamera( window.innerWidth/-40, window.innerWidth / 40, window.innerHeight / 40, window.innerHeight / -40, -50, 50 );
+// camera.position.y = -10;
+// camera.rotateX(Math.PI/4);
 
 // Initialize renderer
 const renderer = new THREE.WebGLRenderer();
@@ -42,16 +46,18 @@ for (let planetID = 1; planetID <= noOfPlanets; planetID++) {
 }
 for (let i = 0, len = allPlanets.length; i < len; i++) {
     const shortestPlanet: Planet | null = allPlanets[i].seekShortestPlanet(allPlanets);
+
     if (shortestPlanet !== null) {
-        const [myX,myY,myZ] = allPlanets[i].coordinates;
-        const [yourX,yourY,yourZ] = shortestPlanet.coordinates;
+
+        const my: Vector3 = allPlanets[i].coordinates;
+        const your: Vector3 = shortestPlanet.coordinates;
         const myPlanetR = allPlanets[i].radius;
         const yourPlanetR = shortestPlanet.radius;
-        const myShortestVectorNormalized = new Vector3(yourX-myX, yourY-myY, yourZ-myZ).normalize();
+        const myShortestVectorNormalized = new Vector3(your.x-my.x, your.y-my.y, your.z-my.z).normalize();
         console.log('normalized vector: ', myShortestVectorNormalized);
-        console.log('not normalized vector: ', new Vector3(yourX-myX, yourY-myY, yourZ-myZ));
+        console.log('not normalized vector: ', new Vector3(your.x-my.x, your.y-my.y, your.z-my.z));
         allPlanets[i].addNeighbour(shortestPlanet, myShortestVectorNormalized.multiplyScalar(myPlanetR-2));
-        const yourShortestVectorNormalized = new Vector3(myX-yourX, myY-yourY, myZ-yourZ).normalize();
+        const yourShortestVectorNormalized = new Vector3(my.x-your.x, my.y-your.y, my.z-your.z).normalize();
         shortestPlanet.addNeighbour(allPlanets[i], yourShortestVectorNormalized.multiplyScalar(yourPlanetR-2));
     }
 }
@@ -78,8 +84,8 @@ function isValidPosition(thisX:number, thisY:number, thisR:number) {
     let isValid = true;
     for (let i = 0, len = allPlanets.length; i < len; i++) {
         const planetRadius = allPlanets[i].radius;
-        const [p_x,p_y,p_z] = allPlanets[i].coordinates;
-        const distance = Math.sqrt(Math.pow(thisX-p_x, 2)+Math.pow(thisY-p_y, 2));
+        const p: Vector3 = allPlanets[i].coordinates;
+        const distance = Math.sqrt(Math.pow(thisX-p.x, 2)+Math.pow(thisY-p.y, 2));
         if (distance-(thisR+planetRadius)<0) {
             isValid = false;
         }
@@ -127,36 +133,47 @@ function animate() {
         }
         cat.updatePosition(dt);
         renderer.render( scene, camera );
-        setInnerText('xF', cat.xF);
-        setInnerText('yF', cat.yF);
-        setInnerText('xP', cat.position.x.toFixed(3));
-        setInnerText('yP', cat.position.y.toFixed(3));
-        setInnerText('zP', cat.position.z.toFixed(3));
-        setInnerText('angle', [allPlanets[0].alpha, allPlanets[0].beta, allPlanets[0].gamma].toString());
+        // setDebugInfo();
     }
     requestAnimationFrame(animate);
 }
 
-function update(e: KeyboardEvent) {
-    switch(e.key) {
-    case 'd' :
-        // cat.updateForce('x', cat.xF + 5);
-        cats[0].xVel += 1;
-        break;
-    case 's' :
-        // cat.updateForce('y', cat.yF - 5);
-        cats[0].yVel -= 1;
-        break;
-    case 'w' :
-        // cat.updateForce('y', cat.yF + 5);
-        cats[0].yVel += 1;
-        break;
-    case 'a' :
-        // cat.updateForce('x', cat.xF - 5);
-        cats[0].xVel -= 1;
-        break;
-    }
-}
+// function update(e: KeyboardEvent) {
+//     switch(e.key) {
+//     case 'd' :
+//         // cat.updateForce('x', cat.xF + 5);
+//         cats[0].xVel += 1;
+//         break;
+//     case 's' :
+//         // cat.updateForce('y', cat.yF - 5);
+//         cats[0].yVel -= 1;
+//         break;
+//     case 'w' :
+//         // cat.updateForce('y', cat.yF + 5);
+//         cats[0].yVel += 1;
+//         break;
+//     case 'a' :
+//         // cat.updateForce('x', cat.xF - 5);
+//         cats[0].xVel -= 1;
+//         break;
+//     case 'l' :
+//         // cat.updateForce('x', cat.xF + 5);
+//         cat2.xVel += 1;
+//         break;
+//     case 'k' :
+//         // cat.updateForce('y', cat.yF - 5);
+//         cat2.yVel -= 1;
+//         break;
+//     case 'i' :
+//         // cat.updateForce('y', cat.yF + 5);
+//         cat2.yVel += 1;
+//         break;
+//     case 'j' :
+//         // cat.updateForce('x', cat.xF - 5);
+//         cat2.xVel -= 1;
+//         break;
+//     }
+// }
 
 function update2(e: DeviceOrientationEvent) {
     for (let i = 0, len = cats.length; i < len; i++) {
@@ -176,6 +193,18 @@ function firstTouch() {
     });
 }
 
+// function setDebugInfo() {
+
+//     setInnerText('xF', cat.xF);
+//     setInnerText('yF', cat.yF);
+//     setInnerText('xP', cat.positionOnPlanet.x.toFixed(3));
+//     setInnerText('yP', cat.positionOnPlanet.y.toFixed(3));
+//     setInnerText('zP', cat.positionOnPlanet.z.toFixed(3));
+//     setInnerText('angle', [planet.alpha * (180/Math.PI), planet.beta* (180/Math.PI), planet.gamma* (180/Math.PI)].toString());
+//     setInnerText('catPosAngle', [cat.catPositionAngle[0] * (180/Math.PI), cat.catPositionAngle[1] * (180/Math.PI)].toString());
+
+// }
+
 function newController() {
     const controllers = document.getElementById('gyrodatas')?.children;
     if (controllers) {
@@ -186,7 +215,7 @@ function newController() {
     }
 }
 
-document.addEventListener('keypress', update);
+// document.addEventListener('keypress', update);
 window.addEventListener('touchend', firstTouch);
 document.getElementById('gyrodatas')?.addEventListener( 'DOMNodeInserted', function ( event ) {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access

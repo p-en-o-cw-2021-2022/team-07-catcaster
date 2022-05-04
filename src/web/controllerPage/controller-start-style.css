@@ -1,0 +1,40 @@
+body {
+    margin: 0;
+    padding: 0;
+    background-color: steelblue;
+}
+
+button {
+    height: 30%;
+    width: 40%; 
+    background: green;
+    color: white;
+    font-family: "Garamond", serif;
+    font-weight: 400;
+    font-size: 200%;
+    text-align: center;
+    border-radius: 25px;
+    position: absolute;
+}
+.button:active {
+  background-color: gray;
+  box-shadow: 0 5px #666;
+  transform: translateY(4px);
+}
+
+#single-screen-button {
+  top: 15%;
+  left: 30%;
+}
+
+#multiple-screen-button{
+  top: 55%;
+  left: 30%;
+}
+
+#camera--trigger{
+  top: 40%;
+  left: 30%;
+}
+
+
