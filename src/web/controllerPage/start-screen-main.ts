@@ -1,6 +1,4 @@
 /* eslint-disable @typescript-eslint/restrict-plus-operands */
-import { writeSync } from 'fs';
-import { waitForDebugger } from 'inspector';
 import jsQR from 'jsqr';
 import { Point } from 'jsqr/dist/locator';
 import { findNeighborsVoronoi } from './voronoi.js';
@@ -17,7 +15,6 @@ let number: number;
 const queryString = window.location.search;
 const urlParams = new URLSearchParams(queryString);
 const id: string | null = urlParams.get('id');
-let qrlocationsweb: QRlocation[]|null = null;
 
 export class QRlocation {
     id : string;
@@ -107,7 +104,7 @@ function getQRLocations() {
     try {
         //Scan camera for locations and contents of QR codes
         const qrlocations:Array<QRlocation> = QR(number);
-        alert('HIER');
+        alert('QR-codes found');
         const sites: {x: number; y: number; id: string}[] = [];
 
         for (const qrloc of qrlocations) {
@@ -139,7 +136,7 @@ function getQRLocations() {
 
         /* server code */
     } catch(e) {
-        alert(e);
+        alert('No QR-codes found\r\n' + e);
     }
 }
 
@@ -152,6 +149,20 @@ cameraTrigger.onclick = function() {
     cameraMain.style.display = 'block';
     cameraView.style.display = 'none';
     cameraTrigger.style.display = 'none';
+    
+    getQRLocations();
+};
+
+window.addEventListener('load', cameraStart, false);
+
+
+// eslint-disable-next-line @typescript-eslint/no-misused-promises
+multiple_screen_button.addEventListener('click', function() {
+    cameraMain.style.display = 'block';
+    cameraTrigger.style.display = 'block';
+    cameraView.style.display = 'block';
+    multiple_screen_button.style.display = 'none';
+    single_screen_button.style.display = 'none';
     //Enter amount of screens
     let input: string | null = prompt('Enter the amount of QR codes:');
     while (input === null) {
@@ -167,20 +178,6 @@ cameraTrigger.onclick = function() {
         }
         number = parseInt(input);
     }
-    
-    getQRLocations();
-};
-
-window.addEventListener('load', cameraStart, false);
-
-
-// eslint-disable-next-line @typescript-eslint/no-misused-promises
-multiple_screen_button.addEventListener('click', function() {
-    cameraMain.style.display = 'block';
-    cameraTrigger.style.display = 'block';
-    cameraView.style.display = 'block';
-    multiple_screen_button.style.display = 'none';
-    single_screen_button.style.display = 'none';
     //change qr code
     websocket.send(JSON.stringify({client: 'multi-screen', id: id}));
     //Start camera
