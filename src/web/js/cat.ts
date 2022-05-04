@@ -26,7 +26,7 @@ export class Cat {
         this.radius = radius;
         this.positionOnPlanet = new Vector3(0, 0, 0);
         this.planet = planet;
-        this.sphere = new THREE.SphereGeometry( 1, 32, 16 );
+        this.sphere = new THREE.SphereGeometry( 3, 32, 16 );
         const material = new THREE.MeshLambertMaterial( { color: this.generateColor(id) } ); // This should be taken in as a constructor argument, but might break things when that happens
         this.mesh = new THREE.Mesh( this.sphere, material);
         this.catPositionAngle = [0,0];
@@ -50,9 +50,7 @@ export class Cat {
         }
     }
 
-    // Updates the relative position of cat on planet
-    updatePosition(dt: number) {
-
+    updateVelocity(dt: number) {
         const accX: number = (this.xF + this.planet.gamma *1.5)/this.mass;
         const accY: number = -(this.yF+ this.planet.beta*1.5)/this.mass;
 
@@ -76,26 +74,21 @@ export class Cat {
         if (this.jump) {
             this.planet.checkTP(this);
         }
+    }
 
-        // const oldGamma = this.planet.gamma;
-        // const oldBeta = this.planet.beta;
-
-        // const dgamma = oldGamma - this.planet.gamma;
-        // const dbeta = oldBeta - this.planet.beta;
+    // Updates the relative position of cat on planet
+    updateAngle() {
 
         const copyVector = this.positionOnPlanet.clone();
+        
+        // const normalVectorY = new Vector3(0,1,0);
+        // copyVector.applyAxisAngle(new Vector3(0,1,0), this.planet.gamma);
+        // copyVector.applyAxisAngle(new Vector3(1,0,0), this.planet.beta);
 
         copyVector.applyAxisAngle(new Vector3(0,1,0), this.planet.gamma);
         copyVector.applyAxisAngle(new Vector3(1,0,0), this.planet.beta);
-        // this.positionOnPlanet.applyAxisAngle(new Vector3(0,1,0), -dAngles[0]);
-        // this.positionOnPlanet.applyAxisAngle(new Vector3(1,0,0), -dAngles[1]);
 
-        // const absPosition = this.positionOnPlanet.clone().add(this.planet.coordinates);
         const absPosition = copyVector.add(this.planet.coordinates);
-
-        // this.catPositionAngle[0] = this.planet.gamma;
-        // this.catPositionAngle[1] = this.planet.beta;
-
         this.mesh!.position.copy(copyVector);
 
     }
