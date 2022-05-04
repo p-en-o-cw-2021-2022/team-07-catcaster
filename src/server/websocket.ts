@@ -61,14 +61,17 @@ export function websocketEventHandlers(websocket:ws.Server) {
                     client.send(JSON.stringify({client : 'multi-screen'}));
                 });
                 ws.send(JSON.stringify({client: 'multiscreen-send'}))
+                break;
 
             case 'qrlocations':
                 console.log('qrlocations ontvangen')
                 console.log(mes.data)
+                break;
 
             case 'screenMultiData':
                 multiScreenData[id] = [mes.innerHeight, mes.planets];
                 //console.log(multiScreenData);
+                break;
             }
 
             
