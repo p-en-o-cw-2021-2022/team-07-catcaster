@@ -40,7 +40,7 @@
         </div>
         <table id = "table" class="display">
             <tr>
-                <td class="title">Status:</td>
+                <td class="title">ID:</td>
                 <td class="title">Messages:</td>
             </tr>
             <tr>
@@ -53,16 +53,17 @@
             </tr>
         </table>
 
-        <div id="controllers"></div>
-        <div id="gyrodatas"></div>
-        <p>X-force: <span id="xF">n/a</span></p>
-        <p>Y-force: <span id="yF">n/a</span></p>
-        <p>X-coord: <span id="xP">n/a</span></p>
-        <p>Y-coord: <span id="yP">n/a</span></p>
-        <p>Z-coord: <span id="zP">n/a</span></p>
-        <p>Planet Angle: <span id="angle">n/a</span></p>
-        <p>Cat Position Angle: <span id="catPosAngle">n/a</span></p>
-        <p>Accelaration: <span id="acc">n/a</span></p>
+        <button id="debug-info" style="font-size: 20px;">Debug Info</button>
+        <div id="controllers" ></div>
+        <div id="gyrodatas" ></div>
+        <p hidden>X-force: <span id="xF">n/a</span></p>
+        <p hidden> Y-force: <span id="yF">n/a</span></p>
+        <p hidden>X-coord: <span id="xP">n/a</span></p>
+        <p hidden>Y-coord: <span id="yP">n/a</span></p>
+        <p hidden>Z-coord: <span id="zP">n/a</span></p>
+        <p hidden>Planet Angle: <span id="angle">n/a</span></p>
+        <p hidden>Cat Position Angle: <span id="catPosAngle">n/a</span></p>
+        <p hidden>Accelaration: <span id="acc">n/a</span></p>
         
         <script> var exports = {}; </script>
         <script type = "module" src = screenPage.js>var exports = {};</script>
