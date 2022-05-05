@@ -17,21 +17,25 @@
     
     <button id="single-screen-button" style="font-size: 80px;">Single Screen</button>
     <button id="multiple-screen-button" style="font-size: 80px;">Multiple Screens</button>
+    
     <!-- Camera -->
-    <main id="camera" style="display: none;">
+    <main id="camera" style="display: none;" style="margin: auto; margin-top: 1em;">
         <!-- Camera view -->
-        <video id="camera--view" autoplay playsinline></video>
-        <!-- Camera trigger -->
-        <button id="camera--trigger" style="font-size: 80px;">Take a picture</button>
-        <!-- Camera sensor -->
-        <canvas id="camera--sensor"></canvas>
+        <video id="camera--view" autoplay playsinline style="margin: auto;"> </video>
         <!-- Camera output -->
-        <img src="//:0" alt="" id="camera--output" hidden>
+        <img src="//:0" alt="" id="camera--output" hidden style="margin: auto;">
+        <!-- Camera sensor -->
+        <canvas id="camera--sensor" style="margin: auto;padding: auto; padding-top: 1em; "></canvas>
+        <!-- Camera trigger -->
+        <div id = "loaderQR", class="loader"></div>
+        <button id="camera--trigger" style="font-size: 80px;">Take a picture </div></button>
+        
+        
     </main>
     <br>
-    <video id="video" width="960" height="720" autoplay></video>
+    <video id="video" width="960" height="720" autoplay style="margin: auto; margin-top: 1em;"></video>
 
-    <canvas id="canvas" width="960" height="720" style="visibility: hidden;"></canvas>
+    <canvas id="canvas" width="960" height="720" style="visibility: hidden; margin: auto; margin-top: 1em;"></canvas>
     
     
 

@@ -1,6 +1,14 @@
 import { Planet } from '../js/planet.js';
 
 import {allPlanets} from './animationMain.js';
+const debug = <HTMLButtonElement>document.getElementById('debug-info');
+const gyrodata =  <HTMLElement>document.getElementById('gyrodatas');
+
+debug.addEventListener('click',  function() {
+
+    gyrodata.hidden = !gyrodata.hidden;
+
+});
 
 const qr = <HTMLImageElement>document.getElementById('qrcode');
 
@@ -57,17 +65,24 @@ function eventHandlersScreen() {
         }
         if(mes.client === 'multi-screen') {
             console.log('Received message');
+            let url = window.location.href;
+            url = url.slice(0,-19) + 'controller/';
             const qrcodelarge = <HTMLImageElement>document.getElementById('qrcodelarge');
             qrcodelarge.src = 'https://api.qrserver.com/v1/create-qr-code/?size=500x500&data=' + String(getIdScreen());
+            const qrcodesmall = <HTMLImageElement>document.getElementById('qrcode');
+            qrcodesmall.src = qrcodesmall.src = 'https://api.qrserver.com/v1/create-qr-code/?size=500x500&data=' + url;
 
             sendDataforMulti(websocket, allPlanets);
-
+        }
+        if(mes.client === 'endgame') {
+            console.log('The game was ended.');
+            window.location.href = '/catcaster/endgame/';
         }
     };
 
     websocket.onclose = () => {
-        window.location.href = '/catcaster/error/'
-    }
+        window.location.href = '/catcaster/error/';
+    };
 }
 
 if (getIdScreen() !== null) {

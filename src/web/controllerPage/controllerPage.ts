@@ -1,6 +1,15 @@
 const id = <HTMLDivElement>document.getElementById('sender-id');
 const screenId = <HTMLDivElement>document.getElementById('receiver-id');
 const connectiondiv = <HTMLDivElement>document.getElementById('connection-div');
+const debug_controller = <HTMLButtonElement>document.getElementById("debug-info-controller");
+const controller_data =  <HTMLElement>document.getElementById("data");
+
+debug_controller.addEventListener('click',  function() {
+    
+    controller_data.hidden = !controller_data.hidden;
+    
+});
+
 
 interface Message {
     'id': string;
@@ -46,6 +55,9 @@ function eventHandlersController() {
         }
         if(mes.client === 'screen') {
             screenId.innerHTML += mes.id;
+        }
+        if(mes.client === 'endgame') {
+            window.location.href = '/catcaster/endgame/';
         }
     };
 
