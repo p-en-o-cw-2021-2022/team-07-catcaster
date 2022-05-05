@@ -53,19 +53,19 @@ export function websocketEventHandlers(websocket:ws.Server) {
                 break;
 
             case 'multi-screen':
-                if (!database.doesIdExist(mes.id)){
+                if (!database.doesIdExist(mes.id)) {
                     console.log('Received ID is not in the database, closing connection to client.');
-                    ws.send(JSON.stringify({client : 'disconnect', id : mes.id}))
+                    ws.send(JSON.stringify({client : 'disconnect', id : mes.id}));
                 }
                 websocket.clients.forEach((client) => {
                     client.send(JSON.stringify({client : 'multi-screen'}));
                 });
-                ws.send(JSON.stringify({client: 'multiscreen-send'}))
+                ws.send(JSON.stringify({client: 'multiscreen-send'}));
                 break;
 
             case 'qrlocations':
-                console.log('qrlocations ontvangen')
-                console.log(mes.data)
+                console.log('qrlocations ontvangen');
+                console.log(mes.data);
                 break;
 
             case 'screenMultiData':
@@ -80,7 +80,7 @@ export function websocketEventHandlers(websocket:ws.Server) {
                 });
                 break;
             case 'nbcontrollers':
-                let controllerids = database.getControllerIds();
+                const controllerids = database.getControllerIds();
                 ws.send(JSON.stringify({client: controllerids}));
                 break;
             }

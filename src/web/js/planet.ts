@@ -1,9 +1,23 @@
 import * as THREE from 'three';
 import { Plane, Scene, Vector, Vector3 } from 'three';
+import { myId } from '../screenPage/screenPage.js';
 import { Cat } from './cat.js';
+
+const websocket = <WebSocket>window.myWebSocket;
+
+interface Message {
+    'id': string;
+    'client': string;
+    'myScreenID': string;
+    'otherScreenID': string;
+    'otherScreenPlanet': number;
+    'cat': Cat;
+}
+
 export class Planet {
 
     id: number;
+    screenid: string;
     radius: number;
     coordinates: Vector3;
     cats: Map<number, Cat>;
@@ -18,9 +32,10 @@ export class Planet {
     portals: Map<number, Vector3>;
     neighbours: Map<number, Planet>;
 
-    constructor(scene: Scene, id: number, radius: number, friction: number, coordinates: number[] = [0,0,0]) {
+    constructor(scene: Scene, id: number, screenid: string, radius: number, friction: number, coordinates: number[] = [0,0,0]) {
         this.id = id;
         this.coordinates = new Vector3(coordinates[0], coordinates[1], coordinates[2]);
+        this.screenid = screenid;
         this.radius = radius;
         this.friction = friction;
         this.neighbours = new Map<number, Planet>();
@@ -31,6 +46,17 @@ export class Planet {
         this.circle.translate(coordinates[0], coordinates[1], coordinates[2]);
         this.mesh = new THREE.Mesh( this.circle, new THREE.MeshNormalMaterial() );
         scene.add( this.mesh );
+
+        websocket.onmessage = (message:WebSocketMessage) => {
+            const mes = <Message>JSON.parse(message.data);
+            console.log('received message from : ', mes.id, '  |  client is: ', mes.client);
+            if(mes.client === 'jump') {
+                if ((mes.otherScreenID === this.screenid) && (mes.otherScreenPlanet === this.id)) {
+                    mes.cat.setPlanet(this);
+                    mes.cat.positionOnPlanet = new Vector3(this.coordinates.x, this.coordinates.y, this.coordinates.z);
+                }
+            }
+        };
     }
 
     // Add a new neighbouring planet if not already added.
@@ -124,7 +150,6 @@ export class Planet {
         this.circle.translate(this.coordinates.x, this.coordinates.y, this.coordinates.z);
 
         this.mesh.geometry.copy(newCircle);
-
         // for (const cat of this.cats.values()) {
         //     cat.updateAngle();
         // }
@@ -148,7 +173,23 @@ export class Planet {
                 neighbour.setCat(cat);
                 cat.positionOnPlanet = new Vector3(x,y,z);
                 this.cats.delete(cat.id);
+                // Send teleport message over websocket
+                if (neighbour.isOnOtherScreen(this.screenid)) {
+                    const jumpmessage = `{
+                        "client": "jump",
+                        "myScreenID": "${myId.innerText}",
+                        "otherScreenID": "${neighbour.screenid}",
+                        "otherScreenPlanet": "${neighbour.id}"
+                        "cat": "${cat}"
+                    }`;
+                    websocket.send(JSON.stringify(jumpmessage));
+                }
             }
         }
+    }
+    isOnOtherScreen(otherScreenID: string) {
+        if (this.screenid !== otherScreenID) {
+            return true;
+        } else {return false;}
     }
 }

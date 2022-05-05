@@ -8,6 +8,7 @@ import { askPermissionIfNeeded } from '../js/motion-events.js';
 import { Planet } from '../js/planet.js';
 
 // Initialize animation scene and camera
+const myId = <HTMLDivElement>document.getElementById('receiver-id');
 const scene = new THREE.Scene();
 const light = new THREE.AmbientLight(); // soft white light
 const sceneHeight = 500;
@@ -47,7 +48,7 @@ const noOfPlanets = 3;
 
 for (let planetID = 1; planetID <= noOfPlanets; planetID++) {
     const [planet_x, planet_y, planet_r] = generatePlanetCoo();
-    const planet: Planet = new Planet(scene, planetID, planet_r, 10, [planet_x,planet_y,0]);
+    const planet: Planet = new Planet(scene, planetID, myId.innerHTML, planet_r, 10, [planet_x,planet_y,0]);
     allPlanets.push(planet);
     console.log('Created planet at: ', String([planet_x, planet_y, planet_r]));
 }
@@ -151,7 +152,7 @@ function animate() {
         cat.updateVelocity(dt);
         // setDebugInfo();
     }
-    updatePlanets();
+    // updatePlanets();
     renderer.render( scene, camera );
     requestAnimationFrame(animate);
 }

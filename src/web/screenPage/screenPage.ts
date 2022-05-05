@@ -1,6 +1,10 @@
 import { Planet } from '../js/planet.js';
-
 import {allPlanets} from './animationMain.js';
+
+declare global {
+    interface Window { myWebSocket: any; }
+}
+
 const debug = <HTMLButtonElement>document.getElementById('debug-info');
 const gyrodata =  <HTMLElement>document.getElementById('gyrodatas');
 
@@ -47,6 +51,7 @@ function eventHandlersScreen() {
 
     const websocket = new WebSocket(url);
     console.log('Starting Websocket connection...');
+    window.myWebSocket = websocket;
 
     websocket.onopen = () => {
         console.log('Connection established.');
