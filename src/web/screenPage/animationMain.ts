@@ -10,14 +10,18 @@ import { Planet } from '../js/planet.js';
 // Initialize animation scene and camera
 const scene = new THREE.Scene();
 const light = new THREE.AmbientLight(); // soft white light
+const sceneHeight = 500;
+const aspectRatio = window.innerWidth/window.innerHeight;
 scene.add( light );
-scene.background = new THREE.Color(0x919bab);
-// const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
-// camera.position.z = 10;
+scene.background = new THREE.Color('white');
+// scene.background = new THREE.Color(0x919bab);
+// const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, -1000, 1000 );
+// camera.position.z = 1000;
 const cats : Cat[] = [];
 const catsData : HTMLElement[][] = [];
 let controllers_count = 0;
-const camera = new THREE.OrthographicCamera( window.innerWidth/-40, window.innerWidth / 40, window.innerHeight / 40, window.innerHeight / -40, -50, 50 );
+// const camera = new THREE.OrthographicCamera( window.innerWidth/-20, window.innerWidth / 20, window.innerHeight / 20, window.innerHeight / -20, -100, 100);
+const camera = new THREE.OrthographicCamera( -sceneHeight * aspectRatio / 2 , sceneHeight * aspectRatio / 2, sceneHeight / 2, -sceneHeight / 2, -500, 500);
 // camera.position.y = -10;
 // camera.rotateX(Math.PI/4);
 
@@ -31,6 +35,8 @@ renderer.domElement.style.position = 'absolute';
 renderer.domElement.style.top = '0';
 document.body.appendChild( renderer.domElement );
 
+// const planet = new Planet(scene, 0, 20, 0, [0,0,0]);
+
 //-------------------------------------------------------------------------------------
 export const allPlanets : Planet[] = [];
 const screenCount = 1;
@@ -38,6 +44,7 @@ const maxPlanets = 3*screenCount;
 const minPlanets = 1;
 // let noOfPlanets = Math.floor(Math.random() * (maxPlanets-minPlanets+1)+minPlanets);
 const noOfPlanets = 3;
+
 for (let planetID = 1; planetID <= noOfPlanets; planetID++) {
     const [planet_x, planet_y, planet_r] = generatePlanetCoo();
     const planet: Planet = new Planet(scene, planetID, planet_r, 10, [planet_x,planet_y,0]);
@@ -63,14 +70,18 @@ for (let i = 0, len = allPlanets.length; i < len; i++) {
 }
 
 function generatePlanetCoo() : number[] {
-    const max_r = 280;
-    const min_r = 120;
+    const max_r = 100;
+    const min_r = 50;
     const planet_r = Math.floor(Math.random() * (max_r-min_r+1)+min_r);
 
-    const max_x_window = window.innerWidth/2 - 80;
+    // const max_x_window = window.innerWidth/2 - 80;
+    // const max_x_window = 120;
+    const max_x_window = aspectRatio * sceneHeight / 2;
     const planet_x = Math.ceil(Math.random() * (max_x_window-planet_r)) * (Math.round(Math.random()) ? 1 : -1);
 
-    const max_y_window = window.innerHeight/2;
+    // const max_y_window = 100;
+    // const max_y_window = window.innerHeight/2;
+    const max_y_window = sceneHeight / 2 ;
     const planet_y = Math.ceil(Math.random() * (max_y_window-planet_r)) * (Math.round(Math.random()) ? 1 : -1);
 
     if(!isValidPosition(planet_x, planet_y, planet_r)) {
@@ -105,9 +116,13 @@ renderer.render( scene, camera );
 function addCat() {
     const controllers = document.getElementById('controllers')!.children;
     const id = (controllers[controllers_count - 1] as HTMLParagraphElement).innerText;
+
+    // const cat: Cat = new Cat(scene, parseInt(id, 16), allPlanets[0].radius, planet);
     const cat: Cat = new Cat(scene, parseInt(id, 16), allPlanets[0].radius, allPlanets[0]);
     console.log(allPlanets);
     allPlanets[0].setCat(cat);
+    // planet.setCat(cat);
+
     cats.push(cat);
     console.log('Cat added wih id: ' + String(parseInt(id, 16)));
     console.log(catsData);
@@ -131,10 +146,12 @@ function animate() {
             cat.xF = Number(gamma);
             cat.yF = Number(beta);
         }
-        cat.updatePosition(dt);
-        renderer.render( scene, camera );
+        cat.updateVelocity(dt);
         // setDebugInfo();
     }
+    updatePlanets();
+    // planet.updateAngles(dt);
+    renderer.render( scene, camera );
     requestAnimationFrame(animate);
 }
 
@@ -215,6 +232,12 @@ function newController() {
     }
 }
 
+function updatePlanets() {
+    for (const planet of allPlanets) {
+        planet.updateAngles(dt);
+    }
+}
+
 // document.addEventListener('keypress', update);
 window.addEventListener('touchend', firstTouch);
 document.getElementById('gyrodatas')?.addEventListener( 'DOMNodeInserted', function ( event ) {
@@ -225,3 +248,5 @@ document.getElementById('gyrodatas')?.addEventListener( 'DOMNodeInserted', funct
     }
 }, false );
 animate();
+
+

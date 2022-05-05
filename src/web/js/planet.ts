@@ -119,15 +119,14 @@ export class Planet {
         this.beta = -this.MAX_ANGLE * yRatio;
 
         const newCircle = this.circle = new THREE.CircleGeometry( this.radius, 32 );
-        this.circle.translate(this.coordinates.x, this.coordinates.y, this.coordinates.z);
-
         newCircle.rotateX(this.beta);
         newCircle.rotateY(this.gamma);
+        this.circle.translate(this.coordinates.x, this.coordinates.y, this.coordinates.z);
 
         this.mesh.geometry.copy(newCircle);
 
         for (const cat of this.cats.values()) {
-            cat.updatePosition(dt);
+            cat.updateAngle();
         }
     }
 
