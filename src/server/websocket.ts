@@ -45,12 +45,18 @@ export function websocketEventHandlers(websocket:ws.Server) {
                     console.log('Received ID is not in the database, closing connection to client.');
                     ws.send(JSON.stringify({client : 'disconnect', id : mes.id}));
                 }
+
+                else {
+                    ws.send(JSON.stringify({mode: 'Free'}))
+                }
+                
                 //start ping-pong process
                 setInterval(() => {
                     ws.send('__ping__');
                     let remTimer: boolean = false;
                     pingpong(remTimer, id);
                 }, 30000)
+
                 //ws.send(JSON.stringify({type: 'ControllerID', id: mes.id}));
                 break;
 
@@ -64,11 +70,15 @@ export function websocketEventHandlers(websocket:ws.Server) {
                 }
 
                 //Send the controller the ID of the screen, as to establish a webRTC connection
-                websocket.clients.forEach(function(client) {
-                    client.send(JSON.stringify({client: 'controller', id:controllerid}));
-                });
-                for(const sid of screenid) {
-                    ws.send(JSON.stringify({client : 'screen', id : sid}));
+                else {
+                    websocket.clients.forEach(function(client) {
+                        client.send(JSON.stringify({client: 'controller', id:controllerid}));
+                        client.send(JSON.stringify({mode : 'CatCaster'}));
+                    });
+                    for(const sid of screenid) {
+                        ws.send(JSON.stringify({client : 'screen', id : sid}));
+                    }
+                    setTimeout(() => {ws.send(JSON.stringify({client : 'connect', id : 0}));}, 500);
                 }
                 setTimeout(() => {ws.send(JSON.stringify({client : 'connect', id : 0}));}, 500);
 
@@ -79,7 +89,6 @@ export function websocketEventHandlers(websocket:ws.Server) {
                     pingpong(remTimer, id);
                 }, 30000)
                 break;
-
             case 'multi-screen':
                 if (!database.doesIdExist(mes.id)){
                     console.log('Received ID is not in the database, closing connection to client.');
@@ -112,10 +121,17 @@ export function websocketEventHandlers(websocket:ws.Server) {
                 let controllerids = database.getControllerIds();
                 ws.send(JSON.stringify({client: controllerids}));
                 break;
-
+            
+                case 'controller-menu':
+                if (!database.doesIdExist(mes.id)) {
+                    console.log('Received ID is not in the database, closing connection to client.');
+                    ws.send(JSON.stringify({client : 'disconnect', id : mes.id}));
+                }
+                break;
+            
             case '__pong__':
                 remTimer = true;
-                pingpong(remTimer);
+                pingpong(remTimer, id);
                 break;
             }
         });

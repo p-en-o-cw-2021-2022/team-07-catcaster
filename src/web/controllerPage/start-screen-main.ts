@@ -51,6 +51,7 @@ let websocket = new WebSocket(url);
 console.log('Starting Websocket connection...');
 
 websocket.onopen = () => {
+    websocket.send(JSON.stringify({client: 'controller-menu', id: id}));
     console.log('Connection established.');
 };
 
@@ -79,19 +80,6 @@ websocket.onclose = (event) => {
         console.log('Reconnection failed, terminating...') //ADD TO HTML PAGE !!!!
     }
 }
-
-
-// function send_multiscreen() {
-//     const url = 'wss' + window.location.href.substr(5);
-
-//     const websocket = new WebSocket(url);
-//     console.log('Starting Websocket connection...');
-
-
-// single_screen_button.addEventListener('click',  function() {
-//     window.location.href = '/catcaster/controller/?id=' + <string>id + '&mode=singlescreen';
-// });
-// }
 
 function cameraStart() {
     navigator.mediaDevices
