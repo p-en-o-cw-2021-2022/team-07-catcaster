@@ -1,6 +1,14 @@
 import { Planet } from '../js/planet.js';
 
 import {allPlanets} from './animationMain.js';
+const debug = <HTMLButtonElement>document.getElementById("debug-info");
+const gyrodata =  <HTMLElement>document.getElementById("gyrodata");
+
+debug.addEventListener('click',  function() {
+    
+    gyrodata.hidden = !gyrodata.hidden;
+    
+});
 
 const qr = <HTMLImageElement>document.getElementById('qrcode');
 

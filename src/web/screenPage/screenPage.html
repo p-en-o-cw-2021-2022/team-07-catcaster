@@ -6,6 +6,7 @@
         <link href="data:image/x-icon;base64,AAABAAEAEBAAAAAAAABoBQAAFgAAACgAAAAQAAAAIAAAAAEACAAAAAAAAAEAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP//AAD//wAA+B8AAOfnAADf+wAA3rsAAL1dAAC//QAAt/UAAL/9AAC//QAAvD0AANvbAADX6wAA7/cAAP//AAA=" rel="icon" type="image/x-icon" />
         <meta name ="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
         <link rel="stylesheet" type="text/css" href="animationStylesheet.css">
+        
         <script async src="https://unpkg.com/es-module-shims@0.13.1/dist/es-module-shims.js"></script>
 
         <script type="importmap">
@@ -40,7 +41,7 @@
         </div>
         <table id = "table" class="display">
             <tr>
-                <td class="title">Status:</td>
+                <td class="title">ID:</td>
                 <td class="title">Messages:</td>
             </tr>
             <tr>
@@ -53,16 +54,18 @@
             </tr>
         </table>
 
-        <div id="controllers"></div>
-        <div id="gyrodatas"></div>
-        <p>X-force: <span id="xF">n/a</span></p>
-        <p>Y-force: <span id="yF">n/a</span></p>
-        <p>X-coord: <span id="xP">n/a</span></p>
-        <p>Y-coord: <span id="yP">n/a</span></p>
-        <p>Z-coord: <span id="zP">n/a</span></p>
-        <p>Planet Angle: <span id="angle">n/a</span></p>
-        <p>Cat Position Angle: <span id="catPosAngle">n/a</span></p>
-        <p>Accelaration: <span id="acc">n/a</span></p>
+        <button id="debug-info" style="font-size: 20px;">Debug Info</button>
+        <div id="controllers" ></div>
+        <div id="gyrodata" hidden >
+            <p >X-force: <span id="xF">n/a</span></p>
+            <p > Y-force: <span id="yF">n/a</span></p>
+            <p >X-coord: <span id="xP">n/a</span></p>
+            <p >Y-coord: <span id="yP">n/a</span></p>
+            <p >Z-coord: <span id="zP">n/a</span></p>
+            <p >Planet Angle: <span id="angle">n/a</span></p>
+            <p >Cat Position Angle: <span id="catPosAngle">n/a</span></p>
+            <p >Accelaration: <span id="acc">n/a</span></p>
+        </div>
         
         <script> var exports = {}; </script>
         <script type = "module" src = screenPage.js>var exports = {};</script>

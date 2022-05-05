@@ -13,7 +13,7 @@
         
         <table class="control">
             <tr>
-                <td class="title">Status:</td>
+                <td class="title">ID:</td>
                 <td class="title">Messages:</td>
             </tr>
             <tr>
@@ -29,12 +29,15 @@
                 <td><div id="status" class="status"></div></td>
             </tr>
         </table>
+        <button id="debug-info-controller" style="font-size: 20px;">Debug Info</button>
+        <div id="data" hidden >
         <p>Gamma sent: <span id="gamma"></span></p>
         <p>Beta sent: <span id="beta"></span></p>
         <p>Current y: <span id="currenty"></span></p>
         <p>Highest y: <span id="highesty"></span></p>
         <p>Lowest y: <span id="lowesty"></span></p>
         <p>Jump: <span id="jump"></span></p>
+        </div>
 
         <script> var exports = {}; </script>
         <script type = "module" src = controllerPage.js>var exports = {};</script>
