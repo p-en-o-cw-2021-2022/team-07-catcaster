@@ -15,7 +15,7 @@ function pingpong(remTimer: boolean, id: string) {
         tm = setTimeout(function () {
             database.removeID(id)
             console.log('connection with ID: ' + id + ' timed out.\r\n removing ID from database...')
-        }, 5000)
+        }, 40000)
     }
     else {
         clearTimeout(tm)
@@ -33,10 +33,11 @@ export function websocketEventHandlers(websocket:ws.Server) {
 
         ws.on('message', (message) => {
             const mes : any = <string>JSON.parse(message.toString());
-            console.log('Received message from: ', mes.id);
+            console.log('Received message from: ' + mes.id + ', message: ' + mes.client);
             const controllerid = database.getControllerIds();
             const screenid = database.getScreenIds();
             const id = <string>mes.id;
+            console.log(id)
 
             switch (mes.client) {
             case 'screen':
@@ -58,7 +59,7 @@ export function websocketEventHandlers(websocket:ws.Server) {
                     ws.send(JSON.stringify({client: '__ping__'}));
                     let remTimer: boolean = false;
                     pingpong(remTimer, id);
-                }, 30000)
+                }, 20000)
                 
                 //ws.send(JSON.stringify({type: 'ControllerID', id: mes.id}));
                 break;
@@ -91,7 +92,7 @@ export function websocketEventHandlers(websocket:ws.Server) {
                     ws.send(JSON.stringify({client: '__ping__'}));
                     let remTimer: boolean = false;
                     pingpong(remTimer, id);
-                }, 30000)
+                }, 20000)
 
                 break;
             case 'multi-screen':

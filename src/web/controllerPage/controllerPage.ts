@@ -54,7 +54,7 @@ function eventHandlersController() {
             window.location.href = '/catcaster/endgame/';
         }
         if(mes.client === '__ping__') {
-            websocket.send(JSON.stringify({client: '__pong__', id: id}))
+            websocket.send(JSON.stringify({client: '__pong__', id: id.innerHTML}))
         }
     };
 

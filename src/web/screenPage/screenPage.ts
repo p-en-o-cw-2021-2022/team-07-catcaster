@@ -91,7 +91,7 @@ function eventHandlersScreen() {
             screenState.innerHTML = 'Free';
         }
         if(mes.client === '__ping__') {
-            websocket.send(JSON.stringify({client: '__pong__', id: myId}))
+            websocket.send(JSON.stringify({client: '__pong__', id: myId.innerHTML}))
         }
     };
 }
