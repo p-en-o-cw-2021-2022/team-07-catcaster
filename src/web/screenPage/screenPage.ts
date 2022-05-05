@@ -3,6 +3,8 @@ import { Planet } from '../js/planet.js';
 import {allPlanets} from './animationMain.js';
 const debug = <HTMLButtonElement>document.getElementById("debug-info");
 const gyrodata =  <HTMLElement>document.getElementById("gyrodata");
+const screenState = <HTMLSpanElement>document.getElementById("screenstate")
+const websocketState = <HTMLSpanElement>document.getElementById("websocketstate")
 
 debug.addEventListener('click',  function() {
     
@@ -16,6 +18,7 @@ const myId = <HTMLDivElement>document.getElementById('receiver-id');
 let controllerId = null;
 
 interface Message {
+    mode: string;
     'id': string;
     'client': string;
 }
@@ -47,10 +50,12 @@ function eventHandlersScreen() {
 
     const websocket = new WebSocket(url);
     console.log('Starting Websocket connection...');
+    websocketState.innerHTML = 'Trying to connect...'
 
     websocket.onopen = () => {
         console.log('Connection established.');
         websocket.send(JSON.stringify({client: 'screen', id: myId.innerHTML}));
+        websocketState.innerHTML = 'Connected'
     };
 
     websocket.onmessage = (message:WebSocketMessage) => {
@@ -62,6 +67,7 @@ function eventHandlersScreen() {
         if(mes.client === 'disconnect' && mes.id === myId.innerHTML) {
             console.log('Illegal ID, removing websocket connection.');
             websocket.close();
+            window.location.href = '/catcaster/error/'
         }
         if(mes.client === 'multi-screen') {
             console.log('Received message');
@@ -75,13 +81,19 @@ function eventHandlersScreen() {
             sendDataforMulti(websocket, allPlanets);
         }
         if(mes.client === 'endgame') {
-            console.log('The game was ended.')
+            console.log('The game was ended.');
             window.location.href = '/catcaster/endgame/';
+        }
+        if(mes.mode === 'CatCaster') {
+            screenState.innerHTML = 'Game';
+        }
+        if(mes.mode == 'Free') {
+            screenState.innerHTML = 'Free';
         }
     };
 
     websocket.onclose = () => {
-        window.location.href = '/catcaster/error/'
+        websocketState.innerHTML = 'Connection closed, trying to reconnect...'
     }
 }
 
