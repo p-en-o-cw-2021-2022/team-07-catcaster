@@ -1,13 +1,13 @@
 import { Planet } from '../js/planet.js';
 
 import {allPlanets} from './animationMain.js';
-const debug = <HTMLButtonElement>document.getElementById("debug-info");
-const gyrodata =  <HTMLElement>document.getElementById("gyrodata");
+const debug = <HTMLButtonElement>document.getElementById('debug-info');
+const gyrodata =  <HTMLElement>document.getElementById('gyrodatas');
 
 debug.addEventListener('click',  function() {
-    
+
     gyrodata.hidden = !gyrodata.hidden;
-    
+
 });
 
 const qr = <HTMLImageElement>document.getElementById('qrcode');
@@ -75,14 +75,14 @@ function eventHandlersScreen() {
             sendDataforMulti(websocket, allPlanets);
         }
         if(mes.client === 'endgame') {
-            console.log('The game was ended.')
+            console.log('The game was ended.');
             window.location.href = '/catcaster/endgame/';
         }
     };
 
     websocket.onclose = () => {
-        window.location.href = '/catcaster/error/'
-    }
+        window.location.href = '/catcaster/error/';
+    };
 }
 
 if (getIdScreen() !== null) {

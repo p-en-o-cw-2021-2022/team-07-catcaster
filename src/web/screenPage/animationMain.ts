@@ -31,9 +31,9 @@ const scaleFactor = 1; // Scale factor for the resolution of window
 renderer.setSize( window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(window.devicePixelRatio * scaleFactor);
 renderer.domElement.style.zIndex = '-1';
-renderer.domElement.style.position = 'absolute';
+renderer.domElement.style.position = 'relative';
 renderer.domElement.style.top = '0';
-document.body.appendChild( renderer.domElement );
+document.getElementById('Game')!.appendChild( renderer.domElement );
 
 // const planet = new Planet(scene, 0, 20, 0, [0,0,0]);
 
@@ -73,7 +73,6 @@ function generatePlanetCoo() : number[] {
     const max_r = 100;
     const min_r = 50;
     const planet_r = Math.floor(Math.random() * (max_r-min_r+1)+min_r);
-
     // const max_x_window = window.innerWidth/2 - 80;
     // const max_x_window = 120;
     const max_x_window = aspectRatio * sceneHeight / 2;
@@ -83,6 +82,9 @@ function generatePlanetCoo() : number[] {
     // const max_y_window = window.innerHeight/2;
     const max_y_window = sceneHeight / 2 ;
     const planet_y = Math.ceil(Math.random() * (max_y_window-planet_r)) * (Math.round(Math.random()) ? 1 : -1);
+
+    console.log('Tried planet at: ');
+    console.log(planet_x, planet_y, planet_r);
 
     if(!isValidPosition(planet_x, planet_y, planet_r)) {
         return generatePlanetCoo();
@@ -150,7 +152,6 @@ function animate() {
         // setDebugInfo();
     }
     updatePlanets();
-    // planet.updateAngles(dt);
     renderer.render( scene, camera );
     requestAnimationFrame(animate);
 }

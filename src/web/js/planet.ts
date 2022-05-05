@@ -83,7 +83,7 @@ export class Planet {
     seekShortestPlanet(allPlanets: Planet[]) {
         const my: Vector3 = this.coordinates;
         let shortestDistance: number = Number.POSITIVE_INFINITY;
-        let shortestPlanet: Planet = this;
+        let shortestPlanet: Planet | null = null;
         for (let i = 0, len = allPlanets.length; i < len; i++) {
             const your: Vector3= allPlanets[i].coordinates;
             const distance = Math.pow(my.x-your.x, 2) + Math.pow(my.y-your.y, 2);
@@ -125,9 +125,9 @@ export class Planet {
 
         this.mesh.geometry.copy(newCircle);
 
-        for (const cat of this.cats.values()) {
-            cat.updateAngle();
-        }
+        // for (const cat of this.cats.values()) {
+        //     cat.updateAngle();
+        // }
     }
 
     checkTP(cat: Cat) {
