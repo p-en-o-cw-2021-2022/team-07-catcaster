@@ -56,6 +56,9 @@ function eventHandlersController() {
         if(mes.client === 'screen') {
             screenId.innerHTML += mes.id;
         }
+        if(mes.client === 'endgame') {
+            window.location.href = '/catcaster/endgame/';
+        }
     };
 
     websocket.onclose = () => {

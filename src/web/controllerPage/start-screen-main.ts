@@ -138,6 +138,7 @@ function getQRLocations() {
         }
 
         websocket.send(JSON.stringify({client:'qrlocations', data: qrlocations}))
+        window.location.href = '/catcaster/controller/?id='+id+'&mode=multiscreen';
 
         /* server code */
     } catch(e) {
@@ -198,6 +199,13 @@ multiple_screen_button.addEventListener('click', function() {
         // window.location.href = '/catcaster/controller/?id=' + <string>id + '&mode=multiscreen';
         // window.location.href = '/catcaster/controller/?id=' + id + '&mode=multiscreen';
     }
+    //change qr code
+    websocket.send(JSON.stringify({client: 'multi-screen', id: id}));
+    //window.location.href = '/catcaster/controller/?id='+id+'&mode=multiscreen';
+    //Start camera
+    // window.location.href = '/catcaster/controller/?id=' + <string>id + '&mode=multiscreen';
+
+    // window.location.href = '/catcaster/controller/?id=' + id + '&mode=multiscreen';
 });
 
 //returns an array containing tuples of all found QR codes {x, y, id}

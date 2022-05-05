@@ -72,9 +72,19 @@ export function websocketEventHandlers(websocket:ws.Server) {
                 multiScreenData[id] = [mes.innerHeight, mes.planets];
                 //console.log(multiScreenData);
                 break;
+
+            case 'endgame':
+                console.log('The game was ended.');
+                websocket.clients.forEach((client) => {
+                    client.send(JSON.stringify({client : 'endgame'}));
+                });
+                break;
+            case 'nbcontrollers':
+                let controllerids = database.getControllerIds();
+                ws.send(JSON.stringify({client: controllerids}));
+                break;
             }
 
-            
         });
     });
 
