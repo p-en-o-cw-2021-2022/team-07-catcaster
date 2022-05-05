@@ -20,7 +20,9 @@
         <script type="module" src="./qr-code.js"></script>
     </head>
     <body>
-        <img id="qrcode", style="width: 15%; display: none;" ></img>
+        <div class = "bottom">
+        <img id="qrcode", style="width: 15%; display: none;position : relative;" ></img>
+        </div>
         
         <div id="overlay" , style="position: fixed;
                                     display: BLOCK;
@@ -39,37 +41,40 @@
             margin-right: -50%;transform: translate(-50%);height: 100%;
             z-index: 101;">
         </div>
-        <table id = "table" class="display">
-            <tr>
-                <td class="title">ID:</td>
-                <td class="title">Messages:</td>
-            </tr>
-            <tr>
-                <td>
-                    <div id="receiver-id" style="font-weight: bold;" title="Copy this ID to the input on send.html.">ID:</div>
-                </td>
-            </tr>
-            <tr>
-                <td><div id="status" class="status"></div></td>
-            </tr>
-        </table>
 
+        <div class = "bottom">
         <button id="debug-info" style="font-size: 20px;">Debug Info</button>
-        <div id="controllers" ></div>
-        <div>
-            <p>Screen State: <span id = "screenstate"></span></p>
-            <p>Websocket: <span id = "websocketstate"></span></p>
-        </div>
-        
-        <div id="gyrodata" hidden >
-            <p >X-force: <span id="xF">n/a</span></p>
-            <p > Y-force: <span id="yF">n/a</span></p>
-            <p >X-coord: <span id="xP">n/a</span></p>
-            <p >Y-coord: <span id="yP">n/a</span></p>
-            <p >Z-coord: <span id="zP">n/a</span></p>
-            <p >Planet Angle: <span id="angle">n/a</span></p>
-            <p >Cat Position Angle: <span id="catPosAngle">n/a</span></p>
-            <p >Accelaration: <span id="acc">n/a</span></p>
+        <div id="controllers" hidden></div><br>
+        <div class = "whiteBorder">
+            <table id = "table" class="display">
+                <tr>
+                    <td class="title">ID:</td>
+                    <td class="title">Messages:</td>
+                </tr>
+                <tr>
+                    <td>
+                        <div id="receiver-id" style="font-weight: bold;" title="Copy this ID to the input on send.html.">ID:</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td><div id="status" class="status"></div></td>
+                </tr>
+            </table>
+            <div>
+                <p>Screen State: <span id = "screenstate"></span></p>
+                <p>Websocket: <span id = "websocketstate"></span></p>
+            </div>
+            
+            <div id="gyrodata" hidden >
+                <p >X-force: <span id="xF">n/a</span></p>
+                <p > Y-force: <span id="yF">n/a</span></p>
+                <p >X-coord: <span id="xP">n/a</span></p>
+                <p >Y-coord: <span id="yP">n/a</span></p>
+                <p >Z-coord: <span id="zP">n/a</span></p>
+                <p >Planet Angle: <span id="angle">n/a</span></p>
+                <p >Cat Position Angle: <span id="catPosAngle">n/a</span></p>
+                <p >Accelaration: <span id="acc">n/a</span></p>
+            </div>
         </div>
         
         <script> var exports = {}; </script>
