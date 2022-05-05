@@ -1,5 +1,5 @@
 body{
-    background-color:#65aafd;
+    background-color:#ffffff;
     color : #ffffff;
     font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
@@ -14,7 +14,7 @@ h1{
     padding : 5px;
 }
 .whiteBorder{
-    border-color:#ffffff;
+    border-color:#333333;
     border-width : 3px;
     border-style : solid;
     border-radius: 15px;
