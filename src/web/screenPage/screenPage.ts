@@ -1,6 +1,6 @@
 import { Planet } from '../js/planet.js';
-
 import {allPlanets} from './animationMain.js';
+
 const debug = <HTMLButtonElement>document.getElementById("debug-info");
 const gyrodata =  <HTMLElement>document.getElementById("gyrodata");
 const screenState = <HTMLSpanElement>document.getElementById("screenstate")
@@ -18,7 +18,7 @@ const myId = <HTMLDivElement>document.getElementById('receiver-id');
 let controllerId = null;
 
 interface Message {
-    mode: string;
+    'mode': string;
     'id': string;
     'client': string;
 }
