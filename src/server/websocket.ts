@@ -6,10 +6,25 @@ import { database } from './index';
 import { z } from 'zod';
 
 const multiScreenData:{ [key: string]: Array<string> } = {};
+let tm: any
+let remTimer: boolean = false;
+
+function pingpong(remTimer: boolean, id: string) {
+    if (remTimer === false){
+        tm = setTimeout(function () {
+            database.removeID(id)
+            console.log('connection with ID: ' + id + ' timed out.\r\n removing ID from database...')
+        }, 600000)
+    }
+    else {
+        clearTimeout(tm)
+    }
+}
 
 export function websocketEventHandlers(websocket:ws.Server) {
 
     websocket.on('connection', (ws : ws.WebSocket) => {
+
 
         console.log('Connection established.');
 
@@ -30,6 +45,12 @@ export function websocketEventHandlers(websocket:ws.Server) {
                     console.log('Received ID is not in the database, closing connection to client.');
                     ws.send(JSON.stringify({client : 'disconnect', id : mes.id}));
                 }
+                //start ping-pong process
+                setInterval(() => {
+                    ws.send('__ping__');
+                    let remTimer: boolean = false;
+                    pingpong(remTimer, id);
+                }, 30000)
                 //ws.send(JSON.stringify({type: 'ControllerID', id: mes.id}));
                 break;
 
@@ -50,6 +71,13 @@ export function websocketEventHandlers(websocket:ws.Server) {
                     ws.send(JSON.stringify({client : 'screen', id : sid}));
                 }
                 setTimeout(() => {ws.send(JSON.stringify({client : 'connect', id : 0}));}, 500);
+
+                //start ping-pong process
+                setInterval(() => {
+                    ws.send('__ping__');
+                    let remTimer: boolean = false;
+                    pingpong(remTimer, id);
+                }, 30000)
                 break;
 
             case 'multi-screen':
@@ -79,23 +107,21 @@ export function websocketEventHandlers(websocket:ws.Server) {
                     client.send(JSON.stringify({client : 'endgame'}));
                 });
                 break;
+                
             case 'nbcontrollers':
                 let controllerids = database.getControllerIds();
                 ws.send(JSON.stringify({client: controllerids}));
                 break;
-            }
 
+            case '__pong__':
+                remTimer = true;
+                pingpong(remTimer);
+                break;
+            }
         });
     });
 
     websocket.on('close', () => {
         console.log('Websocket connection closed.');
-    });
-}
-
-function ping(clients: any) {
-    clients.forEach(function(client: any) {
-        client.send(JSON.stringify({client: '__ping__'}));
-
     });
 }
