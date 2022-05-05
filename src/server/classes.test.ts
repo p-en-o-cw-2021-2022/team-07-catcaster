@@ -24,7 +24,7 @@ describe('IdDatabase Tests', () => {
         expect(idDatabase.addController(id1)).toBeFalse;
         expect(idDatabase.addController(id2)).toBeTrue;
         expect(idDatabase.addScreen(id2)).toBeFalse;
-        expect(idDatabase.removeScreen(id1)).toBeTrue;
-        expect(idDatabase.removeController(id2)).toBeTrue;
+        expect(idDatabase.removeID(id1)).toBeTrue;
+        expect(idDatabase.removeID(id2)).toBeTrue;
     });
 });

@@ -9,17 +9,19 @@ const multiScreenData:{ [key: string]: Array<string> } = {};
 let tm: any
 let remTimer: boolean = false;
 
+
 function pingpong(remTimer: boolean, id: string) {
-    if (remTimer === false){
+    if (remTimer === false && database.doesIdExist(id)){
         tm = setTimeout(function () {
             database.removeID(id)
             console.log('connection with ID: ' + id + ' timed out.\r\n removing ID from database...')
-        }, 600000)
+        }, 5000)
     }
     else {
         clearTimeout(tm)
     }
 }
+
 
 export function websocketEventHandlers(websocket:ws.Server) {
 
@@ -50,13 +52,14 @@ export function websocketEventHandlers(websocket:ws.Server) {
                     ws.send(JSON.stringify({mode: 'Free'}))
                 }
                 
+                
                 //start ping-pong process
                 setInterval(() => {
-                    ws.send('__ping__');
+                    ws.send(JSON.stringify({client: '__ping__'}));
                     let remTimer: boolean = false;
                     pingpong(remTimer, id);
                 }, 30000)
-
+                
                 //ws.send(JSON.stringify({type: 'ControllerID', id: mes.id}));
                 break;
 
@@ -82,12 +85,14 @@ export function websocketEventHandlers(websocket:ws.Server) {
                 }
                 setTimeout(() => {ws.send(JSON.stringify({client : 'connect', id : 0}));}, 500);
 
+                
                 //start ping-pong process
                 setInterval(() => {
-                    ws.send('__ping__');
+                    ws.send(JSON.stringify({client: '__ping__'}));
                     let remTimer: boolean = false;
                     pingpong(remTimer, id);
                 }, 30000)
+
                 break;
             case 'multi-screen':
                 if (!database.doesIdExist(mes.id)){

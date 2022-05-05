@@ -1,3 +1,5 @@
+import { WebSocketMessage, Message } from '../screenPage/screenPage.js';
+
 requestControllerID();
 
 async function requestControllerID() {

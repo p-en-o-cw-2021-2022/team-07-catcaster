@@ -1,3 +1,6 @@
+import { myId } from "../screenPage/screenPage";
+import { WebSocketMessage, Message } from '../screenPage/screenPage.js';
+
 const id = <HTMLDivElement>document.getElementById('sender-id');
 const screenId = <HTMLDivElement>document.getElementById('receiver-id');
 const connectiondiv = <HTMLDivElement>document.getElementById('connection-div');
@@ -10,15 +13,6 @@ debug_controller.addEventListener('click',  function() {
     
 });
 
-
-interface Message {
-    'id': string;
-    'client': string;
-}
-
-interface WebSocketMessage {
-    'data': string;
-}
 
 function getIdController(): string | null {
     const queryString = window.location.search;
@@ -58,6 +52,9 @@ function eventHandlersController() {
         }
         if(mes.client === 'endgame') {
             window.location.href = '/catcaster/endgame/';
+        }
+        if(mes.client === '__ping__') {
+            websocket.send(JSON.stringify({client: '__pong__', id: id}))
         }
     };
 

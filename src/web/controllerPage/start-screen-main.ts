@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/restrict-plus-operands */
 import jsQR from 'jsqr';
 import { Point } from 'jsqr/dist/locator';
-import { string } from 'yargs';
 import { findNeighborsVoronoi } from './voronoi.js';
+import { WebSocketMessage, Message } from '../screenPage/screenPage.js';
 
 
 const constraints = { video: { facingMode: 'environment' }, audio: false };

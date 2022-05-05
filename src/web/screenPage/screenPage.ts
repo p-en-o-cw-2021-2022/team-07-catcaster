@@ -17,13 +17,13 @@ const qr = <HTMLImageElement>document.getElementById('qrcode');
 const myId = <HTMLDivElement>document.getElementById('receiver-id');
 let controllerId = null;
 
-interface Message {
+export interface Message {
     'mode': string;
     'id': string;
     'client': string;
 }
 
-interface WebSocketMessage {
+export interface WebSocketMessage {
     'data': string;
 }
 
@@ -87,12 +87,17 @@ function eventHandlersScreen() {
         if(mes.mode === 'CatCaster') {
             screenState.innerHTML = 'Game';
         }
-        if(mes.mode == 'Free') {
+        if(mes.mode === 'Free') {
             screenState.innerHTML = 'Free';
+        }
+        if(mes.client === '__ping__') {
+            websocket.send(JSON.stringify({client: '__pong__', id: myId}))
         }
     };
 }
 if (getIdScreen() !== null) {
     myId.innerHTML = <string>getIdScreen();
 }
+
+eventHandlersScreen()
 export {myId, controllerId};
