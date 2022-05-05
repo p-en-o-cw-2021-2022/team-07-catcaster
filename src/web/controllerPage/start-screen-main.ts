@@ -113,7 +113,7 @@ function getQRLocations() {
         for (const qrloc of qrlocations) {
             sites.push({x: qrloc.middle_location.x, y: qrloc.middle_location.y, id: qrloc.id});
         }
-
+        alert('start-screen sites: ' + sites.toString());
         //Create voronoi triangulation, neighbours contains edges
         const neighboursPerID = findNeighborsVoronoi(sites);
 

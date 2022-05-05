@@ -6,7 +6,7 @@ import { QRlocation } from '../web/controllerPage/start-screen-main';
 import { Planet } from '../web/js/planet';
 import { Portal } from '../web/js/portal';
 import { database } from './index';
-import { findNeighborsVoronoi } from '../web/controllerPage/voronoi'
+import { findNeighborsVoronoi } from './voronoi.js';
 import { Vector2Tuple, Vector3 } from 'three';
 import { z } from 'zod';
 
@@ -121,7 +121,7 @@ function calculatePortalCoordinates(myPlanet: Planet, otherPlanet: Planet, ratio
 
 function generateSites() {
     let ratio = Object();
-    let sites: Array<{x: number; y: number; id: string}> = [];
+    let sites: {x: number; y: number; id: string}[] = [];
     let planetsIDs: {[key: number]: [string, number]} = {};
     let globalPlanetID = 0;
     for (const qrloc of qrlocations){
@@ -141,6 +141,7 @@ function generateSites() {
             globalPlanetID++;
         }
     }
+    console.log('websocket sites: ', sites);
     const neighbors = findNeighborsVoronoi(sites);
     // const Portals = Portal[];
     for(const planet of neighbors){

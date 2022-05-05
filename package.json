@@ -57,7 +57,9 @@
   },
   "dependencies": {
     "@koa/router": "^10.1.1",
+    "@types/d3-voronoi": "^1.1.9",
     "@types/jquery": "^3.5.9",
+    "@types/voronoi-diagram": "^1.0.1",
     "@types/yargs": "^17.0.3",
     "jquery": "^3.6.0",
     "jsqr": "^1.4.0",
