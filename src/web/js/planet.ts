@@ -145,6 +145,10 @@ export class Planet {
             const portalVec3 = entry.myCoordinates;
 
             if(tmp.distanceTo(portalVec3) <= 120) {
+                // mss this.radius/2 ipv 120
+                // cat en entry.otherPlanet doorsturen naar entry.otherScreen
+                // ----------------------------------------------------------------
+                // deze code uitvoeren op entry.otherScreen en niet hier
                 const neighbour: Planet = entry.otherPlanet;
                 cat.setPlanet(neighbour);
                 const x = neighbour.coordinates.x;
@@ -152,6 +156,7 @@ export class Planet {
                 const z = neighbour.coordinates.z;
                 neighbour.setCat(cat);
                 cat.positionOnPlanet = new Vector3(x,y,z);
+                // ----------------------------------------------------------------
                 this.cats.delete(cat.id);
             }
         }

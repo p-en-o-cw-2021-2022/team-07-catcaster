@@ -72,7 +72,9 @@ export function websocketEventHandlers(websocket: ws.Server) {
             case 'qrlocations':
                 console.log('qrlocations ontvangen', mes.data);
                 qrlocations = mes.data;
-                generateSites();
+                const portals = createPortals();
+                console.log('portals added?: ', multiScreenData);
+                // hier planets() of portals terugsturen naar schermen?
                 break;
 
             case 'screenMultiData':
@@ -98,6 +100,10 @@ export function websocketEventHandlers(websocket: ws.Server) {
     websocket.on('close', () => {
         console.log('Websocket connection closed.');
     });
+}
+
+function createPortals(){
+    return generateSites();
 }
 
 function findPlanet(id: number){
@@ -151,8 +157,12 @@ function generateSites() {
         }
     }
     console.log('websocket sites: ', sites);
+    return generatePortals(sites, planetsIDs, ratio);
+}
+
+function generatePortals(sites: {x: number; y: number; id: string}[], planetsIDs: {[key: number]: [string, number]}, ratio = Object()) {
     const neighbors = findNeighborsVoronoi(sites);
-    // const Portals = Portal[];
+    const portals: Portal[] = [];
     for(const planet of neighbors){
         const myID = planet.id;
         const myPlanet = findPlanet(Number(myID))!;
@@ -173,6 +183,14 @@ function generateSites() {
         }
         console.log('planet: ', myPlanet);
     }
+    return portals;
+}
+
+function sendPortals(clients: any) {
+    clients.forEach(function(client: any) {
+        client.send(JSON.stringify({client: 'portal'}));
+
+    });
 }
 
 function ping(clients: any) {

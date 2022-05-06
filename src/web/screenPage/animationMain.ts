@@ -43,7 +43,7 @@ const screenCount = 1;
 const maxPlanets = 3*screenCount;
 const minPlanets = 1;
 // let noOfPlanets = Math.floor(Math.random() * (maxPlanets-minPlanets+1)+minPlanets);
-const noOfPlanets = 1;
+const noOfPlanets = 3;
 for (let planetID = 1; planetID <= noOfPlanets; planetID++) {
     const [planet_x, planet_y, planet_r] = generatePlanetCoo();
     const planet: Planet = new Planet(scene, planetID, planet_r, 10, [planet_x,planet_y,0]);
