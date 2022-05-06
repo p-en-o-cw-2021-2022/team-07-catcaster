@@ -111,16 +111,18 @@ export class Planet {
             yRatio += (cat.positionOnPlanet.y) / this.radius;
         }
 
-        // Adjust ratio scaling so that it doesn't exceed 1
-        xRatio = xRatio / this.cats.size;
-        yRatio = yRatio / this.cats.size;
+        if (this.cats.size > 0 ) {
+            // Adjust ratio scaling so that it doesn't exceed 1
+            xRatio = xRatio / this.cats.size;
+            yRatio = yRatio / this.cats.size;
+        }
 
-        // this.gamma = this.MAX_ANGLE * xRatio;
-        // this.beta = -this.MAX_ANGLE * yRatio;
+        this.gamma = this.MAX_ANGLE * xRatio;
+        this.beta = -this.MAX_ANGLE * yRatio;
 
         const newCircle = this.circle = new THREE.CircleGeometry( this.radius, 32 );
-        // newCircle.rotateX(this.beta);
-        // newCircle.rotateY(this.gamma);
+        newCircle.rotateX(this.beta);
+        newCircle.rotateY(this.gamma);
         this.circle.translate(this.coordinates.x, this.coordinates.y, this.coordinates.z);
 
         this.mesh.geometry.copy(newCircle);
