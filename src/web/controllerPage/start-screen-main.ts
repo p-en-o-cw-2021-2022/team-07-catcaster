@@ -149,7 +149,7 @@ function getQRLocations() {
 cameraTrigger.onclick = function() {
     
     
-    let displayPromise = new Promise(function(displayResolve, displayReject) {
+    let displayPromise = new Promise(function(resolve, reject) {
         cameraTrigger.style.display = 'none';
         loaderQR.style.display = "block";
         cameraTrigger.disabled = true;
@@ -161,11 +161,13 @@ cameraTrigger.onclick = function() {
         cameraOutput.classList.add('taken');
         cameraMain.style.display = 'block';
         cameraView.style.display = 'none';
+        resolve(1)
         });
         
         displayPromise.then(
-          function() { getQRLocations(); 
-                        loaderQR.style.display = "none";
+          function() { 
+                       getQRLocations(); 
+                       loaderQR.style.display = "none";
                     }
           
         );

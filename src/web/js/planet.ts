@@ -116,9 +116,11 @@ export class Planet {
             yRatio += (cat.positionOnPlanet.y) / this.radius;
         }
 
-        // Adjust ratio scaling so that it doesn't exceed 1
-        xRatio = xRatio / this.cats.size;
-        yRatio = yRatio / this.cats.size;
+        if (this.cats.size > 0 ) {
+            // Adjust ratio scaling so that it doesn't exceed 1
+            xRatio = xRatio / this.cats.size;
+            yRatio = yRatio / this.cats.size;
+        }
 
         this.gamma = this.MAX_ANGLE * xRatio;
         this.beta = -this.MAX_ANGLE * yRatio;
@@ -130,9 +132,9 @@ export class Planet {
 
         this.mesh.geometry.copy(newCircle);
 
-        // for (const cat of this.cats.values()) {
-        //     cat.updateAngle();
-        // }
+        for (const cat of this.cats.values()) {
+            cat.updateAngle();
+        }
     }
 
     checkTP(cat: Cat) {
