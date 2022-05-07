@@ -106,9 +106,11 @@ function createPortals(){
     return generateSites();
 }
 
-function findPlanet(id: number){
-    for (const planet of multiScreenData[id][1]){
-        if(planet.id == id){
+function findPlanet(planetID: number, planetsIDs: {[key: number]: [string, number]} ){
+    const screenID = planetsIDs[planetID][0];
+    const otherPlanetID = planetsIDs[planetID][1];
+    for (const planet of multiScreenData[screenID][1]){
+        if(planet.id == otherPlanetID){
             return planet;
         }
     }
@@ -165,13 +167,13 @@ function generatePortals(sites: {x: number; y: number; id: string}[], planetsIDs
     const portals: Portal[] = [];
     for(const planet of neighbors){
         const myID = planet.id;
-        const myPlanet = findPlanet(Number(myID))!;
+        const myPlanet = findPlanet(Number(myID), planetsIDs)!;
         const myCoordinates = myPlanet!.coordinates;
         const neighborsToAdd = planet.neighborsOfID;
         for(const neighborToAdd of neighborsToAdd){
             const [otherScreen, otherPlanetID] = planetsIDs[Number(neighborToAdd)];
             const screenID = planetsIDs[Number(myID)][0];
-            const otherPlanet = findPlanet(otherPlanetID)!;
+            const otherPlanet = findPlanet(otherPlanetID, planetsIDs)!;
             const screenCoordinates = findScreenCoordinates(screenID)!;
             let screenVector = new Vector3;
             screenVector.set(screenCoordinates.x, screenCoordinates.y, 0);
