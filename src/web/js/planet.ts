@@ -18,6 +18,7 @@ export class Planet {
     circle: THREE.CircleGeometry;
     portals: Portal[];
     neighbours: Map<number, Planet>;
+    object3dGroup: THREE.Group;
 
     constructor(scene: Scene, id: number, radius: number, friction: number, coordinates: number[] = [0,0,0]) {
         this.id = id;
@@ -29,8 +30,10 @@ export class Planet {
         this.portals = new Array<Portal>();
         this.circle = new THREE.CircleGeometry( this.radius, 32 );
         this.mesh = new THREE.Mesh( this.circle, new THREE.MeshNormalMaterial() );
-        this.mesh.position.add(this.coordinates);
-        scene.add( this.mesh );
+        this.object3dGroup = new THREE.Group();
+        this.object3dGroup.add(this.mesh);
+        this.object3dGroup.position.add(this.coordinates);
+        scene.add( this.object3dGroup );
     }
 
     addPortal(portal: Portal) {
@@ -125,7 +128,7 @@ export class Planet {
         this.gamma = this.MAX_ANGLE * xRatio;
         this.beta = -this.MAX_ANGLE * yRatio;
 
-        this.mesh.rotation.copy(new Euler(this.beta, this.gamma));
+        this.object3dGroup.rotation.copy(new Euler(this.beta, this.gamma));
 
         for (const cat of this.cats.values()) {
             cat.updateAngle();
