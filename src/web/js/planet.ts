@@ -26,14 +26,14 @@ export class Planet {
         this.friction = friction;
         this.neighbours = new Map<number, Planet>();
         this.cats = new Map<number, Cat>();
-        this.portals = new Array();
+        this.portals = new Array<Portal>();
         this.circle = new THREE.CircleGeometry( this.radius, 32 );
         this.circle.translate(coordinates[0], coordinates[1], coordinates[2]);
         this.mesh = new THREE.Mesh( this.circle, new THREE.MeshNormalMaterial() );
         scene.add( this.mesh );
     }
 
-    addPortal(portal: Portal){
+    addPortal(portal: Portal) {
         this.portals.push(portal);
     }
 
