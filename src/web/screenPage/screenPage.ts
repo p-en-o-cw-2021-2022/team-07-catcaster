@@ -1,6 +1,7 @@
 import { Planet } from '../js/planet.js';
-
-import {allPlanets} from './animationMain.js';
+import { Scene } from 'three'
+import { allPlanets } from './animationMain.js';
+import { Portal } from '../js/portal.js';
 const debug = <HTMLButtonElement>document.getElementById('debug-info');
 const gyrodata =  <HTMLElement>document.getElementById('gyrodatas');
 
@@ -18,6 +19,7 @@ let controllerId = null;
 interface Message {
     'id': string;
     'client': string;
+    'data': {[key: string]: [number, Planet[]]}
 }
 
 interface WebSocketMessage {
@@ -77,6 +79,32 @@ function eventHandlersScreen() {
         if(mes.client === 'endgame') {
             console.log('The game was ended.');
             window.location.href = '/catcaster/endgame/';
+        }
+        if(mes.client == 'portal') {
+            console.log('Portals received.');
+            const multiScreenData = mes.data;
+            const planets: Planet[] = [];
+            for (const fakePlanet of multiScreenData[myId.innerHTML][1]) {
+                const scene = new Scene();
+                const coords = [fakePlanet.coordinates.x, fakePlanet.coordinates.y, fakePlanet.coordinates.z];
+                const planet = new Planet(scene, fakePlanet.id, fakePlanet.radius, fakePlanet.friction, coords);
+                for(const fakePortal of fakePlanet.portals){
+                    const portal = new Portal(fakePortal.otherScreen, fakePortal.myCoordinates, fakePortal.otherPlanet);
+                    planet.addPortal(portal);
+                }
+                planets.push(planet);
+            }
+            for(const planet of allPlanets) {
+                for(const serverPlanet of planets){
+                    if(planet.id == serverPlanet.id){
+                        for(const portal of serverPlanet.portals){
+                            planet.addPortal(portal);
+                        }
+                    }
+                }
+                console.log('changedplanet: ', planet);
+            }
+            // verander ik hier ook de portals in animation.ts
         }
     };
 

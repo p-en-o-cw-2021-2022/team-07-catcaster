@@ -74,6 +74,9 @@ export function websocketEventHandlers(websocket: ws.Server) {
                 qrlocations = mes.data;
                 const portals = createPortals();
                 console.log('portals added: ', portals);
+                websocket.clients.forEach((client) => {
+                    client.send(JSON.stringify({client : 'portal', data : multiScreenData}));
+                });
                 // hier planets() of portals terugsturen naar schermen?
                 break;
 
@@ -83,7 +86,6 @@ export function websocketEventHandlers(websocket: ws.Server) {
                     const scene = new Scene();
                     const planet = new Planet(scene, fakePlanet.id, fakePlanet.radius, fakePlanet.friction, fakePlanet.coordinates);
                     planets.push(planet);
-
                 }
                 multiScreenData[id] = [mes.innerHeight, planets];
                 break;
@@ -198,7 +200,6 @@ function generatePortals(sites: {x: number; y: number; id: string}[], planetsIDs
 // function sendPortals(clients: any) {
 //     clients.forEach(function(client: any) {
 //         client.send(JSON.stringify({client: 'portal'}));
-
 //     });
 // }
 
