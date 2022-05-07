@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { Plane, Scene, Vector, Vector3 } from 'three';
+import { Euler, Plane, Scene, Vector, Vector3 } from 'three';
 import { Cat } from './cat.js';
 import { Portal } from './portal.js';
 export class Planet {
@@ -28,8 +28,8 @@ export class Planet {
         this.cats = new Map<number, Cat>();
         this.portals = new Array<Portal>();
         this.circle = new THREE.CircleGeometry( this.radius, 32 );
-        this.circle.translate(coordinates[0], coordinates[1], coordinates[2]);
         this.mesh = new THREE.Mesh( this.circle, new THREE.MeshNormalMaterial() );
+        this.mesh.position.add(this.coordinates);
         scene.add( this.mesh );
     }
 
@@ -125,12 +125,7 @@ export class Planet {
         this.gamma = this.MAX_ANGLE * xRatio;
         this.beta = -this.MAX_ANGLE * yRatio;
 
-        const newCircle = this.circle = new THREE.CircleGeometry( this.radius, 32 );
-        newCircle.rotateX(this.beta);
-        newCircle.rotateY(this.gamma);
-        this.circle.translate(this.coordinates.x, this.coordinates.y, this.coordinates.z);
-
-        this.mesh.geometry.copy(newCircle);
+        this.mesh.rotation.copy(new Euler(this.beta, this.gamma));
 
         for (const cat of this.cats.values()) {
             cat.updateAngle();
