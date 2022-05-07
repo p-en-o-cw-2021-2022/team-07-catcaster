@@ -7,11 +7,11 @@ import { Planet } from '../web/js/planet';
 import { Portal } from '../web/js/portal';
 import { database } from './index';
 import { findNeighborsVoronoi } from './voronoi.js';
-import { Vector2Tuple, Vector3 } from 'three';
+import { Scene, Vector2Tuple, Vector3 } from 'three';
 import { z } from 'zod';
 
 const multiScreenData:{[key: string]: [number, Planet[]]} = {};
-let qrlocations: QRlocation[] = Array();
+let qrlocations: QRlocation[] = [];
 
 export function websocketEventHandlers(websocket: ws.Server) {
 
@@ -59,27 +59,33 @@ export function websocketEventHandlers(websocket: ws.Server) {
                 break;
 
             case 'multi-screen':
-                if (!database.doesIdExist(mes.id)){
+                if (!database.doesIdExist(mes.id)) {
                     console.log('Received ID is not in the database, closing connection to client.');
-                    ws.send(JSON.stringify({client : 'disconnect', id : mes.id}))
+                    ws.send(JSON.stringify({client : 'disconnect', id : mes.id}));
                 }
                 websocket.clients.forEach((client) => {
                     client.send(JSON.stringify({client : 'multi-screen'}));
                 });
-                ws.send(JSON.stringify({client: 'multiscreen-send'}))
+                ws.send(JSON.stringify({client: 'multiscreen-send'}));
                 break;
 
             case 'qrlocations':
                 console.log('qrlocations ontvangen', mes.data);
                 qrlocations = mes.data;
                 const portals = createPortals();
-                console.log('portals added?: ', multiScreenData);
+                console.log('portals added: ', portals);
                 // hier planets() of portals terugsturen naar schermen?
                 break;
 
             case 'screenMultiData':
-                multiScreenData[id] = [mes.innerHeight, mes.planets];
-                //console.log(multiScreenData);
+                const planets: Planet[] = [];
+                for (const fakePlanet of mes.planets) {
+                    const scene = new Scene();
+                    const planet = new Planet(scene, fakePlanet.id, fakePlanet.radius, fakePlanet.friction, fakePlanet.coordinates);
+                    planets.push(planet);
+
+                }
+                multiScreenData[id] = [mes.innerHeight, planets];
                 break;
 
             case 'endgame':
@@ -89,7 +95,7 @@ export function websocketEventHandlers(websocket: ws.Server) {
                 });
                 break;
             case 'nbcontrollers':
-                let controllerids = database.getControllerIds();
+                const controllerids = database.getControllerIds();
                 ws.send(JSON.stringify({client: controllerids}));
                 break;
             }
@@ -102,98 +108,99 @@ export function websocketEventHandlers(websocket: ws.Server) {
     });
 }
 
-function createPortals(){
+function createPortals(): Portal[] {
     return generateSites();
 }
 
-function findPlanet(planetID: number, planetsIDs: {[key: number]: [string, number]} ){
+function findPlanet(planetID: number, planetsIDs: {[key: number]: [string, number]} ): Planet {
     const screenID = planetsIDs[planetID][0];
     const otherPlanetID = planetsIDs[planetID][1];
-    for (const planet of multiScreenData[screenID][1]){
-        if(planet.id == otherPlanetID){
+    for (const planet of multiScreenData[screenID][1]) {
+        if(planet.id == otherPlanetID) {
             return planet;
         }
     }
+    return multiScreenData[screenID][1][0];
 }
 
-function findScreenCoordinates(id: string){
-    for (const qr of qrlocations){
-        if(qr.id == id){
+function findScreenCoordinates(id: string): {x: number, y:number} {
+    for (const qr of qrlocations) {
+        if(qr.id == id) {
             return qr.middle_location;
         }
     }
+    return {x: 0, y: 0};
 }
 
-function calculatePortalCoordinates(myPlanet: Planet, otherPlanet: Planet, ratio: number, screenCoordinates: Vector3){
-    let vector = new Vector3;
+function calculatePortalCoordinates(myPlanet: Planet, otherPlanet: Planet, ratio: number, screenCoordinates: Vector3): Vector3 {
+    const vector = new Vector3();
     vector.addVectors(otherPlanet.coordinates, myPlanet.coordinates.multiplyScalar(-1));
     vector.normalize();
     vector.multiplyScalar(myPlanet.radius-2);
-    let localPlanetCoordinates = new Vector3;
-    localPlanetCoordinates.addVectors(myPlanet.coordinates, screenCoordinates.multiplyScalar(-1))
+    const localPlanetCoordinates = new Vector3();
+    localPlanetCoordinates.addVectors(myPlanet.coordinates, screenCoordinates.multiplyScalar(-1));
     localPlanetCoordinates.multiplyScalar(1/ratio);
     localPlanetCoordinates.add(vector);
     return localPlanetCoordinates;
 }
 
-function generateSites() {
-    let ratio = Object();
-    let sites: {x: number; y: number; id: string}[] = [];
-    let planetsIDs: {[key: number]: [string, number]} = {};
+function generateSites(): Portal[] {
+    const ratio = Object();
+    const sites: {x: number; y: number; id: string}[] = [];
+    const planetsIDs: {[key: number]: [string, number]} = {};
     let globalPlanetID = 0;
-    for (const qrloc of qrlocations){
-        let id = qrloc.id;
+    for (const qrloc of qrlocations) {
+        const id = qrloc.id;
         ratio[id] = Math.abs(qrloc.topleft_location.y - qrloc.bottomright_location.y) / multiScreenData[id][0];
-        for (const planet of multiScreenData[id][1]){
+        for (const planet of multiScreenData[id][1]) {
             planetsIDs[globalPlanetID] = [id, planet.id];
-            let globalPlanetCoordinates = new Vector3;
+            const globalPlanetCoordinates = new Vector3();
             globalPlanetCoordinates.add(planet.coordinates);
             globalPlanetCoordinates.multiplyScalar(ratio[id]);
-            let qrVector = new Vector3;
+            const qrVector = new Vector3();
             qrVector.set(qrloc.middle_location.x, qrloc.middle_location.y, 0);
             globalPlanetCoordinates.add(qrVector);
             planet.coordinates = globalPlanetCoordinates;
-            let site: {x: number; y: number; id: string} = {x: planet.coordinates.x, y: planet.coordinates.y, id: globalPlanetID.toString()};
+            const site: {x: number; y: number; id: string} = {x: planet.coordinates.x, y: planet.coordinates.y, id: globalPlanetID.toString()};
             sites.push(site);
             globalPlanetID++;
         }
     }
-    console.log('websocket sites: ', sites);
     return generatePortals(sites, planetsIDs, ratio);
 }
 
-function generatePortals(sites: {x: number; y: number; id: string}[], planetsIDs: {[key: number]: [string, number]}, ratio = Object()) {
+function generatePortals(sites: {x: number; y: number; id: string}[], planetsIDs: {[key: number]: [string, number]}, ratio = Object()): Portal[] {
     const neighbors = findNeighborsVoronoi(sites);
+    console.log('neighbors: ', neighbors);
     const portals: Portal[] = [];
-    for(const planet of neighbors){
+    for(const planet of neighbors) {
         const myID = planet.id;
         const myPlanet = findPlanet(Number(myID), planetsIDs)!;
-        const myCoordinates = myPlanet!.coordinates;
+        const myCoordinates = myPlanet.coordinates;
         const neighborsToAdd = planet.neighborsOfID;
-        for(const neighborToAdd of neighborsToAdd){
+        for(const neighborToAdd of neighborsToAdd) {
             const [otherScreen, otherPlanetID] = planetsIDs[Number(neighborToAdd)];
             const screenID = planetsIDs[Number(myID)][0];
             const otherPlanet = findPlanet(otherPlanetID, planetsIDs)!;
             const screenCoordinates = findScreenCoordinates(screenID)!;
-            let screenVector = new Vector3;
+            const screenVector = new Vector3();
             screenVector.set(screenCoordinates.x, screenCoordinates.y, 0);
             const portalCoordinates = calculatePortalCoordinates(myPlanet, otherPlanet, ratio[screenID], screenVector);
             const portal = new Portal(otherScreen, portalCoordinates, otherPlanet);
             myPlanet.addPortal(portal);
-            console.log(portal);
-            
+            portals.push(portal);
         }
         console.log('planet: ', myPlanet);
     }
     return portals;
 }
 
-function sendPortals(clients: any) {
-    clients.forEach(function(client: any) {
-        client.send(JSON.stringify({client: 'portal'}));
+// function sendPortals(clients: any) {
+//     clients.forEach(function(client: any) {
+//         client.send(JSON.stringify({client: 'portal'}));
 
-    });
-}
+//     });
+// }
 
 function ping(clients: any) {
     clients.forEach(function(client: any) {
