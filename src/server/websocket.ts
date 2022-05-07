@@ -139,11 +139,11 @@ function calculatePortalCoordinates(myPlanet: Planet, otherPlanet: Planet, ratio
     vector.addVectors(otherPlanet.coordinates, myPlanet.coordinates.multiplyScalar(-1));
     vector.normalize();
     vector.multiplyScalar(myPlanet.radius-2);
-    const localPlanetCoordinates = new Vector3();
-    localPlanetCoordinates.addVectors(myPlanet.coordinates, screenCoordinates.multiplyScalar(-1));
-    localPlanetCoordinates.multiplyScalar(1/ratio);
-    localPlanetCoordinates.add(vector);
-    return localPlanetCoordinates;
+    // const localPlanetCoordinates = new Vector3();
+    // localPlanetCoordinates.addVectors(myPlanet.coordinates, screenCoordinates.multiplyScalar(-1));
+    // localPlanetCoordinates.multiplyScalar(1/ratio);
+    // localPlanetCoordinates.add(vector);
+    return vector;
 }
 
 function generateSites(): Portal[] {

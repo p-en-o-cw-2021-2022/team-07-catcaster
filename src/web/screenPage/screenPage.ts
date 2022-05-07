@@ -99,7 +99,7 @@ function eventHandlersScreen() {
                 for(const serverPlanet of planets){
                     if(planet.id == serverPlanet.id){
                         for(const portal of serverPlanet.portals){
-                            planet.addPortal(portal);
+                            planet.addPortal(new Portal(portal.otherScreen, portal.myCoordinates.add(planet.coordinates), portal.otherPlanet));
                             console.log('added portal:',portal);
                         }
                     }
