@@ -1,5 +1,5 @@
 import { Planet } from '../js/planet.js';
-import { Scene, Vector3 } from 'three'
+import { Scene, Vector3 } from 'three';
 import { allPlanets } from './animationMain.js';
 import { Portal } from '../js/portal.js';
 const debug = <HTMLButtonElement>document.getElementById('debug-info');
@@ -88,25 +88,25 @@ function eventHandlersScreen() {
                 const scene = new Scene();
                 const coords = [fakePlanet.coordinates.x, fakePlanet.coordinates.y, fakePlanet.coordinates.z];
                 const planet = new Planet(scene, fakePlanet.id, fakePlanet.radius, fakePlanet.friction, coords);
-                for(const fakePortal of fakePlanet.portals){
-                    const coords: Vector3 = new Vector3(fakePortal.myCoordinates.x, fakePortal.myCoordinates.y, fakePortal.myCoordinates.z)
-                    const portal = new Portal(fakePortal.otherScreen, coords, fakePortal.otherPlanet);
+                for(const fakePortal of fakePlanet.portals) {
+                    const coords: Vector3 = new Vector3(fakePortal.myCoordinates.x, fakePortal.myCoordinates.y, 0);
+                    const portal = new Portal(fakePortal.otherScreen, coords, fakePortal.otherPlanetID);
                     planet.addPortal(portal);
                 }
                 planets.push(planet);
             }
             for(const planet of allPlanets) {
-                for(const serverPlanet of planets){
-                    if(planet.id == serverPlanet.id){
-                        for(const portal of serverPlanet.portals){
-                            planet.addPortal(new Portal(portal.otherScreen, portal.myCoordinates.add(planet.coordinates), portal.otherPlanet));
-                            console.log('added portal:',portal);
+                for(const serverPlanet of planets) {
+                    if(planet.id == serverPlanet.id) {
+                        for(const portal of serverPlanet.portals) {
+                            // planet.addPortal(new Portal(portal.otherScreen, portal.myCoordinates.add(planet.coordinates), portal.otherPlanetID));
+                            planet.addPortal(portal);
+                            console.log('added portal:', portal);
                         }
                     }
                 }
                 console.log('changedplanet: ', planet);
             }
-            // verander ik hier ook de portals in animation.ts
         }
     };
 
