@@ -2,6 +2,7 @@ import { Planet } from '../js/planet.js';
 import { Scene, Vector3 } from 'three';
 import { allPlanets } from './animationMain.js';
 import { Portal } from '../js/portal.js';
+import { findNeighborsVoronoi } from '../controllerPage/voronoi.js';
 const debug = <HTMLButtonElement>document.getElementById('debug-info');
 const gyrodata =  <HTMLElement>document.getElementById('gyrodatas');
 
@@ -44,6 +45,24 @@ function sendDataforMulti(websocket: WebSocket, planets: Array<Planet>) {
     console.log('ok');
 }
 
+function getPlanet(id: number) {
+    for(const planet of allPlanets) {
+        if(planet.id === id) {
+            return planet;
+        }
+    }
+    return allPlanets[0];
+}
+
+function getPortalCoordinates(myPlanet: Planet, otherPlanet: Planet) {
+    const vector = new Vector3(myPlanet.coordinates.x, myPlanet.coordinates.y, 0);
+    vector.multiplyScalar(-1);
+    vector.add(otherPlanet.coordinates);
+    vector.normalize();
+    vector.multiplyScalar(3*myPlanet.radius/4);
+    return vector;
+}
+
 function eventHandlersScreen() {
     const url = 'wss' + window.location.href.substr(5);
 
@@ -75,6 +94,27 @@ function eventHandlersScreen() {
             qrcodesmall.src = qrcodesmall.src = 'https://api.qrserver.com/v1/create-qr-code/?size=500x500&data=' + url;
 
             sendDataforMulti(websocket, allPlanets);
+        }
+        if(mes.client === 'singleScreen') {
+            console.log('Single screen selected.');
+            const sites: {x: number; y: number; id: string}[] = [];
+            for(const planet of allPlanets) {
+                const site = {x: planet.coordinates.x, y: planet.coordinates.y, id: planet.id.toString()};
+                sites.push(site);
+            }
+            const neighbors = findNeighborsVoronoi(sites);
+            for(const currentPlanet of neighbors) {
+                const planetID = Number(currentPlanet.id);
+                const planet = getPlanet(planetID);
+                const neighborsToAdd = currentPlanet.neighborsOfID;
+                for(const neighborToAdd of neighborsToAdd) {
+                    const neighborID = Number(neighborToAdd);
+                    const neighbor = getPlanet(neighborID);
+                    const portalCoordinates = getPortalCoordinates(planet, neighbor);
+                    const portal = new Portal(myId.innerHTML, portalCoordinates, neighborID);
+                    planet.addPortal(portal);
+                }
+            }
         }
         if(mes.client === 'endgame') {
             console.log('The game was ended.');
