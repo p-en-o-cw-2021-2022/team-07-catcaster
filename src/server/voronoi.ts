@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
-import {Voronoi} from 'voronoi';
+import Voronoi from 'voronoi';
 
 export function findNeighborsVoronoi(sites: {x: number; y: number; id: string}[]) {
 
