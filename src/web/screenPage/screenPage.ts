@@ -1,5 +1,5 @@
 import { Planet } from '../js/planet.js';
-import { Scene } from 'three'
+import { Scene, Vector3 } from 'three'
 import { allPlanets } from './animationMain.js';
 import { Portal } from '../js/portal.js';
 const debug = <HTMLButtonElement>document.getElementById('debug-info');
@@ -89,7 +89,8 @@ function eventHandlersScreen() {
                 const coords = [fakePlanet.coordinates.x, fakePlanet.coordinates.y, fakePlanet.coordinates.z];
                 const planet = new Planet(scene, fakePlanet.id, fakePlanet.radius, fakePlanet.friction, coords);
                 for(const fakePortal of fakePlanet.portals){
-                    const portal = new Portal(fakePortal.otherScreen, fakePortal.myCoordinates, fakePortal.otherPlanet);
+                    const coords: Vector3 = new Vector3(fakePortal.myCoordinates.x, fakePortal.myCoordinates.y, fakePortal.myCoordinates.z)
+                    const portal = new Portal(fakePortal.otherScreen, coords, fakePortal.otherPlanet);
                     planet.addPortal(portal);
                 }
                 planets.push(planet);
@@ -99,6 +100,7 @@ function eventHandlersScreen() {
                     if(planet.id == serverPlanet.id){
                         for(const portal of serverPlanet.portals){
                             planet.addPortal(portal);
+                            console.log('added portal:',portal);
                         }
                     }
                 }
