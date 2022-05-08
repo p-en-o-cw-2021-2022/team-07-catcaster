@@ -157,27 +157,27 @@ export class Planet {
             }
         }
         return;
-                // this.cats.delete(cat.id);
-                // // Send teleport message over websocket
-                // if (entry.otherScreen != myScreen) {
-                //     const url = 'wss' + window.location.href.substr(5);
-                //     const websocket = new WebSocket(url);
-                //     const jumpmessage = [entry.otherScreen, entry.otherPlanetID, cat];
-                //     websocket.send(JSON.stringify({client: 'jump-message', data: jumpmessage}));
-                // }
-                // else {
-                //     console.log('myscreen!');
-                //     for(const planet of allPlanets) {
-                //         if(planet.id == entry.otherPlanetID){
-                //             cat.setPlanet(planet);
-                //             planet.setCat(cat);
-                //             const x = planet.coordinates.x;
-                //             const y = planet.coordinates.y;
-                //             cat.positionOnPlanet = new Vector3(x, y, 0);
-                //         }
-                //     }
-                // }
-            // }
+        // this.cats.delete(cat.id);
+        // // Send teleport message over websocket
+        // if (entry.otherScreen != myScreen) {
+        //     const url = 'wss' + window.location.href.substr(5);
+        //     const websocket = new WebSocket(url);
+        //     const jumpmessage = [entry.otherScreen, entry.otherPlanetID, cat];
+        //     websocket.send(JSON.stringify({client: 'jump-message', data: jumpmessage}));
+        // }
+        // else {
+        //     console.log('myscreen!');
+        //     for(const planet of allPlanets) {
+        //         if(planet.id == entry.otherPlanetID){
+        //             cat.setPlanet(planet);
+        //             planet.setCat(cat);
+        //             const x = planet.coordinates.x;
+        //             const y = planet.coordinates.y;
+        //             cat.positionOnPlanet = new Vector3(x, y, 0);
+        //         }
+        //     }
+        // }
+        // }
         // }
     }
 }

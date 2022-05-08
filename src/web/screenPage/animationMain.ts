@@ -1,8 +1,5 @@
-import { loadavg } from 'os';
-import { PassThrough } from 'stream';
 import * as THREE from 'three';
-import { Mesh, MeshBasicMaterial, MeshNormalMaterial, Scene, Vector3 } from 'three';
-import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
+import { Vector3 } from 'three';
 import { Cat } from '../js/cat.js';
 import { setInnerText } from '../js/dom-util.js';
 import { askPermissionIfNeeded } from '../js/motion-events.js';
@@ -35,7 +32,10 @@ renderer.setPixelRatio(window.devicePixelRatio * scaleFactor);
 renderer.domElement.style.zIndex = '-1';
 renderer.domElement.style.position = 'relative';
 renderer.domElement.style.top = '0';
-document.getElementById('Game')!.appendChild( renderer.domElement );
+
+if (document.getElementById('Game') !== null) {
+    document.getElementById('Game')?.appendChild( renderer.domElement );
+}
 
 // const planet = new Planet(scene, 0, 20, 0, [0,0,0]);
 
@@ -150,19 +150,18 @@ function animate() {
             cat.yF = Number(beta);
         }
         const portal = cat.updateVelocity(dt);
-        if(portal != undefined){
+        if(portal !== undefined) {
             cat.planet.cats.delete(cat.id);
             // Send teleport message over websocket
-            if (portal.otherScreen != myId.innerHTML) {
+            if (portal.otherScreen !== myId.innerHTML) {
                 // hier is iets fout
                 const url = 'wss' + window.location.href.substr(5);
                 const websocket = new WebSocket(url);
                 const jumpmessage = [portal.otherScreen, portal.otherPlanetID, cat];
                 websocket.send(JSON.stringify({client: 'jump-message', data: jumpmessage}));
-            }
-            else {
+            } else {
                 for(const planet of allPlanets) {
-                    if(planet.id == portal.otherPlanetID){
+                    if(planet.id === portal.otherPlanetID) {
                         cat.setPlanet(planet);
                         planet.setCat(cat);
                         cat.positionOnPlanet = new Vector3(0, 0, 0);

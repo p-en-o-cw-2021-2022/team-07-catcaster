@@ -13,8 +13,6 @@ debug.addEventListener('click',  function() {
 
 });
 
-const qr = <HTMLImageElement>document.getElementById('qrcode');
-
 const myId = <HTMLDivElement>document.getElementById('receiver-id');
 let controllerId = null;
 
@@ -122,10 +120,10 @@ function eventHandlersScreen() {
         if(mes.client === 'jumpmessage') {
             console.log('Cat jumped from otherscreen.');
             const [otherScreen, otherPlanetID, otherFakeCat] = mes.jdata;
-            if(otherScreen == myId.innerHTML) {
+            if(otherScreen === myId.innerHTML) {
                 const cat = otherFakeCat;
                 for(const planet of allPlanets) {
-                    if(planet.id == Number(otherPlanetID)){
+                    if(planet.id === Number(otherPlanetID)) {
                         cat.setPlanet(planet);
                         planet.setCat(cat);
                         cat.positionOnPlanet = new Vector3(0, 0, 0);
@@ -137,7 +135,7 @@ function eventHandlersScreen() {
             console.log('The game was ended.');
             window.location.href = '/catcaster/endgame/';
         }
-        if(mes.client == 'portal') {
+        if(mes.client === 'portal') {
             console.log('Portals received.');
             const multiScreenData = mes.data;
             const planets: Planet[] = [];
@@ -154,7 +152,7 @@ function eventHandlersScreen() {
             }
             for(const planet of allPlanets) {
                 for(const serverPlanet of planets) {
-                    if(planet.id == serverPlanet.id) {
+                    if(planet.id === serverPlanet.id) {
                         for(const portal of serverPlanet.portals) {
                             // planet.addPortal(new Portal(portal.otherScreen, portal.myCoordinates.add(planet.coordinates), portal.otherPlanetID));
                             planet.addPortal(portal);
