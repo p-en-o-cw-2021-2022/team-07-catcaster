@@ -1,4 +1,5 @@
 import { loadavg } from 'os';
+import { PassThrough } from 'stream';
 import * as THREE from 'three';
 import { Mesh, MeshBasicMaterial, MeshNormalMaterial, Scene, Vector3 } from 'three';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
@@ -6,6 +7,7 @@ import { Cat } from '../js/cat.js';
 import { setInnerText } from '../js/dom-util.js';
 import { askPermissionIfNeeded } from '../js/motion-events.js';
 import { Planet } from '../js/planet.js';
+import { myId } from './screenPage.js';
 
 // Initialize animation scene and camera
 const scene = new THREE.Scene();
@@ -147,7 +149,27 @@ function animate() {
             cat.xF = Number(gamma);
             cat.yF = Number(beta);
         }
-        cat.updateVelocity(dt);
+        const portal = cat.updateVelocity(dt);
+        if(portal != undefined){
+            cat.planet.cats.delete(cat.id);
+            // Send teleport message over websocket
+            if (portal.otherScreen != myId.innerHTML) {
+                // hier is iets fout
+                const url = 'wss' + window.location.href.substr(5);
+                const websocket = new WebSocket(url);
+                const jumpmessage = [portal.otherScreen, portal.otherPlanetID, cat];
+                websocket.send(JSON.stringify({client: 'jump-message', data: jumpmessage}));
+            }
+            else {
+                for(const planet of allPlanets) {
+                    if(planet.id == portal.otherPlanetID){
+                        cat.setPlanet(planet);
+                        planet.setCat(cat);
+                        cat.positionOnPlanet = new Vector3(0, 0, 0);
+                    }
+                }
+            }
+        }
         // setDebugInfo();
     }
     updatePlanets();

@@ -3,6 +3,7 @@ import { Scene, Vector3 } from 'three';
 import { allPlanets } from './animationMain.js';
 import { Portal } from '../js/portal.js';
 import { findNeighborsVoronoi } from './voronoi.js';
+import { Cat } from '../js/cat.js';
 const debug = <HTMLButtonElement>document.getElementById('debug-info');
 const gyrodata =  <HTMLElement>document.getElementById('gyrodatas');
 
@@ -21,6 +22,7 @@ interface Message {
     'id': string;
     'client': string;
     'data': {[key: string]: [number, Planet[]]}
+    'jdata': [string, string, Cat]
 }
 
 interface WebSocketMessage {
@@ -114,6 +116,20 @@ function eventHandlersScreen() {
                     const portalCoordinates = getPortalCoordinates(planet, neighbor);
                     const portal = new Portal(myId.innerHTML, portalCoordinates, neighborID);
                     planet.addPortal(portal);
+                }
+            }
+        }
+        if(mes.client === 'jumpmessage') {
+            console.log('Cat jumped from otherscreen.');
+            const [otherScreen, otherPlanetID, otherFakeCat] = mes.jdata;
+            if(otherScreen == myId.innerHTML) {
+                const cat = otherFakeCat;
+                for(const planet of allPlanets) {
+                    if(planet.id == Number(otherPlanetID)){
+                        cat.setPlanet(planet);
+                        planet.setCat(cat);
+                        cat.positionOnPlanet = new Vector3(0, 0, 0);
+                    }
                 }
             }
         }

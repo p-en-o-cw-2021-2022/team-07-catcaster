@@ -75,6 +75,12 @@ export function websocketEventHandlers(websocket: ws.Server) {
                 });
                 break;
 
+            case 'jump-message':
+                websocket.clients.forEach((client) => {
+                    client.send(JSON.stringify({client : 'jumpmessage', jdata: mes.data}));
+                });
+                break;
+
             case 'qrlocations':
                 console.log('qrlocations ontvangen', mes.data);
                 qrlocations = mes.data;

@@ -145,27 +145,39 @@ export class Planet {
         }
     }
 
-    checkTP(cat: Cat) {
-        const tmp = cat.positionOnPlanet; // Current cat checking.
+    checkTP(cat: Cat): Portal | undefined {
+        const tmp = cat.positionOnPlanet.clone(); // Current cat checking.
+        tmp.add(this.coordinates);
         // TODO Add logic to handle multiple cats
 
         for (const entry of this.portals) {
             const portalVec3 = entry.myCoordinates;
-
             if(tmp.distanceTo(portalVec3) <= this.radius/4) {
-                // cat en entry.otherPlanetID doorsturen naar entry.otherScreen
-                // ----------------------------------------------------------------
-                // deze code uitvoeren op entry.otherScreen en niet hier
-                // const neighbour: Planet = entry.otherPlanet;
-                // cat.setPlanet(neighbour);
-                // const x = neighbour.coordinates.x;
-                // const y = neighbour.coordinates.y;
-                // const z = neighbour.coordinates.z;
-                // neighbour.setCat(cat);
-                // cat.positionOnPlanet = new Vector3(x,y,z);
-                // ----------------------------------------------------------------
-                this.cats.delete(cat.id);
+                return entry;
             }
         }
+        return;
+                // this.cats.delete(cat.id);
+                // // Send teleport message over websocket
+                // if (entry.otherScreen != myScreen) {
+                //     const url = 'wss' + window.location.href.substr(5);
+                //     const websocket = new WebSocket(url);
+                //     const jumpmessage = [entry.otherScreen, entry.otherPlanetID, cat];
+                //     websocket.send(JSON.stringify({client: 'jump-message', data: jumpmessage}));
+                // }
+                // else {
+                //     console.log('myscreen!');
+                //     for(const planet of allPlanets) {
+                //         if(planet.id == entry.otherPlanetID){
+                //             cat.setPlanet(planet);
+                //             planet.setCat(cat);
+                //             const x = planet.coordinates.x;
+                //             const y = planet.coordinates.y;
+                //             cat.positionOnPlanet = new Vector3(x, y, 0);
+                //         }
+                //     }
+                // }
+            // }
+        // }
     }
 }
