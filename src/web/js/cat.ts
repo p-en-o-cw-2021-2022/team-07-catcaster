@@ -82,7 +82,7 @@ export class Cat {
     updateAngle() {
 
         const copyVector = this.positionOnPlanet.clone();
-        
+
         // const normalVectorY = new Vector3(0,1,0);
         // copyVector.applyAxisAngle(new Vector3(0,1,0), this.planet.gamma);
         // copyVector.applyAxisAngle(new Vector3(1,0,0), this.planet.beta);
