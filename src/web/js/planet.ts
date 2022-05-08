@@ -1,23 +1,24 @@
 import * as THREE from 'three';
-import { Plane, Scene, Vector, Vector3 } from 'three';
+import { Euler, Plane, Scene, Vector, Vector3 } from 'three';
 import { myId } from '../screenPage/screenPage.js';
 import { Cat } from './cat.js';
+import { allPlanets  } from '../screenPage/animationMain.js';
 
-const websocket = <WebSocket>window.myWebSocket;
+// const websocket = <WebSocket>window.myWebSocket;
 
-interface Message {
-    'id': string;
-    'client': string;
-    'myScreenID': string;
-    'otherScreenID': string;
-    'otherScreenPlanet': number;
-    'cat': Cat;
-}
+// interface Message {
+//     'id': string;
+//     'client': string;
+//     'myScreenID': string;
+//     'otherScreenID': string;
+//     'otherScreenPlanet': number;
+//     'cat': Cat;
+// }
 
+import { Portal } from './portal.js';
 export class Planet {
 
     id: number;
-    screenid: string;
     radius: number;
     coordinates: Vector3;
     cats: Map<number, Cat>;
@@ -29,50 +30,66 @@ export class Planet {
     MAX_ANGLE: number = Math.PI/4;
     mesh: THREE.Mesh;
     circle: THREE.CircleGeometry;
-    portals: Map<number, Vector3>;
+    portals: Portal[];
     neighbours: Map<number, Planet>;
+    object3dGroup: THREE.Group;
 
-    constructor(scene: Scene, id: number, screenid: string, radius: number, friction: number, coordinates: number[] = [0,0,0]) {
+    constructor(scene: Scene, id: number, radius: number, friction: number, coordinates: number[] = [0,0,0]) {
         this.id = id;
         this.coordinates = new Vector3(coordinates[0], coordinates[1], coordinates[2]);
-        this.screenid = screenid;
         this.radius = radius;
         this.friction = friction;
         this.neighbours = new Map<number, Planet>();
-        this.portals = new Map<number, Vector3>();
         this.cats = new Map<number, Cat>();
-
+        this.portals = new Array<Portal>();
         this.circle = new THREE.CircleGeometry( this.radius, 32 );
-        this.circle.translate(coordinates[0], coordinates[1], coordinates[2]);
         this.mesh = new THREE.Mesh( this.circle, new THREE.MeshNormalMaterial() );
-        scene.add( this.mesh );
+        this.object3dGroup = new THREE.Group();
+        this.object3dGroup.add(this.mesh);
+        this.object3dGroup.position.add(this.coordinates);
+        scene.add( this.object3dGroup );
 
-        websocket.onmessage = (message:WebSocketMessage) => {
-            const mes = <Message>JSON.parse(message.data);
-            console.log('received message from : ', mes.id, '  |  client is: ', mes.client);
-            if(mes.client === 'jump') {
-                if ((mes.otherScreenID === this.screenid) && (mes.otherScreenPlanet === this.id)) {
-                    mes.cat.setPlanet(this);
-                    mes.cat.positionOnPlanet = new Vector3(this.coordinates.x, this.coordinates.y, this.coordinates.z);
-                }
-            }
-        };
+        // websocket.onmessage = (message:WebSocketMessage) => {
+        //     const mes = <Message>JSON.parse(message.data);
+        //     console.log('received message from : ', mes.id, '  |  client is: ', mes.client);
+        //     if(mes.client === 'jump') {
+        //         if ((mes.otherScreenID === myId.innerHTML) && (mes.otherScreenPlanet === this.id)) {
+        //             mes.cat.setPlanet(this);
+        //             mes.cat.positionOnPlanet = new Vector3(this.coordinates.x, this.coordinates.y, this.coordinates.z);
+        //         }
+        //     }
+        // };
     }
+
+    addPortal(portal: Portal) {
+        this.portals.push(portal);
+        // Coords need to be cloned because Vector3 methods are in place
+        const planetCoords = this.coordinates.clone();
+        const portalCoords = portal.myCoordinates.clone();
+        planetCoords.multiplyScalar(-1);
+        portalCoords.add(planetCoords); // Calculate portal coords relative to planet center
+        const circleGeom = new THREE.CircleGeometry( this.radius/4, 32 );
+        const portalMesh = new THREE.Mesh(circleGeom, new THREE.MeshLambertMaterial( { color: 0x4cbf04 } ));
+        this.object3dGroup.add(portalMesh);
+        portalMesh.position.copy(portalCoords); // Move the portal relative to the group center
+        portalMesh.position.add(new Vector3(0,0,1)); // Move the portal a bit forward to prevent clipping
+    }
+
 
     // Add a new neighbouring planet if not already added.
     // Portal vector is relative to center of the neightbour planet
-    addNeighbour(newNeighbour: Planet, portalVector: Vector3) {
-        if (!this.neighbours.has(newNeighbour.id)) {
-            this.neighbours.set(newNeighbour.id, newNeighbour);
-            const x = this.coordinates.x;
-            const y = this.coordinates.y;
-            const z = this.coordinates.z;
-            const portalCoords = new Vector3(x,y,z);
-            console.log('portalvetor: ', portalVector);
-            console.log('portalcoordinates: ', portalCoords);
-            this.portals.set(newNeighbour.id, portalVector.add(portalCoords));
-        }
-    }
+    // addNeighbour(newNeighbour: Planet, portalVector: Vector3) {
+    //     if (!this.neighbours.has(newNeighbour.id)) {
+    //         this.neighbours.set(newNeighbour.id, newNeighbour);
+    //         const x = this.coordinates[0];
+    //         const y = this.coordinates[1];
+    //         const z = this.coordinates[2];
+    //         const portalCoords = new Vector3(x,y,z);
+    //         console.log('portalvetor: ', portalVector)
+    //         console.log('portalcoordinates: ', portalCoords)
+    //         this.portals.set(newNeighbour.id, portalVector.add(portalCoords));
+    //     }
+    // }
 
     setAngle(axis: string, angle: number) {
 
@@ -137,59 +154,50 @@ export class Planet {
             yRatio += (cat.positionOnPlanet.y) / this.radius;
         }
 
-        // Adjust ratio scaling so that it doesn't exceed 1
-        xRatio = xRatio / this.cats.size;
-        yRatio = yRatio / this.cats.size;
+        if (this.cats.size > 0 ) {
+            // Adjust ratio scaling so that it doesn't exceed 1
+            xRatio = xRatio / this.cats.size;
+            yRatio = yRatio / this.cats.size;
+        }
 
         this.gamma = this.MAX_ANGLE * xRatio;
         this.beta = -this.MAX_ANGLE * yRatio;
 
-        const newCircle = this.circle = new THREE.CircleGeometry( this.radius, 32 );
-        newCircle.rotateX(this.beta);
-        newCircle.rotateY(this.gamma);
-        this.circle.translate(this.coordinates.x, this.coordinates.y, this.coordinates.z);
+        this.object3dGroup.rotation.copy(new Euler(this.beta, this.gamma));
 
-        this.mesh.geometry.copy(newCircle);
-        // for (const cat of this.cats.values()) {
-        //     cat.updateAngle();
-        // }
+        for (const cat of this.cats.values()) {
+            cat.updateAngle();
+        }
     }
 
     checkTP(cat: Cat) {
         const tmp = cat.positionOnPlanet; // Current cat checking.
         // TODO Add logic to handle multiple cats
 
-        for (const entry of this.portals.entries()) {
-            const planetId = entry[0];
-            const portalVec3 = entry[1];
+        for (const entry of this.portals) {
+            const portalVec3 = entry.myCoordinates;
 
-            if(tmp.distanceTo(portalVec3) <= 120) {
-                console.log('goeie');
-                const neighbour: Planet = this.neighbours.get(planetId)!;
-                cat.setPlanet(neighbour);
-                const x = neighbour.coordinates.x;
-                const y = neighbour.coordinates.y;
-                const z = neighbour.coordinates.z;
-                neighbour.setCat(cat);
-                cat.positionOnPlanet = new Vector3(x,y,z);
+            if(tmp.distanceTo(portalVec3) <= this.radius/4) {
                 this.cats.delete(cat.id);
                 // Send teleport message over websocket
-                if (neighbour.isOnOtherScreen(this.screenid)) {
-                    const jumpmessage = `{
-                        "client": "jump",
-                        "myScreenID": "${myId.innerText}",
-                        "otherScreenID": "${neighbour.screenid}",
-                        "otherScreenPlanet": "${neighbour.id}"
-                        "cat": "${cat}"
-                    }`;
-                    websocket.send(JSON.stringify(jumpmessage));
+                if (entry.otherScreen != myId.innerText) {
+                    const url = 'wss' + window.location.href.substr(5);
+                    const websocket = new WebSocket(url);
+                    const jumpmessage = [entry.otherScreen, entry.otherPlanetID, cat];
+                    websocket.send(JSON.stringify({client: 'jump-message', data: jumpmessage}));
+                }
+                else {
+                    for(const planet of allPlanets) {
+                        if(planet.id == entry.otherPlanetID){
+                            cat.setPlanet(planet);
+                            planet.setCat(cat);
+                            const x = planet.coordinates.x;
+                            const y = planet.coordinates.y;
+                            cat.positionOnPlanet = new Vector3(x, y, 0);
+                        }
+                    }
                 }
             }
         }
-    }
-    isOnOtherScreen(otherScreenID: string) {
-        if (this.screenid !== otherScreenID) {
-            return true;
-        } else {return false;}
     }
 }
