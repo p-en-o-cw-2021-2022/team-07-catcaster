@@ -44,30 +44,29 @@ const maxPlanets = 3*screenCount;
 const minPlanets = 1;
 // let noOfPlanets = Math.floor(Math.random() * (maxPlanets-minPlanets+1)+minPlanets);
 const noOfPlanets = 3;
-
 for (let planetID = 1; planetID <= noOfPlanets; planetID++) {
     const [planet_x, planet_y, planet_r] = generatePlanetCoo();
     const planet: Planet = new Planet(scene, planetID, planet_r, 10, [planet_x,planet_y,0]);
     allPlanets.push(planet);
     console.log('Created planet at: ', String([planet_x, planet_y, planet_r]));
 }
-for (let i = 0, len = allPlanets.length; i < len; i++) {
-    const shortestPlanet: Planet | null = allPlanets[i].seekShortestPlanet(allPlanets);
+// for (let i = 0, len = allPlanets.length; i < len; i++) {
+//     const shortestPlanet: Planet | null = allPlanets[i].seekShortestPlanet(allPlanets);
 
-    if (shortestPlanet !== null) {
+//     if (shortestPlanet !== null) {
 
-        const my: Vector3 = allPlanets[i].coordinates;
-        const your: Vector3 = shortestPlanet.coordinates;
-        const myPlanetR = allPlanets[i].radius;
-        const yourPlanetR = shortestPlanet.radius;
-        const myShortestVectorNormalized = new Vector3(your.x-my.x, your.y-my.y, your.z-my.z).normalize();
-        console.log('normalized vector: ', myShortestVectorNormalized);
-        console.log('not normalized vector: ', new Vector3(your.x-my.x, your.y-my.y, your.z-my.z));
-        allPlanets[i].addNeighbour(shortestPlanet, myShortestVectorNormalized.multiplyScalar(myPlanetR-2));
-        const yourShortestVectorNormalized = new Vector3(my.x-your.x, my.y-your.y, my.z-your.z).normalize();
-        shortestPlanet.addNeighbour(allPlanets[i], yourShortestVectorNormalized.multiplyScalar(yourPlanetR-2));
-    }
-}
+//         const my: Vector3 = allPlanets[i].coordinates;
+//         const your: Vector3 = shortestPlanet.coordinates;
+//         const myPlanetR = allPlanets[i].radius;
+//         const yourPlanetR = shortestPlanet.radius;
+//         const myShortestVectorNormalized = new Vector3(your.x-my.x, your.y-my.y, your.z-my.z).normalize();
+//         console.log('normalized vector: ', myShortestVectorNormalized);
+//         console.log('not normalized vector: ', new Vector3(your.x-my.x, your.y-my.y, your.z-my.z));
+//         allPlanets[i].addNeighbour(shortestPlanet, myShortestVectorNormalized.multiplyScalar(myPlanetR-2));
+//         const yourShortestVectorNormalized = new Vector3(my.x-your.x, my.y-your.y, my.z-your.z).normalize();
+//         shortestPlanet.addNeighbour(allPlanets[i], yourShortestVectorNormalized.multiplyScalar(yourPlanetR-2));
+//     }
+// }
 
 function generatePlanetCoo() : number[] {
     const max_r = 100;

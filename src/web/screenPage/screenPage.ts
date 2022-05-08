@@ -1,6 +1,8 @@
 import { Planet } from '../js/planet.js';
-
-import {allPlanets} from './animationMain.js';
+import { Scene, Vector3 } from 'three';
+import { allPlanets } from './animationMain.js';
+import { Portal } from '../js/portal.js';
+import { findNeighborsVoronoi } from './voronoi.js';
 const debug = <HTMLButtonElement>document.getElementById('debug-info');
 const gyrodata =  <HTMLElement>document.getElementById('gyrodatas');
 
@@ -18,6 +20,7 @@ let controllerId = null;
 interface Message {
     'id': string;
     'client': string;
+    'data': {[key: string]: [number, Planet[]]}
 }
 
 interface WebSocketMessage {
@@ -40,6 +43,25 @@ function sendDataforMulti(websocket: WebSocket, planets: Array<Planet>) {
     const jsonString = JSON.stringify({client: 'screenMultiData', id: myId.innerHTML, innerHeight: innerHeight, planets: planets});
     websocket.send(jsonString);
     console.log('ok');
+}
+
+function getPlanet(id: number): Planet {
+    for(const planet of allPlanets) {
+        if(planet.id === id) {
+            return planet;
+        }
+    }
+    return allPlanets[0];
+}
+
+function getPortalCoordinates(myPlanet: Planet, otherPlanet: Planet): Vector3 {
+    const vector = new Vector3(myPlanet.coordinates.x, myPlanet.coordinates.y, 0);
+    vector.multiplyScalar(-1);
+    vector.add(otherPlanet.coordinates);
+    vector.normalize();
+    vector.multiplyScalar(3*myPlanet.radius/4);
+    vector.add(myPlanet.coordinates);
+    return vector;
 }
 
 function eventHandlersScreen() {
@@ -74,9 +96,58 @@ function eventHandlersScreen() {
 
             sendDataforMulti(websocket, allPlanets);
         }
+        if(mes.client === 'singleScreen') {
+            console.log('Single screen selected.');
+            const sites: {x: number; y: number; id: string}[] = [];
+            for(const planet of allPlanets) {
+                const site = {x: planet.coordinates.x, y: planet.coordinates.y, id: planet.id.toString()};
+                sites.push(site);
+            }
+            const neighbors = findNeighborsVoronoi(sites);
+            for(const currentPlanet of neighbors) {
+                const planetID = Number(currentPlanet.id);
+                const planet = getPlanet(planetID);
+                const neighborsToAdd = currentPlanet.neighborsOfID;
+                for(const neighborToAdd of neighborsToAdd) {
+                    const neighborID = Number(neighborToAdd);
+                    const neighbor = getPlanet(neighborID);
+                    const portalCoordinates = getPortalCoordinates(planet, neighbor);
+                    const portal = new Portal(myId.innerHTML, portalCoordinates, neighborID);
+                    planet.addPortal(portal);
+                }
+            }
+        }
         if(mes.client === 'endgame') {
             console.log('The game was ended.');
             window.location.href = '/catcaster/endgame/';
+        }
+        if(mes.client == 'portal') {
+            console.log('Portals received.');
+            const multiScreenData = mes.data;
+            const planets: Planet[] = [];
+            for (const fakePlanet of multiScreenData[myId.innerHTML][1]) {
+                const scene = new Scene();
+                const coords = [fakePlanet.coordinates.x, fakePlanet.coordinates.y, fakePlanet.coordinates.z];
+                const planet = new Planet(scene, fakePlanet.id, fakePlanet.radius, fakePlanet.friction, coords);
+                for(const fakePortal of fakePlanet.portals) {
+                    const coords: Vector3 = new Vector3(fakePortal.myCoordinates.x, fakePortal.myCoordinates.y, 0);
+                    const portal = new Portal(fakePortal.otherScreen, coords, fakePortal.otherPlanetID);
+                    planet.addPortal(portal);
+                }
+                planets.push(planet);
+            }
+            for(const planet of allPlanets) {
+                for(const serverPlanet of planets) {
+                    if(planet.id == serverPlanet.id) {
+                        for(const portal of serverPlanet.portals) {
+                            // planet.addPortal(new Portal(portal.otherScreen, portal.myCoordinates.add(planet.coordinates), portal.otherPlanetID));
+                            planet.addPortal(portal);
+                            console.log('added portal:', portal);
+                        }
+                    }
+                }
+                console.log('changedplanet: ', planet);
+            }
         }
     };
 
