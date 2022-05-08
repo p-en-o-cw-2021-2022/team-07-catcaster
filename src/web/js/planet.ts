@@ -153,8 +153,7 @@ export class Planet {
             const portalVec3 = entry.myCoordinates;
 
             if(tmp.distanceTo(portalVec3) <= this.radius/4) {
-                // mss this.radius/2 ipv 120
-                // cat en entry.otherPlanet doorsturen naar entry.otherScreen
+                // cat en entry.otherPlanetID doorsturen naar entry.otherScreen
                 // ----------------------------------------------------------------
                 // deze code uitvoeren op entry.otherScreen en niet hier
                 // const neighbour: Planet = entry.otherPlanet;

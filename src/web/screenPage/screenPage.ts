@@ -2,7 +2,7 @@ import { Planet } from '../js/planet.js';
 import { Scene, Vector3 } from 'three';
 import { allPlanets } from './animationMain.js';
 import { Portal } from '../js/portal.js';
-import { findNeighborsVoronoi } from '../controllerPage/voronoi.js';
+import { findNeighborsVoronoi } from './voronoi.js';
 const debug = <HTMLButtonElement>document.getElementById('debug-info');
 const gyrodata =  <HTMLElement>document.getElementById('gyrodatas');
 
@@ -45,7 +45,7 @@ function sendDataforMulti(websocket: WebSocket, planets: Array<Planet>) {
     console.log('ok');
 }
 
-function getPlanet(id: number) {
+function getPlanet(id: number): Planet {
     for(const planet of allPlanets) {
         if(planet.id === id) {
             return planet;
@@ -54,12 +54,13 @@ function getPlanet(id: number) {
     return allPlanets[0];
 }
 
-function getPortalCoordinates(myPlanet: Planet, otherPlanet: Planet) {
+function getPortalCoordinates(myPlanet: Planet, otherPlanet: Planet): Vector3 {
     const vector = new Vector3(myPlanet.coordinates.x, myPlanet.coordinates.y, 0);
     vector.multiplyScalar(-1);
     vector.add(otherPlanet.coordinates);
     vector.normalize();
     vector.multiplyScalar(3*myPlanet.radius/4);
+    vector.add(myPlanet.coordinates);
     return vector;
 }
 
