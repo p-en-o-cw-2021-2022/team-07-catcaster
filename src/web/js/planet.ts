@@ -146,13 +146,12 @@ export class Planet {
     }
 
     checkTP(cat: Cat): Portal | undefined {
-        const tmp = cat.positionOnPlanet.clone(); // Current cat checking.
+        const tmp = (cat.positionOnPlanet).clone(); // Current cat checking.
         tmp.add(this.coordinates);
-        // TODO Add logic to handle multiple cats
-
         for (const entry of this.portals) {
             const portalVec3 = entry.myCoordinates;
             if(tmp.distanceTo(portalVec3) <= this.radius/4) {
+                console.log(entry);
                 return entry;
             }
         }

@@ -20,7 +20,7 @@ interface Message {
     'id': string;
     'client': string;
     'data': {[key: string]: [number, Planet[]]}
-    'jdata': [string, string, Cat]
+    'jdata': [string, number, string]
 }
 
 interface WebSocketMessage {
@@ -117,11 +117,12 @@ function eventHandlersScreen() {
                 }
             }
         }
-        if(mes.client === 'jumpmessage') {
-            console.log('Cat jumped from otherscreen.');
+        if(mes.client === 'jump-message') {
+            console.log('Cat jumped from other screen.');
             const [otherScreen, otherPlanetID, otherFakeCat] = mes.jdata;
+            console.log(otherScreen, otherPlanetID, otherFakeCat);
             if(otherScreen === myId.innerHTML) {
-                const cat = otherFakeCat;
+                const cat = <Cat>JSON.parse(otherFakeCat);
                 for(const planet of allPlanets) {
                     if(planet.id === Number(otherPlanetID)) {
                         cat.setPlanet(planet);

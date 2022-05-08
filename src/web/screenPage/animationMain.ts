@@ -151,6 +151,7 @@ function animate() {
         }
         const portal = cat.updateVelocity(dt);
         if(portal !== undefined) {
+            console.log(portal);
             cat.planet.cats.delete(cat.id);
             // Send teleport message over websocket
             if (portal.otherScreen !== myId.innerHTML) {
