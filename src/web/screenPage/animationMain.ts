@@ -117,7 +117,7 @@ const dt = 0.05;
 // planet2.addNeighbour(planet, new Vector3(-3,0,0));
 renderer.render( scene, camera );
 
-export function conAdd(){
+export function conAdd() {
     controllers = document.getElementById('controllers')!.children;
 }
 
@@ -139,11 +139,11 @@ export function conAdd(){
 // }
 
 function animate() {
-    console.log('cats???', cats, catsData);
-    if( cats.length === catsData.length){
+    // console.log('cats???', cats, catsData);
+    if( cats.length === catsData.length) {
         for (let i = 0, len = cats.length; i < len; i++) {
             const cat = cats[i];
-            if(cat != undefined) {
+            if(cat !== undefined) {
                 const jumpdata = catsData[i][1].innerText;
                 if (jumpdata === 'true') {
                     cat.jump = true;
