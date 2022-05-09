@@ -1,11 +1,10 @@
-import { loadavg } from 'os';
 import * as THREE from 'three';
-import { Mesh, MeshBasicMaterial, MeshNormalMaterial, Scene, Vector3 } from 'three';
-import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
+import { Vector3 } from 'three';
 import { Cat } from '../js/cat.js';
 import { setInnerText } from '../js/dom-util.js';
 import { askPermissionIfNeeded } from '../js/motion-events.js';
 import { Planet } from '../js/planet.js';
+import { myId, sendMessage } from './screenPage.js';
 
 // Initialize animation scene and camera
 const scene = new THREE.Scene();
@@ -17,9 +16,10 @@ scene.background = new THREE.Color('white');
 // scene.background = new THREE.Color(0x919bab);
 // const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, -1000, 1000 );
 // camera.position.z = 1000;
-const cats : Cat[] = [];
+export const cats : (Cat | undefined )[] = [];
 const catsData : HTMLElement[][] = [];
-let controllers_count = 0;
+export let controllers_count = 0;
+export let controllers = document.getElementById('controllers')!.children;
 // const camera = new THREE.OrthographicCamera( window.innerWidth/-20, window.innerWidth / 20, window.innerHeight / 20, window.innerHeight / -20, -100, 100);
 const camera = new THREE.OrthographicCamera( -sceneHeight * aspectRatio / 2 , sceneHeight * aspectRatio / 2, sceneHeight / 2, -sceneHeight / 2, -500, 500);
 // camera.position.y = -10;
@@ -31,9 +31,12 @@ const scaleFactor = 1; // Scale factor for the resolution of window
 renderer.setSize( window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(window.devicePixelRatio * scaleFactor);
 renderer.domElement.style.zIndex = '-1';
-renderer.domElement.style.position = 'absolute';
+renderer.domElement.style.position = 'relative';
 renderer.domElement.style.top = '0';
-document.body.appendChild( renderer.domElement );
+
+if (document.getElementById('Game') !== null) {
+    document.getElementById('Game')?.appendChild( renderer.domElement );
+}
 
 // const planet = new Planet(scene, 0, 20, 0, [0,0,0]);
 
@@ -44,36 +47,34 @@ const maxPlanets = 3*screenCount;
 const minPlanets = 1;
 // let noOfPlanets = Math.floor(Math.random() * (maxPlanets-minPlanets+1)+minPlanets);
 const noOfPlanets = 3;
-
 for (let planetID = 1; planetID <= noOfPlanets; planetID++) {
     const [planet_x, planet_y, planet_r] = generatePlanetCoo();
     const planet: Planet = new Planet(scene, planetID, planet_r, 10, [planet_x,planet_y,0]);
     allPlanets.push(planet);
     console.log('Created planet at: ', String([planet_x, planet_y, planet_r]));
 }
-for (let i = 0, len = allPlanets.length; i < len; i++) {
-    const shortestPlanet: Planet | null = allPlanets[i].seekShortestPlanet(allPlanets);
+// for (let i = 0, len = allPlanets.length; i < len; i++) {
+//     const shortestPlanet: Planet | null = allPlanets[i].seekShortestPlanet(allPlanets);
 
-    if (shortestPlanet !== null) {
+//     if (shortestPlanet !== null) {
 
-        const my: Vector3 = allPlanets[i].coordinates;
-        const your: Vector3 = shortestPlanet.coordinates;
-        const myPlanetR = allPlanets[i].radius;
-        const yourPlanetR = shortestPlanet.radius;
-        const myShortestVectorNormalized = new Vector3(your.x-my.x, your.y-my.y, your.z-my.z).normalize();
-        console.log('normalized vector: ', myShortestVectorNormalized);
-        console.log('not normalized vector: ', new Vector3(your.x-my.x, your.y-my.y, your.z-my.z));
-        allPlanets[i].addNeighbour(shortestPlanet, myShortestVectorNormalized.multiplyScalar(myPlanetR-2));
-        const yourShortestVectorNormalized = new Vector3(my.x-your.x, my.y-your.y, my.z-your.z).normalize();
-        shortestPlanet.addNeighbour(allPlanets[i], yourShortestVectorNormalized.multiplyScalar(yourPlanetR-2));
-    }
-}
+//         const my: Vector3 = allPlanets[i].coordinates;
+//         const your: Vector3 = shortestPlanet.coordinates;
+//         const myPlanetR = allPlanets[i].radius;
+//         const yourPlanetR = shortestPlanet.radius;
+//         const myShortestVectorNormalized = new Vector3(your.x-my.x, your.y-my.y, your.z-my.z).normalize();
+//         console.log('normalized vector: ', myShortestVectorNormalized);
+//         console.log('not normalized vector: ', new Vector3(your.x-my.x, your.y-my.y, your.z-my.z));
+//         allPlanets[i].addNeighbour(shortestPlanet, myShortestVectorNormalized.multiplyScalar(myPlanetR-2));
+//         const yourShortestVectorNormalized = new Vector3(my.x-your.x, my.y-your.y, my.z-your.z).normalize();
+//         shortestPlanet.addNeighbour(allPlanets[i], yourShortestVectorNormalized.multiplyScalar(yourPlanetR-2));
+//     }
+// }
 
 function generatePlanetCoo() : number[] {
     const max_r = 100;
     const min_r = 50;
     const planet_r = Math.floor(Math.random() * (max_r-min_r+1)+min_r);
-
     // const max_x_window = window.innerWidth/2 - 80;
     // const max_x_window = 120;
     const max_x_window = aspectRatio * sceneHeight / 2;
@@ -83,6 +84,9 @@ function generatePlanetCoo() : number[] {
     // const max_y_window = window.innerHeight/2;
     const max_y_window = sceneHeight / 2 ;
     const planet_y = Math.ceil(Math.random() * (max_y_window-planet_r)) * (Math.round(Math.random()) ? 1 : -1);
+
+    console.log('Tried planet at: ');
+    console.log(planet_x, planet_y, planet_r);
 
     if(!isValidPosition(planet_x, planet_y, planet_r)) {
         return generatePlanetCoo();
@@ -113,44 +117,77 @@ const dt = 0.05;
 // planet2.addNeighbour(planet, new Vector3(-3,0,0));
 renderer.render( scene, camera );
 
-function addCat() {
-    const controllers = document.getElementById('controllers')!.children;
-    const id = (controllers[controllers_count - 1] as HTMLParagraphElement).innerText;
-
-    // const cat: Cat = new Cat(scene, parseInt(id, 16), allPlanets[0].radius, planet);
-    const cat: Cat = new Cat(scene, parseInt(id, 16), allPlanets[0].radius, allPlanets[0]);
-    console.log(allPlanets);
-    allPlanets[0].setCat(cat);
-    // planet.setCat(cat);
-
-    cats.push(cat);
-    console.log('Cat added wih id: ' + String(parseInt(id, 16)));
-    console.log(catsData);
-    console.log(cats);
+export function conAdd() {
+    controllers = document.getElementById('controllers')!.children;
 }
 
+// export function addCat() {
+//     controllers = document.getElementById('controllers')!.children;
+//     const id = (controllers[controllers_count - 1] as HTMLParagraphElement).innerText;
+
+//     // const cat: Cat = new Cat(scene, parseInt(id, 16), allPlanets[0].radius, planet);
+//     const plan = allPlanets[Math.floor(Math.random() * allPlanets.length)];
+//     const cat: Cat = new Cat(parseInt(id, 16), plan.radius, plan);
+//     console.log(allPlanets);
+//     allPlanets[0].setCat(cat);
+//     // planet.setCat(cat);
+
+//     cats.push(cat);
+//     console.log('Cat added wih id: ' + String(parseInt(id, 16)));
+//     console.log(catsData);
+//     console.log(cats);
+// }
+
 function animate() {
-    for (let i = 0, len = cats.length; i < len; i++) {
-        const cat = cats[i];
-        const jumpdata = catsData[i][1].innerText;
-        if (jumpdata === 'true') {
-            cat.jump = true;
-        } else {
-            cat.jump = false;
+    // console.log('cats???', cats, catsData);
+    if( cats.length === catsData.length) {
+        for (let i = 0, len = cats.length; i < len; i++) {
+            const cat = cats[i];
+            if(cat !== undefined) {
+                const jumpdata = catsData[i][1].innerText;
+                if (jumpdata === 'true') {
+                    cat.jump = true;
+                } else {
+                    cat.jump = false;
+                }
+                const gyrodata = catsData[i][0].innerText;
+                if ((gyrodata !== '') || (gyrodata !== undefined)) {
+                    const datalist = gyrodata?.split(' ');
+                    const beta = datalist[0];
+                    const gamma = datalist[1];
+                    cat.xF = Number(gamma);
+                    cat.yF = Number(beta);
+                }
+                const portal = cat.updateVelocity(dt);
+                if(portal !== undefined) {
+                    console.log(portal);
+                    cat.planet.cats.delete(cat.id);
+                    // Send teleport message over websocket
+                    if (portal.otherScreen !== myId.innerHTML) {
+                        // hier is iets fout
+                        cats[i] = undefined;
+                        const jumpmessage = [portal.otherScreen, portal.otherPlanetID, cat, i];
+                        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+                        sendMessage('jump-message', jumpmessage);
+                    } else {
+                        for(const planet of allPlanets) {
+                            if(planet.id === portal.otherPlanetID) {
+                                cat.setPlanet(planet);
+                                planet.setCat(cat);
+                                cat.positionOnPlanet = new Vector3(0, 0, 0);
+                                cat.xF = 0;
+                                cat.yF = 0;
+                                cat.xVel = 0;
+                                cat.yVel = 0;
+                            }
+                        }
+                    }
+                }
+                // setDebugInfo();
+            }
         }
-        const gyrodata = catsData[i][0].innerText;
-        if ((gyrodata !== '') || (gyrodata !== undefined)) {
-            const datalist = gyrodata?.split(' ');
-            const beta = datalist[0];
-            const gamma = datalist[1];
-            cat.xF = Number(gamma);
-            cat.yF = Number(beta);
-        }
-        cat.updateVelocity(dt);
-        // setDebugInfo();
     }
     updatePlanets();
-    // planet.updateAngles(dt);
     renderer.render( scene, camera );
     requestAnimationFrame(animate);
 }
@@ -195,8 +232,10 @@ function animate() {
 function update2(e: DeviceOrientationEvent) {
     for (let i = 0, len = cats.length; i < len; i++) {
         const cat = cats[i];
-        cat.updateForce('x', e.gamma!);
-        cat.updateForce('y', -e.beta!);
+        if(cat !== undefined) {
+            cat.updateForce('x', e.gamma!);
+            cat.updateForce('y', -e.beta!);
+        }
     }
 }
 
@@ -227,7 +266,7 @@ function newController() {
     if (controllers) {
         if (Math.floor(controllers_count) === controllers_count) {
             catsData.push([<HTMLElement>controllers[controllers_count*2 - 2], <HTMLElement>controllers[controllers_count*2 - 1]]);
-            addCat();
+            // addCat();
         }
     }
 }

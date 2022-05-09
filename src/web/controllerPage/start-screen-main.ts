@@ -14,7 +14,7 @@ const cameraMain = <HTMLElement>document.getElementById('camera');
 const single_screen_button = <HTMLButtonElement>document.getElementById('single-screen-button');
 const multiple_screen_button = <HTMLButtonElement>document.getElementById('multiple-screen-button');
 const loaderQR = <HTMLElement>document.getElementById('loaderQR');
-loaderQR.style.display = "none";
+loaderQR.style.display = 'none';
 
 let number: number;
 const queryString = window.location.search;
@@ -36,12 +36,14 @@ export class QRlocation {
         this.neighbours = [];
     }
 
-    addNeighbour(qrloc: QRlocation){
-        this.neighbours.push(qrloc.id)
+    addNeighbour(qrloc: QRlocation) {
+        this.neighbours.push(qrloc.id);
     }
 }
-    
+
 single_screen_button.addEventListener('click',  function() {
+    websocket.send(JSON.stringify({client: 'single-screen', id: id}));
+    websocket.send(JSON.stringify({client: 'join'}));
     window.location.href = '/catcaster/controller/?id=' + id + '&mode=singlescreen';
 });
 
@@ -58,28 +60,27 @@ websocket.onopen = () => {
 websocket.onmessage = async (message:WebSocketMessage) => {
     const mes = <Message>JSON.parse(message.data);
     console.log('received message from : ', mes.id, '  |  client is: ', mes.client);
-    if(mes.client == 'disconnect' && mes.id == id){
+    if(mes.client == 'disconnect' && mes.id == id) {
         console.log('Illegal ID, removing websocket connection.');
         websocket.close();
-        window.location.href = '/catcaster/error/'
+        window.location.href = '/catcaster/error/';
     }
 };
 
 websocket.onclose = (event) => {
-    websocket.send(JSON.stringify({client: 'disconnected', id: id}))
-    console.log('Connection lost, attempting to reconnect...') //ADD TO HTML PAGE !!!!
-    let tries = 0
+    websocket.send(JSON.stringify({client: 'disconnected', id: id}));
+    console.log('Connection lost, attempting to reconnect...'); //ADD TO HTML PAGE !!!!
+    let tries = 0;
     while (websocket.readyState == 3 && tries <= 10) {
         websocket = new WebSocket(url);
         tries += 1;
-    };
+    }
     if (websocket.readyState == 1) {
-        console.log('Reconnected succesfully.') //ADD TO HTML PAGE !!!!
+        console.log('Reconnected succesfully.'); //ADD TO HTML PAGE !!!!
+    } else {
+        console.log('Reconnection failed, terminating...'); //ADD TO HTML PAGE !!!!
     }
-    else {
-        console.log('Reconnection failed, terminating...') //ADD TO HTML PAGE !!!!
-    }
-}
+};
 
 function cameraStart() {
     navigator.mediaDevices
@@ -103,7 +104,6 @@ function getQRLocations() {
         for (const qrloc of qrlocations) {
             sites.push({x: qrloc.middle_location.x, y: qrloc.middle_location.y, id: qrloc.id});
         }
-
         //Create voronoi triangulation, neighbours contains edges
         const neighboursPerID = findNeighborsVoronoi(sites);
 
@@ -125,7 +125,7 @@ function getQRLocations() {
             }
         }
 
-        websocket.send(JSON.stringify({client:'qrlocations', data: qrlocations}))
+        websocket.send(JSON.stringify({client:'qrlocations', data: qrlocations}));
         window.location.href = '/catcaster/controller/?id='+id+'&mode=multiscreen';
 
         /* server code */
@@ -135,11 +135,11 @@ function getQRLocations() {
 }
 
 cameraTrigger.onclick = function() {
-    
-    
-    let displayPromise = new Promise(function(displayResolve, displayReject) {
+
+
+    const displayPromise = new Promise(function(resolve, reject) {
         cameraTrigger.style.display = 'none';
-        loaderQR.style.display = "block";
+        loaderQR.style.display = 'block';
         cameraTrigger.disabled = true;
 
         cameraSensor.width = cameraView.videoWidth;
@@ -149,17 +149,19 @@ cameraTrigger.onclick = function() {
         cameraOutput.classList.add('taken');
         cameraMain.style.display = 'block';
         cameraView.style.display = 'none';
-        });
-        
-        displayPromise.then(
-          function() { getQRLocations(); 
-                        loaderQR.style.display = "none";
-                    }
-          
-        );
-    
-    
-    
+        resolve(1);
+    });
+
+    displayPromise.then(
+        function() {
+            getQRLocations();
+            loaderQR.style.display = 'none';
+        }
+
+    );
+
+
+
 };
 
 window.addEventListener('load', cameraStart, false);
@@ -167,10 +169,10 @@ window.addEventListener('load', cameraStart, false);
 
 // eslint-disable-next-line @typescript-eslint/no-misused-promises
 multiple_screen_button.addEventListener('click', function() {
-    let input: string | null = prompt('Enter the amount of QR codes:');
+    const input: string | null = prompt('Enter the amount of QR codes:');
     //Enter amount of screens
     if (input !== null) {
-        number = parseInt(input!);
+        number = parseInt(input);
 
         while (number < 2 ||number === null || number === undefined) {
             number = parseInt(prompt('Please enter more than one screen:')!);
@@ -189,6 +191,7 @@ multiple_screen_button.addEventListener('click', function() {
     }
     //change qr code
     websocket.send(JSON.stringify({client: 'multi-screen', id: id}));
+    websocket.send(JSON.stringify({client: 'join'}));
     //window.location.href = '/catcaster/controller/?id='+id+'&mode=multiscreen';
     //Start camera
     // window.location.href = '/catcaster/controller/?id=' + <string>id + '&mode=multiscreen';
@@ -204,7 +207,7 @@ function QR(number: number) {
     const imageData = cameraSensor.getContext('2d')!.getImageData(0, 0, cameraSensor.width, cameraSensor.height);
     cameraSensor.getContext('2d')!.drawImage(cameraView, 0, 0);
     if (imageData === null || imageData === undefined) {
-        alert('Image not found')
+        alert('Image not found');
         throw new Error('imageData was null');
     }
     const data = imageData.data;
@@ -229,7 +232,7 @@ function QR(number: number) {
         const middle_location_x: number = (topLeftCorner.x +bottomRightCorner.x)/2;
         const middle_location_y: number = (topLeftCorner.y+bottomRightCorner.y)/2;
 
-        
+
         const id: string = qr.data;
         const middle_location: {x: number, y: number} = {x: middle_location_x, y: middle_location_y};
         const qr_init = new QRlocation(id, middle_location, topLeftCorner, bottomRightCorner);

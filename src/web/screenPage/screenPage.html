@@ -1,18 +1,28 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <script async src="https://unpkg.com/es-module-shims@1.3.5/dist/es-module-shims.js"></script>
+        <!-- <script type='importmap'>
+            {
+            "imports": {
+                "jsqr": "../js/jsQR.js",
+                "voronoi": "../js/rhill-voronoi-core.js"
+            }
+            }
+        </script> -->
         <meta charset="utf-8" />
         <title>Receiver</title>
         <link href="data:image/x-icon;base64,AAABAAEAEBAAAAAAAABoBQAAFgAAACgAAAAQAAAAIAAAAAEACAAAAAAAAAEAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP//AAD//wAA+B8AAOfnAADf+wAA3rsAAL1dAAC//QAAt/UAAL/9AAC//QAAvD0AANvbAADX6wAA7/cAAP//AAA=" rel="icon" type="image/x-icon" />
         <meta name ="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
         <link rel="stylesheet" type="text/css" href="animationStylesheet.css">
         
-        <script async src="https://unpkg.com/es-module-shims@0.13.1/dist/es-module-shims.js"></script>
+        <!-- <script async src="https://unpkg.com/es-module-shims@0.13.1/dist/es-module-shims.js"></script> -->
 
         <script type="importmap">
           {
             "imports": {
-              "three": "https://unpkg.com/three@0.135.0/build/three.module.js"
+              "three": "https://unpkg.com/three@0.135.0/build/three.module.js",
+              "voronoi": "../js/rhill-voronoi-core.js"
             }
           }
         </script> 
@@ -20,32 +30,27 @@
         <script type="module" src="./qr-code.js"></script>
     </head>
     <body>
-        <div class = "bottom">
-        <img id="qrcode", style="width: 15%; display: none;position : relative;" ></img>
-        </div>
-        
-        <div id="overlay" , style="position: fixed;
-                                    display: BLOCK;
-                                    width: 100%;
-                                    height: 100%;
-                                    top: 0;
-                                    left: 0;
-                                    right: 0;
-                                    bottom: 0;
-                                    background-color: rgba(0,0,0,0.5);
-                                    z-index: 100;
-                                    cursor: pointer;">
-            <img id="qrcodelarge" , style="position: absolute;
-            display: BLOCK;
-            left: 50%;
-            margin-right: -50%;transform: translate(-50%);height: 100%;
-            z-index: 101;">
-        </div>
+        <div id="Game"></div>
+        <div id="Info" style="margin-left: 2%;">
+            <img id="qrcode" , style="width: 15%; display: none;"> 
 
-        <div class = "bottom">
-        <button id="debug-info" style="font-size: 20px;">Debug Info</button>
-        <div id="controllers" hidden></div><br>
-        <div class = "whiteBorder">
+            <div id="overlay" , style="position: fixed;
+                                        display: BLOCK;
+                                        width: 100%;
+                                        height: 100%;
+                                        top: 0;
+                                        left: 0;
+                                        right: 0;
+                                        bottom: 0;
+                                        background-color: rgba(0,0,0,0.5);
+                                        z-index: 100;
+                                        cursor: pointer;">
+                <img id="qrcodelarge" , style="position: absolute;
+                display: BLOCK;
+                left: 50%;
+                margin-right: -50%;transform: translate(-50%);height: 100%;
+                z-index: 101;">
+            </div>
             <table id = "table" class="display">
                 <tr>
                     <td class="title">ID:</td>
@@ -60,25 +65,21 @@
                     <td><div id="status" class="status"></div></td>
                 </tr>
             </table>
-            <div>
-                <p>Screen State: <span id = "screenstate"></span></p>
-                <p>Websocket: <span id = "websocketstate"></span></p>
-            </div>
-            
-            <div id="gyrodata" hidden >
-                <p >X-force: <span id="xF">n/a</span></p>
-                <p > Y-force: <span id="yF">n/a</span></p>
-                <p >X-coord: <span id="xP">n/a</span></p>
-                <p >Y-coord: <span id="yP">n/a</span></p>
-                <p >Z-coord: <span id="zP">n/a</span></p>
-                <p >Planet Angle: <span id="angle">n/a</span></p>
-                <p >Cat Position Angle: <span id="catPosAngle">n/a</span></p>
-                <p >Accelaration: <span id="acc">n/a</span></p>
-            </div>
+
+            <button id="debug-info" style="font-size: 20px;">Debug Info</button>
+            <div id="controllers" ></div>
+            <div id="gyrodatas" ></div>
+            <p >X-force: <span id="xF">n/a</span></p>
+            <p >Y-force: <span id="yF">n/a</span></p>
+            <p >X-coord: <span id="xP">n/a</span></p>
+            <p >Y-coord: <span id="yP">n/a</span></p>
+            <p >Z-coord: <span id="zP">n/a</span></p>
+            <p >Planet Angle: <span id="angle">n/a</span></p>
+            <p >Cat Position Angle: <span id="catPosAngle">n/a</span></p>
+            <p >Accelaration: <span id="acc">n/a</span></p>
         </div>
-        
         <script> var exports = {}; </script>
-        <script type = "module" src = screenPage.js>var exports = {};</script>
+        <script type = "module" src = "screenPage.js">var exports = {};</script>
         <script src = "https://unpkg.com/peerjs@1.3.1/dist/peerjs.min.js">var exports = {};</script>
         <script type = "text/javascript">
             (function () {
