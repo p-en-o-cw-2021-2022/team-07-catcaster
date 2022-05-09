@@ -155,7 +155,7 @@ function eventHandlersScreen() {
         }
         if(mes.client === 'endgame') {
             console.log('The game was ended.');
-            window.location.href = '/catcaster/endgame/';
+            window.location.href = '/catcaster/screen/?id=' + getIdScreen();
         }
         if(mes.client === 'portal') {
             console.log('Portals received.');
