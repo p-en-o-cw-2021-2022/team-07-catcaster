@@ -19,6 +19,7 @@ export class Planet {
     portals: Portal[];
     neighbours: Map<number, Planet>;
     object3dGroup: THREE.Group;
+    scene: Scene;
 
     constructor(scene: Scene, id: number, radius: number, friction: number, coordinates: number[] = [0,0,0]) {
         this.id = id;
@@ -34,6 +35,7 @@ export class Planet {
         this.object3dGroup.add(this.mesh);
         this.object3dGroup.position.add(this.coordinates);
         scene.add( this.object3dGroup );
+        this.scene = scene;
     }
 
     addPortal(portal: Portal) {

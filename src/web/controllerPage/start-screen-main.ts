@@ -43,6 +43,7 @@ export class QRlocation {
 
 single_screen_button.addEventListener('click',  function() {
     websocket.send(JSON.stringify({client: 'single-screen', id: id}));
+    websocket.send(JSON.stringify({client: 'join'}));
     window.location.href = '/catcaster/controller/?id=' + id + '&mode=singlescreen';
 });
 
@@ -202,6 +203,7 @@ multiple_screen_button.addEventListener('click', function() {
     }
     //change qr code
     websocket.send(JSON.stringify({client: 'multi-screen', id: id}));
+    websocket.send(JSON.stringify({client: 'join'}));
     //window.location.href = '/catcaster/controller/?id='+id+'&mode=multiscreen';
     //Start camera
     // window.location.href = '/catcaster/controller/?id=' + <string>id + '&mode=multiscreen';

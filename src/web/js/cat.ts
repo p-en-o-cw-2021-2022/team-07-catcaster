@@ -21,7 +21,7 @@ export class Cat {
     mesh: THREE.Object3D | undefined;
     catPositionAngle: number[];
 
-    constructor(scene: Scene, id: number, radius: number, planet: Planet, mass: number = 10) {
+    constructor(id: number, radius: number, planet: Planet, mass: number = 10) {
         this.id = id;
         this.mass = mass;
         this.radius = radius;
@@ -31,6 +31,7 @@ export class Cat {
         const material = new THREE.MeshLambertMaterial( { color: this.generateColor(id) } ); // This should be taken in as a constructor argument, but might break things when that happens
         this.mesh = new THREE.Mesh( this.sphere, material);
         this.catPositionAngle = [0,0];
+        const scene = planet.scene;
         scene.add( this.mesh );
     }
 

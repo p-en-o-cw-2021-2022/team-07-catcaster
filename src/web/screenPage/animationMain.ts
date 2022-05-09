@@ -16,9 +16,10 @@ scene.background = new THREE.Color('white');
 // scene.background = new THREE.Color(0x919bab);
 // const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, -1000, 1000 );
 // camera.position.z = 1000;
-const cats : Cat[] = [];
+export const cats : Cat[] = [];
 const catsData : HTMLElement[][] = [];
-let controllers_count = 0;
+export let controllers_count = 0;
+export let controllers = document.getElementById('controllers')!.children;
 // const camera = new THREE.OrthographicCamera( window.innerWidth/-20, window.innerWidth / 20, window.innerHeight / 20, window.innerHeight / -20, -100, 100);
 const camera = new THREE.OrthographicCamera( -sceneHeight * aspectRatio / 2 , sceneHeight * aspectRatio / 2, sceneHeight / 2, -sceneHeight / 2, -500, 500);
 // camera.position.y = -10;
@@ -116,61 +117,69 @@ const dt = 0.05;
 // planet2.addNeighbour(planet, new Vector3(-3,0,0));
 renderer.render( scene, camera );
 
-function addCat() {
-    const controllers = document.getElementById('controllers')!.children;
-    const id = (controllers[controllers_count - 1] as HTMLParagraphElement).innerText;
-
-    // const cat: Cat = new Cat(scene, parseInt(id, 16), allPlanets[0].radius, planet);
-    const cat: Cat = new Cat(scene, parseInt(id, 16), allPlanets[0].radius, allPlanets[0]);
-    console.log(allPlanets);
-    allPlanets[0].setCat(cat);
-    // planet.setCat(cat);
-
-    cats.push(cat);
-    console.log('Cat added wih id: ' + String(parseInt(id, 16)));
-    console.log(catsData);
-    console.log(cats);
+export function conAdd(){
+    controllers = document.getElementById('controllers')!.children;
 }
 
+// export function addCat() {
+//     controllers = document.getElementById('controllers')!.children;
+//     const id = (controllers[controllers_count - 1] as HTMLParagraphElement).innerText;
+
+//     // const cat: Cat = new Cat(scene, parseInt(id, 16), allPlanets[0].radius, planet);
+//     const plan = allPlanets[Math.floor(Math.random() * allPlanets.length)];
+//     const cat: Cat = new Cat(parseInt(id, 16), plan.radius, plan);
+//     console.log(allPlanets);
+//     allPlanets[0].setCat(cat);
+//     // planet.setCat(cat);
+
+//     cats.push(cat);
+//     console.log('Cat added wih id: ' + String(parseInt(id, 16)));
+//     console.log(catsData);
+//     console.log(cats);
+// }
+
 function animate() {
-    for (let i = 0, len = cats.length; i < len; i++) {
-        const cat = cats[i];
-        const jumpdata = catsData[i][1].innerText;
-        if (jumpdata === 'true') {
-            cat.jump = true;
-        } else {
-            cat.jump = false;
-        }
-        const gyrodata = catsData[i][0].innerText;
-        if ((gyrodata !== '') || (gyrodata !== undefined)) {
-            const datalist = gyrodata?.split(' ');
-            const beta = datalist[0];
-            const gamma = datalist[1];
-            cat.xF = Number(gamma);
-            cat.yF = Number(beta);
-        }
-        const portal = cat.updateVelocity(dt);
-        if(portal !== undefined) {
-            console.log(portal);
-            cat.planet.cats.delete(cat.id);
-            // Send teleport message over websocket
-            if (portal.otherScreen !== myId.innerHTML) {
-                // hier is iets fout
-                const url = 'wss' + window.location.href.substr(5);
-                const websocket = new WebSocket(url);
-                const jumpmessage = [portal.otherScreen, portal.otherPlanetID, cat];
-                websocket.send(JSON.stringify({client: 'jump-message', data: jumpmessage}));
+    console.log('cats???', cats, catsData);
+    if( cats.length === catsData.length){
+        for (let i = 0, len = cats.length; i < len; i++) {
+            const cat = cats[i];
+            const jumpdata = catsData[i][1].innerText;
+            if (jumpdata === 'true') {
+                cat.jump = true;
             } else {
-                for(const planet of allPlanets) {
-                    if(planet.id === portal.otherPlanetID) {
-                        cat.setPlanet(planet);
-                        planet.setCat(cat);
-                        cat.positionOnPlanet = new Vector3(0, 0, 0);
+                cat.jump = false;
+            }
+            const gyrodata = catsData[i][0].innerText;
+            if ((gyrodata !== '') || (gyrodata !== undefined)) {
+                const datalist = gyrodata?.split(' ');
+                const beta = datalist[0];
+                const gamma = datalist[1];
+                cat.xF = Number(gamma);
+                cat.yF = Number(beta);
+            }
+            const portal = cat.updateVelocity(dt);
+            if(portal !== undefined) {
+                console.log(portal);
+                cat.planet.cats.delete(cat.id);
+                // Send teleport message over websocket
+                if (portal.otherScreen !== myId.innerHTML) {
+                    // hier is iets fout
+                    const url = 'wss' + window.location.href.substr(5);
+                    const websocket = new WebSocket(url);
+                    const jumpmessage = [portal.otherScreen, portal.otherPlanetID, cat];
+                    websocket.send(JSON.stringify({client: 'jump-message', data: jumpmessage}));
+                } else {
+                    for(const planet of allPlanets) {
+                        if(planet.id === portal.otherPlanetID) {
+                            cat.setPlanet(planet);
+                            planet.setCat(cat);
+                            cat.positionOnPlanet = new Vector3(0, 0, 0);
+                        }
                     }
                 }
             }
+            // setDebugInfo();
         }
-        // setDebugInfo();
     }
     updatePlanets();
     renderer.render( scene, camera );
@@ -249,7 +258,7 @@ function newController() {
     if (controllers) {
         if (Math.floor(controllers_count) === controllers_count) {
             catsData.push([<HTMLElement>controllers[controllers_count*2 - 2], <HTMLElement>controllers[controllers_count*2 - 1]]);
-            addCat();
+            // addCat();
         }
     }
 }

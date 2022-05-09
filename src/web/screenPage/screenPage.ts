@@ -1,9 +1,10 @@
 import { Planet } from '../js/planet.js';
 import { Scene, Vector3 } from 'three';
-import { allPlanets } from './animationMain.js';
+import { allPlanets, cats, conAdd, controllers, controllers_count } from './animationMain.js';
 import { Portal } from '../js/portal.js';
 import { findNeighborsVoronoi } from './voronoi.js';
 import { Cat } from '../js/cat.js';
+import { commandDir } from 'yargs';
 const debug = <HTMLButtonElement>document.getElementById('debug-info');
 const gyrodata =  <HTMLElement>document.getElementById('gyrodatas');
 
@@ -21,6 +22,7 @@ interface Message {
     'client': string;
     'data': {[key: string]: [number, Planet[]]}
     'jdata': [string, number, string]
+    'joins': [string, string]
 }
 
 interface WebSocketMessage {
@@ -115,6 +117,22 @@ function eventHandlersScreen() {
                     const portal = new Portal(myId.innerHTML, portalCoordinates, neighborID);
                     planet.addPortal(portal);
                 }
+            }
+        }
+        if(mes.client === 'addCat') {
+            if(mes.joins[0] === myId.innerHTML) {
+                conAdd();
+                // const contID = (controllers[controllers_count - 1] as HTMLParagraphElement).innerText;
+            
+                // const cat: Cat = new Cat(scene, parseInt(id, 16), allPlanets[0].radius, planet);
+                const plan = allPlanets[Math.floor(Math.random() * allPlanets.length)];
+                const cat: Cat = new Cat(parseInt(mes.joins[1], 16), plan.radius, plan);
+                console.log(allPlanets);
+                plan.setCat(cat);
+                // planet.setCat(cat);
+            
+                cats.push(cat);
+                console.log('Cat added wih id: ' + String(parseInt(mes.joins[1], 16)));
             }
         }
         if(mes.client === 'jump-message') {

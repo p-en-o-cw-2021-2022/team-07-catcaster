@@ -83,6 +83,15 @@ export function websocketEventHandlers(websocket: ws.Server) {
                 });
                 break;
 
+            case 'join':
+                const screens = database.getScreenIds();
+                const screen = screens[Math.floor(Math.random() * screens.length)];
+                const nbCont = database.getControllerIds().length;
+                websocket.clients.forEach((client) => {
+                    client.send(JSON.stringify({client : 'addCat', joins : [screen, nbCont.toString()]}));
+                });
+                break;
+
             case 'qrlocations':
                 console.log('qrlocations ontvangen', mes.data);
                 qrlocations = mes.data;
