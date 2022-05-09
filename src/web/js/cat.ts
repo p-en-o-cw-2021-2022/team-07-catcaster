@@ -19,6 +19,8 @@ export class Cat {
     sphere: THREE.SphereGeometry;
     mesh: THREE.Object3D | undefined;
     catPositionAngle: number[];
+    loader = new OBJLoader();
+
 
     constructor(id: number, radius: number, planet: Planet, mass: number = 10) {
         this.id = id;
@@ -31,30 +33,28 @@ export class Cat {
         this.mesh = new THREE.Mesh(this.sphere, material);
         this.catPositionAngle = [0, 0];
         const scene = planet.scene;
-        // scene.add( this.mesh );
-        const loader = new OBJLoader();
+        scene.add( this.mesh );
 
         // load a resource
-        loader.load(
+        this.loader.load(
             // resource URL
-            'cat.obj',
+            'models/monster.obj',
             // called when resource is loaded
-            function (object) {
+            function ( object ) {
 
-                scene.add(object);
+                scene.add( object );
 
             },
             // called when loading is in progresses
-            function (xhr) {
+            function ( xhr ) {
 
-                console.log((xhr.loaded / xhr.total * 100));
-                console.log('% loaded');
+                console.log( ( xhr.loaded / xhr.total * 100 ));
 
             },
             // called when loading has errors
-            function (error) {
+            function ( error ) {
 
-                console.log('An error happened');
+                console.log( 'An error happened' );
 
             }
         );
