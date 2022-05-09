@@ -230,9 +230,9 @@ function generatePortals(sites: {x: number; y: number; id: string}[], planetsIDs
             const screenVector = new Vector3();
             screenVector.set(screenCoordinates.x, screenCoordinates.y, 0);
             const portalCoordinates = calculatePortalCoordinates(myPlanet, otherPlanet, ratio[screenID], screenVector);
-            const portal = new Portal(otherScreen, portalCoordinates, otherPlanetID);
-            myPlanet.addPortal(portal);
-            portals.push(portal);
+            // const portal = new Portal(otherScreen, portalCoordinates, otherPlanetID);
+            // myPlanet.addPortal(portal);
+            // portals.push(portal);
         }
         console.log('planet: ', myPlanet.coordinates);
     }

@@ -111,6 +111,22 @@ websocket.onmessage = (message:WebSocketMessage) => {
             sites.push(site);
         }
         const neighbors = findNeighborsVoronoi(sites);
+        const portalPairs: Array<(number | string)[]> = [];
+        const Colors: string[] = [];
+        for(const currentPlanet of neighbors) {
+            const currentPlan = Number(currentPlanet.id);
+            for(const neighbortoAdd of currentPlanet.neighborsOfID) {
+                const neightoAdd = Number(neighbortoAdd);
+                if(portalPairs.includes([currentPlan, neightoAdd]) || portalPairs.includes([neightoAdd, currentPlan])) {
+                    console.log('Nothing happens.')
+                }
+                else {
+                    const randomColor = Math.floor(Math.random()*16777215).toString(16);
+                    portalPairs.push([currentPlan, neightoAdd, randomColor]);
+                    Colors.push(randomColor);
+                }
+            }
+        }
         for(const currentPlanet of neighbors) {
             const planetID = Number(currentPlanet.id);
             const planet = getPlanet(planetID);
@@ -119,7 +135,16 @@ websocket.onmessage = (message:WebSocketMessage) => {
                 const neighborID = Number(neighborToAdd);
                 const neighbor = getPlanet(neighborID);
                 const portalCoordinates = getPortalCoordinates(planet, neighbor);
-                const portal = new Portal(myId.innerHTML, portalCoordinates, neighborID);
+                let randomColor = '';
+                for(const color of Colors) {
+                    if(portalPairs.indexOf([planetID, neighborID, color]) > -1){
+                        randomColor = portalPairs[portalPairs.indexOf([planetID, neighborID, color])][2] as string;
+                    }
+                    else if(portalPairs.indexOf([neighborID, planetID, color]) > -1) {
+                        randomColor = portalPairs[portalPairs.indexOf([neighborID, planetID, color])][2] as string;
+                    }
+                }
+                const portal = new Portal(myId.innerHTML, portalCoordinates, neighborID, randomColor);
                 planet.addPortal(portal);
             }
         }
@@ -170,8 +195,8 @@ websocket.onmessage = (message:WebSocketMessage) => {
             const planet = new Planet(scene, fakePlanet.id, fakePlanet.radius, fakePlanet.friction, coords);
             for(const fakePortal of fakePlanet.portals) {
                 const coords: Vector3 = new Vector3(fakePortal.myCoordinates.x, fakePortal.myCoordinates.y, 0);
-                const portal = new Portal(fakePortal.otherScreen, coords, fakePortal.otherPlanetID);
-                planet.addPortal(portal);
+                // const portal = new Portal(fakePortal.otherScreen, coords, fakePortal.otherPlanetID);
+                // planet.addPortal(portal);
             }
             planets.push(planet);
         }

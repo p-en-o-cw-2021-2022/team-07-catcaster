@@ -39,6 +39,7 @@ export class Planet {
     }
 
     addPortal(portal: Portal) {
+        const color = portal.color;
         this.portals.push(portal);
         // Coords need to be cloned because Vector3 methods are in place
         const planetCoords = this.coordinates.clone();
@@ -46,7 +47,7 @@ export class Planet {
         planetCoords.multiplyScalar(-1);
         portalCoords.add(planetCoords); // Calculate portal coords relative to planet center
         const circleGeom = new THREE.CircleGeometry( this.radius/4, 32 );
-        const portalMesh = new THREE.Mesh(circleGeom, new THREE.MeshLambertMaterial( { color: 0x4cbf04 } ));
+        const portalMesh = new THREE.Mesh(circleGeom, new THREE.MeshLambertMaterial( { color: color } ));
         this.object3dGroup.add(portalMesh);
         portalMesh.position.copy(portalCoords); // Move the portal relative to the group center
         portalMesh.position.add(new Vector3(0,0,1)); // Move the portal a bit forward to prevent clipping
