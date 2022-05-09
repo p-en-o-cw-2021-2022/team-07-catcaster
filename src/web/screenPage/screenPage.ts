@@ -1,5 +1,5 @@
 import { Planet } from '../js/planet.js';
-import { Scene, Vector3 } from 'three';
+import { Scene, Vector3, Color } from 'three';
 import { allPlanets, cats, conAdd, controllers, controllers_count } from './animationMain.js';
 import { Portal } from '../js/portal.js';
 import { findNeighborsVoronoi } from './voronoi.js';
@@ -118,9 +118,8 @@ websocket.onmessage = (message:WebSocketMessage) => {
             for(const neighbortoAdd of currentPlanet.neighborsOfID) {
                 const neightoAdd = Number(neighbortoAdd);
                 if(portalPairs.includes([currentPlan, neightoAdd]) || portalPairs.includes([neightoAdd, currentPlan])) {
-                    console.log('Nothing happens.')
-                }
-                else {
+                    console.log('Nothing happens.');
+                } else {
                     const randomColor = Math.floor(Math.random()*16777215).toString(16);
                     portalPairs.push([currentPlan, neightoAdd, randomColor]);
                     Colors.push(randomColor);
@@ -137,14 +136,14 @@ websocket.onmessage = (message:WebSocketMessage) => {
                 const portalCoordinates = getPortalCoordinates(planet, neighbor);
                 let randomColor = '';
                 for(const color of Colors) {
-                    if(portalPairs.indexOf([planetID, neighborID, color]) > -1){
-                        randomColor = portalPairs[portalPairs.indexOf([planetID, neighborID, color])][2] as string;
-                    }
-                    else if(portalPairs.indexOf([neighborID, planetID, color]) > -1) {
-                        randomColor = portalPairs[portalPairs.indexOf([neighborID, planetID, color])][2] as string;
+                    if(portalPairs.indexOf([planetID, neighborID, color]) > -1) {
+                        randomColor = '0x' + <string>portalPairs[portalPairs.indexOf([planetID, neighborID, color])][2];
+                    } else if(portalPairs.indexOf([neighborID, planetID, color]) > -1) {
+                        randomColor = '0x' + <string>portalPairs[portalPairs.indexOf([neighborID, planetID, color])][2];
                     }
                 }
-                const portal = new Portal(myId.innerHTML, portalCoordinates, neighborID, randomColor);
+                console.log(randomColor + ' AAAAAA');
+                const portal = new Portal(myId.innerHTML, portalCoordinates, neighborID, new Color(randomColor));
                 planet.addPortal(portal);
             }
         }
@@ -153,18 +152,17 @@ websocket.onmessage = (message:WebSocketMessage) => {
         if(mes.joins[0] === myId.innerHTML) {
             conAdd();
             // const contID = (controllers[controllers_count - 1] as HTMLParagraphElement).innerText;
-        
+
             // const cat: Cat = new Cat(scene, parseInt(id, 16), allPlanets[0].radius, planet);
             const plan = allPlanets[Math.floor(Math.random() * allPlanets.length)];
             const cat: Cat = new Cat(parseInt(mes.joins[1], 16), plan.radius, plan);
             console.log(allPlanets);
             plan.setCat(cat);
             // planet.setCat(cat);
-        
+
             cats.push(cat);
             console.log('Cat added wih id: ' + String(parseInt(mes.joins[1], 16)));
-        }
-        else {
+        } else {
             cats.push(undefined);
         }
     }
@@ -183,7 +181,7 @@ websocket.onmessage = (message:WebSocketMessage) => {
     }
     if(mes.client === 'endgame') {
         console.log('The game was ended.');
-        window.location.href = '/catcaster/screen/?id=' + getIdScreen();
+        window.location.href = '/catcaster/screen/?id=' + <string>getIdScreen();
     }
     if(mes.client === 'portal') {
         console.log('Portals received.');

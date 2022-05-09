@@ -8,11 +8,11 @@ export class Portal {
     otherScreen: string;
     myCoordinates: Vector3;
     otherPlanetID: number;
-    color: string;
+    color: THREE.Color;
     // circle: THREE.CircleGeometry;
     // animation: THREE.Mesh;
 
-    constructor(otherScreen: string, myCoordinates: Vector3, otherPlanetID: number, color: string) {
+    constructor(otherScreen: string, myCoordinates: Vector3, otherPlanetID: number, color: THREE.Color) {
         this.otherScreen = otherScreen;
         this.myCoordinates  = myCoordinates;
         this.otherPlanetID = otherPlanetID;
