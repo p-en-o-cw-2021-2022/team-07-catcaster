@@ -9,7 +9,7 @@
     animation-duration: 2s;
     animation-timing-function: linear;
     animation-iteration-count: infinite;
-    background-color: #a1001b;
+    background-color: #65aafd;
   }
 
 @keyframes buttonColorPulse {
