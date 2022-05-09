@@ -6,21 +6,33 @@ import { database } from './index';
 import { z } from 'zod';
 
 const multiScreenData:{ [key: string]: Array<string> } = {};
-let tm: any
-let remTimer: boolean = false;
+let tm: any;
+let it: any;
+let IDTimers: any = {};
 
-
-function pingpong(remTimer: boolean, id: string) {
-    if (remTimer === false && database.doesIdExist(id)){
+function ping(id: string) {
+    console.log(database.getScreenIds())
+    if (tm === undefined){
         tm = setTimeout(function () {
-            database.removeID(id)
-            console.log('connection with ID: ' + id + ' timed out.\r\n removing ID from database...')
-        }, 40000)
+            database.removeID(id);
+            console.log('connection with ID: ' + id + ' timed out.\r\n removing ID from database...');
+        }, 20000);
+        IDTimers[id] = tm;
     }
-    else {
+    else if (database.doesIdExist(id) && tm._destroyed === true){
+        tm = setTimeout(function () {
+            database.removeID(id);
+            console.log('connection with ID: ' + id + ' timed out.\r\n removing ID from database...');
+        }, 20000);
+        IDTimers[id] = tm;
+    }
+    return tm
+}
+function pong(tm: any, id: string) {
+    if (IDTimers[id] == tm) {
         clearTimeout(tm)
     }
-}
+}   
 
 
 export function websocketEventHandlers(websocket:ws.Server) {
@@ -55,11 +67,10 @@ export function websocketEventHandlers(websocket:ws.Server) {
                 
                 
                 //start ping-pong process
-                setInterval(() => {
+                it = setInterval(() => {
                     ws.send(JSON.stringify({client: '__ping__'}));
-                    let remTimer: boolean = false;
-                    pingpong(remTimer, id);
-                }, 20000)
+                    tm = ping(id);
+                }, 10000)
                 
                 //ws.send(JSON.stringify({type: 'ControllerID', id: mes.id}));
                 break;
@@ -88,11 +99,10 @@ export function websocketEventHandlers(websocket:ws.Server) {
 
                 
                 //start ping-pong process
-                setInterval(() => {
+                it = setInterval(() => {
                     ws.send(JSON.stringify({client: '__ping__'}));
-                    let remTimer: boolean = false;
-                    pingpong(remTimer, id);
-                }, 20000)
+                    tm = ping(id);
+                }, 10000)
 
                 break;
             case 'multi-screen':
@@ -136,8 +146,7 @@ export function websocketEventHandlers(websocket:ws.Server) {
                 break;
             
             case '__pong__':
-                remTimer = true;
-                pingpong(remTimer, id);
+                pong(tm, id);
                 break;
             }
         });
