@@ -15,6 +15,35 @@ import { z } from 'zod';
 const multiScreenData:{[key: string]: [number, Planet[]]} = {};
 let qrlocations: QRlocation[] = [];
 
+let tm: any;
+let it: any;
+let IDTimers: any = {};
+
+function ping(id: string) {
+    console.log(database.getScreenIds())
+    if (tm === undefined){
+        tm = setTimeout(function () {
+            database.removeID(id);
+            console.log('connection with ID: ' + id + ' timed out.\r\n removing ID from database...');
+        }, 20000);
+        IDTimers[id] = tm;
+    }
+    else if (database.doesIdExist(id) && tm._destroyed === true){
+        tm = setTimeout(function () {
+            database.removeID(id);
+            console.log('connection with ID: ' + id + ' timed out.\r\n removing ID from database...');
+        }, 20000);
+        IDTimers[id] = tm;
+    }
+    return tm
+}
+function pong(tm: any, id: string) {
+    if (IDTimers[id] == tm) {
+        clearTimeout(tm)
+    }
+}   
+
+
 export function websocketEventHandlers(websocket: ws.Server) {
 
     websocket.on('connection', (ws : ws.WebSocket) => {
