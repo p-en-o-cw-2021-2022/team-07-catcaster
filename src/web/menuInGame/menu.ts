@@ -1,23 +1,23 @@
 const playButton = <HTMLButtonElement>document.getElementById('play-multi-screen');
 const deleteButton = <HTMLButtonElement>document.getElementById('delete-multi-screen');
 
+const url: string = 'wss' + window.location.href.substr(5);
+const websocket = new WebSocket(url);
+console.log('Starting Websocket connection...');
+
+websocket.onopen = () => {
+    console.log('Connection established.');
+};
+
 playButton.addEventListener('click', function() {
     let cid = getId();
     window.location.href = '/catcaster/controller/?id=' + cid + '&mode=multiscreen';
 });
 
 deleteButton.addEventListener('click', function() {
-    const url: string = 'wss' + window.location.href.substr(5);
     const cid : string|null = getId();
-
-    const websocket = new WebSocket(url);
-    console.log('Starting Websocket connection...');
-
-    websocket.onopen = () => {
-    console.log('Connection established.');
-    websocket.send(JSON.stringify({client: 'endgame', id:cid}))
-    window.location.href = '/catcaster/endgame/'
-    };
+    websocket.send(JSON.stringify({client: 'endgame', id:cid}));
+    window.location.href = '/catcaster/endgame/';
 });
 
 function getId(): string | null {
