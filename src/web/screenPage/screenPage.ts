@@ -1,8 +1,10 @@
 import { Planet } from '../js/planet.js';
 import { Scene, Vector3 } from 'three';
-import { allPlanets } from './animationMain.js';
+import { allPlanets, cats, conAdd, controllers, controllers_count } from './animationMain.js';
 import { Portal } from '../js/portal.js';
 import { findNeighborsVoronoi } from './voronoi.js';
+import { Cat } from '../js/cat.js';
+import { commandDir } from 'yargs';
 const debug = <HTMLButtonElement>document.getElementById('debug-info');
 const gyrodata =  <HTMLElement>document.getElementById('gyrodatas');
 
@@ -12,8 +14,6 @@ debug.addEventListener('click',  function() {
 
 });
 
-const qr = <HTMLImageElement>document.getElementById('qrcode');
-
 const myId = <HTMLDivElement>document.getElementById('receiver-id');
 let controllerId = null;
 
@@ -21,6 +21,8 @@ interface Message {
     'id': string;
     'client': string;
     'data': {[key: string]: [number, Planet[]]}
+    'jdata': [string, number, string]
+    'joins': [string, string]
 }
 
 interface WebSocketMessage {
@@ -117,11 +119,45 @@ function eventHandlersScreen() {
                 }
             }
         }
+        if(mes.client === 'addCat') {
+            if(mes.joins[0] === myId.innerHTML) {
+                conAdd();
+                // const contID = (controllers[controllers_count - 1] as HTMLParagraphElement).innerText;
+            
+                // const cat: Cat = new Cat(scene, parseInt(id, 16), allPlanets[0].radius, planet);
+                const plan = allPlanets[Math.floor(Math.random() * allPlanets.length)];
+                const cat: Cat = new Cat(parseInt(mes.joins[1], 16), plan.radius, plan);
+                console.log(allPlanets);
+                plan.setCat(cat);
+                // planet.setCat(cat);
+            
+                cats.push(cat);
+                console.log('Cat added wih id: ' + String(parseInt(mes.joins[1], 16)));
+            }
+            else {
+                cats.push(undefined);
+            }
+        }
+        if(mes.client === 'jump-message') {
+            console.log('Cat jumped from other screen.');
+            const [otherScreen, otherPlanetID, otherFakeCat] = mes.jdata;
+            console.log(otherScreen, otherPlanetID, otherFakeCat);
+            if(otherScreen === myId.innerHTML) {
+                const cat = <Cat>JSON.parse(otherFakeCat);
+                for(const planet of allPlanets) {
+                    if(planet.id === Number(otherPlanetID)) {
+                        cat.setPlanet(planet);
+                        planet.setCat(cat);
+                        cat.positionOnPlanet = new Vector3(0, 0, 0);
+                    }
+                }
+            }
+        }
         if(mes.client === 'endgame') {
             console.log('The game was ended.');
             window.location.href = '/catcaster/endgame/';
         }
-        if(mes.client == 'portal') {
+        if(mes.client === 'portal') {
             console.log('Portals received.');
             const multiScreenData = mes.data;
             const planets: Planet[] = [];
@@ -138,7 +174,7 @@ function eventHandlersScreen() {
             }
             for(const planet of allPlanets) {
                 for(const serverPlanet of planets) {
-                    if(planet.id == serverPlanet.id) {
+                    if(planet.id === serverPlanet.id) {
                         for(const portal of serverPlanet.portals) {
                             // planet.addPortal(new Portal(portal.otherScreen, portal.myCoordinates.add(planet.coordinates), portal.otherPlanetID));
                             planet.addPortal(portal);

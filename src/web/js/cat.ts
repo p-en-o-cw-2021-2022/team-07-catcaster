@@ -3,6 +3,7 @@ import { Scene, Vector3 } from 'three';
 import { boolean } from 'yargs';
 import { Planet } from './planet';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
+import { Portal } from './portal';
 
 export class Cat {
 
@@ -20,7 +21,7 @@ export class Cat {
     mesh: THREE.Object3D | undefined;
     catPositionAngle: number[];
 
-    constructor(scene: Scene, id: number, radius: number, planet: Planet, mass: number = 10) {
+    constructor(id: number, radius: number, planet: Planet, mass: number = 10) {
         this.id = id;
         this.mass = mass;
         this.radius = radius;
@@ -30,6 +31,7 @@ export class Cat {
         const material = new THREE.MeshLambertMaterial( { color: this.generateColor(id) } ); // This should be taken in as a constructor argument, but might break things when that happens
         this.mesh = new THREE.Mesh( this.sphere, material);
         this.catPositionAngle = [0,0];
+        const scene = planet.scene;
         scene.add( this.mesh );
     }
 
@@ -50,7 +52,7 @@ export class Cat {
         }
     }
 
-    updateVelocity(dt: number) {
+    updateVelocity(dt: number): Portal | undefined {
         const accX: number = (this.xF + this.planet.gamma *1.5)/this.mass;
         const accY: number = -(this.yF+ this.planet.beta*1.5)/this.mass;
 
@@ -72,15 +74,16 @@ export class Cat {
         }
 
         if (this.jump) {
-            this.planet.checkTP(this);
+            return this.planet.checkTP(this);
         }
+        return;
     }
 
     // Updates the relative position of cat on planet
     updateAngle() {
 
         const copyVector = this.positionOnPlanet.clone();
-        
+
         // const normalVectorY = new Vector3(0,1,0);
         // copyVector.applyAxisAngle(new Vector3(0,1,0), this.planet.gamma);
         // copyVector.applyAxisAngle(new Vector3(1,0,0), this.planet.beta);
