@@ -34,14 +34,18 @@ export class Cat {
         this.catPositionAngle = [0, 0];
         const scene = planet.scene;
         scene.add( this.mesh );
-
         // load a resource
         this.loader.load(
             // resource URL
-            'models/monster.obj',
+            'cat.obj',
             // called when resource is loaded
             function ( object ) {
-
+                console.log('Object is loaded');
+                object.traverse(function(child) {
+                    if (child instanceof THREE.Mesh) {
+                        child.material = material;
+                    }
+                });
                 scene.add( object );
 
             },
