@@ -16,7 +16,7 @@ scene.background = new THREE.Color('white');
 // scene.background = new THREE.Color(0x919bab);
 // const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, -1000, 1000 );
 // camera.position.z = 1000;
-export const cats : Cat[] = [];
+export const cats : (Cat | undefined )[] = [];
 const catsData : HTMLElement[][] = [];
 export let controllers_count = 0;
 export let controllers = document.getElementById('controllers')!.children;
@@ -143,42 +143,44 @@ function animate() {
     if( cats.length === catsData.length){
         for (let i = 0, len = cats.length; i < len; i++) {
             const cat = cats[i];
-            const jumpdata = catsData[i][1].innerText;
-            if (jumpdata === 'true') {
-                cat.jump = true;
-            } else {
-                cat.jump = false;
-            }
-            const gyrodata = catsData[i][0].innerText;
-            if ((gyrodata !== '') || (gyrodata !== undefined)) {
-                const datalist = gyrodata?.split(' ');
-                const beta = datalist[0];
-                const gamma = datalist[1];
-                cat.xF = Number(gamma);
-                cat.yF = Number(beta);
-            }
-            const portal = cat.updateVelocity(dt);
-            if(portal !== undefined) {
-                console.log(portal);
-                cat.planet.cats.delete(cat.id);
-                // Send teleport message over websocket
-                if (portal.otherScreen !== myId.innerHTML) {
-                    // hier is iets fout
-                    const url = 'wss' + window.location.href.substr(5);
-                    const websocket = new WebSocket(url);
-                    const jumpmessage = [portal.otherScreen, portal.otherPlanetID, cat];
-                    websocket.send(JSON.stringify({client: 'jump-message', data: jumpmessage}));
+            if(cat != undefined) {
+                const jumpdata = catsData[i][1].innerText;
+                if (jumpdata === 'true') {
+                    cat.jump = true;
                 } else {
-                    for(const planet of allPlanets) {
-                        if(planet.id === portal.otherPlanetID) {
-                            cat.setPlanet(planet);
-                            planet.setCat(cat);
-                            cat.positionOnPlanet = new Vector3(0, 0, 0);
+                    cat.jump = false;
+                }
+                const gyrodata = catsData[i][0].innerText;
+                if ((gyrodata !== '') || (gyrodata !== undefined)) {
+                    const datalist = gyrodata?.split(' ');
+                    const beta = datalist[0];
+                    const gamma = datalist[1];
+                    cat.xF = Number(gamma);
+                    cat.yF = Number(beta);
+                }
+                const portal = cat.updateVelocity(dt);
+                if(portal !== undefined) {
+                    console.log(portal);
+                    cat.planet.cats.delete(cat.id);
+                    // Send teleport message over websocket
+                    if (portal.otherScreen !== myId.innerHTML) {
+                        // hier is iets fout
+                        const url = 'wss' + window.location.href.substr(5);
+                        const websocket = new WebSocket(url);
+                        const jumpmessage = [portal.otherScreen, portal.otherPlanetID, cat];
+                        websocket.send(JSON.stringify({client: 'jump-message', data: jumpmessage}));
+                    } else {
+                        for(const planet of allPlanets) {
+                            if(planet.id === portal.otherPlanetID) {
+                                cat.setPlanet(planet);
+                                planet.setCat(cat);
+                                cat.positionOnPlanet = new Vector3(0, 0, 0);
+                            }
                         }
                     }
                 }
+                // setDebugInfo();
             }
-            // setDebugInfo();
         }
     }
     updatePlanets();
@@ -226,8 +228,10 @@ function animate() {
 function update2(e: DeviceOrientationEvent) {
     for (let i = 0, len = cats.length; i < len; i++) {
         const cat = cats[i];
-        cat.updateForce('x', e.gamma!);
-        cat.updateForce('y', -e.beta!);
+        if(cat != undefined) {
+            cat.updateForce('x', e.gamma!);
+            cat.updateForce('y', -e.beta!);
+        }
     }
 }
 

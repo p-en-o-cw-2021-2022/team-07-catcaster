@@ -134,6 +134,9 @@ function eventHandlersScreen() {
                 cats.push(cat);
                 console.log('Cat added wih id: ' + String(parseInt(mes.joins[1], 16)));
             }
+            else {
+                cats.push(undefined);
+            }
         }
         if(mes.client === 'jump-message') {
             console.log('Cat jumped from other screen.');
