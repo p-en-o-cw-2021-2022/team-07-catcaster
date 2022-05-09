@@ -190,10 +190,10 @@ websocket.onmessage = (message:WebSocketMessage) => {
     }
 };
 
-    websocket.onclose = () => {
-        window.location.href = '/catcaster/error/';
-    };
-}
+websocket.onclose = () => {
+    window.location.href = '/catcaster/error/';
+};
+
 
 if (getIdScreen() !== null) {
     myId.innerHTML = <string>getIdScreen();
