@@ -19,17 +19,16 @@ async function requestControllerID() {
         websocket.onopen = () => {
             console.log('Connection established.');
             websocket.send(JSON.stringify({client: 'nbcontrollers',id:id}));
-        }
+        };
         websocket.onmessage = async (message:WebSocketMessage) => {
             const mes = <Message>JSON.parse(message.data);
-            if (mes.client.length == 1){
+            if (mes.client.length == 1) {
                 window.location.href = '/catcaster/controller/?id='+id;
-            }
-            else {
+            } else {
                 window.location.href = '/catcaster/menu/?id=' + id;
             }
         };
-        
-        
+
+
     }
 }

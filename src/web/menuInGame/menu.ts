@@ -9,9 +9,9 @@ playButton.addEventListener('click', function() {
     console.log('Starting Websocket connection...');
 
     websocket.onopen = () => {
-    console.log('Connection established.');
-    websocket.send(JSON.stringify({client: 'join', id:cid}))
-    window.location.href = '/catcaster/controller/?id=' + cid + '&mode=multiscreen';
+        console.log('Connection established.');
+        websocket.send(JSON.stringify({client: 'join', id:cid}));
+        window.location.href = '/catcaster/controller/?id=' + cid + '&mode=multiscreen';
     };
 });
 
@@ -23,16 +23,16 @@ deleteButton.addEventListener('click', function() {
     console.log('Starting Websocket connection...');
 
     websocket.onopen = () => {
-    console.log('Connection established.');
-    websocket.send(JSON.stringify({client: 'endgame', id:cid}))
-    window.location.href = '/catcaster/endgame/'
+        console.log('Connection established.');
+        websocket.send(JSON.stringify({client: 'endgame', id:cid}));
+        window.location.href = '/catcaster/endgame/';
     };
 });
 
 function getId(): string | null {
-    let queryString = window.location.search;
-    let urlParams = new URLSearchParams(queryString);
-    let id: string | null = urlParams.get('id');
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    const id: string | null = urlParams.get('id');
     if (id) {
         return id;
     } else {
