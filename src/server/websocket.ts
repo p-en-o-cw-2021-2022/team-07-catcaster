@@ -67,6 +67,12 @@ export function websocketEventHandlers(websocket: ws.Server) {
                     console.log('Received ID is not in the database, closing connection to client.');
                     ws.send(JSON.stringify({client : 'disconnect', id : mes.id}));
                 }
+
+                //start ping-pong process
+                it = setInterval(() => {
+                    ws.send(JSON.stringify({client: '__ping__'}));
+                    tm = ping(id);
+                }, 10000)
                 //ws.send(JSON.stringify({type: 'ControllerID', id: mes.id}));
                 break;
 
@@ -87,6 +93,12 @@ export function websocketEventHandlers(websocket: ws.Server) {
                     ws.send(JSON.stringify({client : 'screen', id : sid}));
                 }
                 setTimeout(() => {ws.send(JSON.stringify({client : 'connect', id : 0}));}, 500);
+                
+                //start ping-pong process
+                it = setInterval(() => {
+                    ws.send(JSON.stringify({client: '__ping__'}));
+                    tm = ping(id);
+                }, 10000)
                 break;
 
             case 'multi-screen':
@@ -146,7 +158,7 @@ export function websocketEventHandlers(websocket: ws.Server) {
                 console.log('The game was ended.');
                 let cids:Array<string> = database.getControllerIds();
                 cids.forEach(element => {
-                    database.removeController(element);
+                    database.removeID(element);
                 })
                 websocket.clients.forEach((client) => {
                     client.send(JSON.stringify({client : 'endgame'}));
@@ -156,8 +168,11 @@ export function websocketEventHandlers(websocket: ws.Server) {
                 const controllerids = database.getControllerIds();
                 ws.send(JSON.stringify({client: controllerids}));
                 break;
+        
+            case '__pong__':
+                pong(tm, id)
+                break;
             }
-
         });
     });
 
@@ -266,11 +281,4 @@ function generatePortals(sites: {x: number; y: number; id: string}[], planetsIDs
         console.log('planet: ', myPlanet.coordinates);
     }
     return portals;
-}
-
-function ping(clients: any) {
-    clients.forEach(function(client: any) {
-        client.send(JSON.stringify({client: '__ping__'}));
-
-    });
 }
