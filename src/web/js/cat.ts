@@ -106,8 +106,8 @@ export class Cat {
         return vector.distanceTo(new Vector3(0,0,0)) <= this.planet.radius;
     }
 
-    generateColor(id: number): THREE.ColorRepresentation | undefined {
-
+    generateColor(cid: number): THREE.ColorRepresentation | undefined {
+        const id = cid * 100000;
         let hash: number = 5381;
 
         for (let i = 0; i < id.toString().length; i++) {
