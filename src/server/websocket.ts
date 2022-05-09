@@ -1,3 +1,5 @@
+/* eslint-disable no-case-declarations */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
@@ -75,6 +77,21 @@ export function websocketEventHandlers(websocket: ws.Server) {
                 });
                 break;
 
+            case 'jump-message':
+                websocket.clients.forEach((client) => {
+                    client.send(JSON.stringify({client : 'jumpmessage', jdata: mes.data}));
+                });
+                break;
+
+            case 'join':
+                const screens = database.getScreenIds();
+                const screen = screens[Math.floor(Math.random() * screens.length)];
+                const nbCont = database.getControllerIds().length;
+                websocket.clients.forEach((client) => {
+                    client.send(JSON.stringify({client : 'addCat', joins : [screen, nbCont.toString()]}));
+                });
+                break;
+
             case 'qrlocations':
                 console.log('qrlocations ontvangen', mes.data);
                 qrlocations = mes.data;
@@ -121,7 +138,7 @@ function createPortals(): Portal[] {
 
 function findPlanetWithLocalID(planetID: number, screenID: string): Planet {
     for (const planet of multiScreenData[screenID][1]) {
-        if(planet.id == planetID) {
+        if(planet.id === planetID) {
             return planet;
         }
     }
@@ -132,7 +149,7 @@ function findPlanetWithGlobalID(planetID: number, planetsIDs: {[key: number]: [s
     const screenID = planetsIDs[planetID][0];
     const otherPlanetID = planetsIDs[planetID][1];
     for (const planet of multiScreenData[screenID][1]) {
-        if(planet.id == otherPlanetID) {
+        if(planet.id === otherPlanetID) {
             return planet;
         }
     }
@@ -141,7 +158,7 @@ function findPlanetWithGlobalID(planetID: number, planetsIDs: {[key: number]: [s
 
 function findScreenCoordinates(id: string): {x: number, y:number} {
     for (const qr of qrlocations) {
-        if(qr.id == id) {
+        if(qr.id === id) {
             return qr.middle_location;
         }
     }
