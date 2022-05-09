@@ -78,6 +78,7 @@ export function websocketEventHandlers(websocket: ws.Server) {
                 break;
 
             case 'jump-message':
+                console.log('jumpmessage received.');
                 websocket.clients.forEach((client) => {
                     client.send(JSON.stringify({client : 'jumpmessage', jdata: mes.data}));
                 });

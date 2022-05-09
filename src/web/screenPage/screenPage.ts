@@ -21,7 +21,7 @@ interface Message {
     'id': string;
     'client': string;
     'data': {[key: string]: [number, Planet[]]}
-    'jdata': [string, number, string]
+    'jdata': [string, number, Cat, number]
     'joins': [string, string]
 }
 
@@ -66,8 +66,10 @@ function getPortalCoordinates(myPlanet: Planet, otherPlanet: Planet): Vector3 {
     return vector;
 }
 
-export function sendMessage(mesclient:string, mesid:string) {
-    websocket.send(JSON.stringify({client:mesclient, id:mesid}));
+export function sendMessage(mesclient: string, mesdata: (string | number | Cat)[]) {
+    console.log('going to jump');
+    websocket.send(JSON.stringify({client : mesclient, data : mesdata}));
+    console.log('jumped here');
 }
 
 const url = 'wss' + window.location.href.substr(5);
@@ -141,17 +143,15 @@ websocket.onmessage = (message:WebSocketMessage) => {
             cats.push(undefined);
         }
     }
-    if(mes.client === 'jump-message') {
-        console.log('Cat jumped from other screen.');
-        const [otherScreen, otherPlanetID, otherFakeCat] = mes.jdata;
-        console.log(otherScreen, otherPlanetID, otherFakeCat);
+    if(mes.client === 'jumpmessage') {
+        const [otherScreen, otherPlanetID, otherFakeCat, catIndex] = mes.jdata;
         if(otherScreen === myId.innerHTML) {
-            const cat = <Cat>JSON.parse(otherFakeCat);
             for(const planet of allPlanets) {
                 if(planet.id === Number(otherPlanetID)) {
-                    cat.setPlanet(planet);
+                    const cat = new Cat(otherFakeCat.id, otherFakeCat.radius, planet, otherFakeCat.mass);
                     planet.setCat(cat);
                     cat.positionOnPlanet = new Vector3(0, 0, 0);
+                    cats[catIndex] = cat;
                 }
             }
         }

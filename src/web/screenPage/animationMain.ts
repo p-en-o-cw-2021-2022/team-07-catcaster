@@ -4,7 +4,7 @@ import { Cat } from '../js/cat.js';
 import { setInnerText } from '../js/dom-util.js';
 import { askPermissionIfNeeded } from '../js/motion-events.js';
 import { Planet } from '../js/planet.js';
-import { myId } from './screenPage.js';
+import { myId, sendMessage } from './screenPage.js';
 
 // Initialize animation scene and camera
 const scene = new THREE.Scene();
@@ -139,7 +139,7 @@ export function conAdd(){
 // }
 
 function animate() {
-    console.log('cats???', cats, catsData);
+    // console.log('cats???', cats, catsData);
     if( cats.length === catsData.length){
         for (let i = 0, len = cats.length; i < len; i++) {
             const cat = cats[i];
@@ -165,10 +165,9 @@ function animate() {
                     // Send teleport message over websocket
                     if (portal.otherScreen !== myId.innerHTML) {
                         // hier is iets fout
-                        const url = 'wss' + window.location.href.substr(5);
-                        const websocket = new WebSocket(url);
-                        const jumpmessage = [portal.otherScreen, portal.otherPlanetID, cat];
-                        websocket.send(JSON.stringify({client: 'jump-message', data: jumpmessage}));
+                        cats[i] = undefined;
+                        const jumpmessage = [portal.otherScreen, portal.otherPlanetID, cat, i];
+                        sendMessage('jump-message', jumpmessage);
                     } else {
                         for(const planet of allPlanets) {
                             if(planet.id === portal.otherPlanetID) {
