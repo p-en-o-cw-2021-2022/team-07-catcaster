@@ -117,7 +117,7 @@ const dt = 0.05;
 // planet2.addNeighbour(planet, new Vector3(-3,0,0));
 renderer.render( scene, camera );
 
-export function conAdd(){
+export function conAdd() {
     controllers = document.getElementById('controllers')!.children;
 }
 
@@ -140,10 +140,10 @@ export function conAdd(){
 
 function animate() {
     // console.log('cats???', cats, catsData);
-    if( cats.length === catsData.length){
+    if( cats.length === catsData.length) {
         for (let i = 0, len = cats.length; i < len; i++) {
             const cat = cats[i];
-            if(cat != undefined) {
+            if(cat !== undefined) {
                 const jumpdata = catsData[i][1].innerText;
                 if (jumpdata === 'true') {
                     cat.jump = true;
@@ -167,6 +167,7 @@ function animate() {
                         // hier is iets fout
                         cats[i] = undefined;
                         const jumpmessage = [portal.otherScreen, portal.otherPlanetID, cat, i];
+                        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                         sendMessage('jump-message', jumpmessage);
                     } else {
                         for(const planet of allPlanets) {
@@ -231,7 +232,7 @@ function animate() {
 function update2(e: DeviceOrientationEvent) {
     for (let i = 0, len = cats.length; i < len; i++) {
         const cat = cats[i];
-        if(cat != undefined) {
+        if(cat !== undefined) {
             cat.updateForce('x', e.gamma!);
             cat.updateForce('y', -e.beta!);
         }

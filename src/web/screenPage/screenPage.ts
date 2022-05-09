@@ -1,10 +1,9 @@
 import { Planet } from '../js/planet.js';
 import { Scene, Vector3 } from 'three';
-import { allPlanets, cats, conAdd, controllers, controllers_count } from './animationMain.js';
+import { allPlanets, cats, conAdd } from './animationMain.js';
 import { Portal } from '../js/portal.js';
 import { findNeighborsVoronoi } from './voronoi.js';
 import { Cat } from '../js/cat.js';
-import { commandDir } from 'yargs';
 const debug = <HTMLButtonElement>document.getElementById('debug-info');
 const gyrodata =  <HTMLElement>document.getElementById('gyrodatas');
 
@@ -128,18 +127,17 @@ websocket.onmessage = (message:WebSocketMessage) => {
         if(mes.joins[0] === myId.innerHTML) {
             conAdd();
             // const contID = (controllers[controllers_count - 1] as HTMLParagraphElement).innerText;
-        
+
             // const cat: Cat = new Cat(scene, parseInt(id, 16), allPlanets[0].radius, planet);
             const plan = allPlanets[Math.floor(Math.random() * allPlanets.length)];
             const cat: Cat = new Cat(parseInt(mes.joins[1], 16), plan.radius, plan);
             console.log(allPlanets);
             plan.setCat(cat);
             // planet.setCat(cat);
-        
+
             cats.push(cat);
             console.log('Cat added wih id: ' + String(parseInt(mes.joins[1], 16)));
-        }
-        else {
+        } else {
             cats.push(undefined);
         }
     }
@@ -156,8 +154,40 @@ websocket.onmessage = (message:WebSocketMessage) => {
             }
         }
     }
+    if(mes.client === 'addCat') {
+        if(mes.joins[0] === myId.innerHTML) {
+            conAdd();
+            // const contID = (controllers[controllers_count - 1] as HTMLParagraphElement).innerText;
+
+            // const cat: Cat = new Cat(scene, parseInt(id, 16), allPlanets[0].radius, planet);
+            const plan = allPlanets[Math.floor(Math.random() * allPlanets.length)];
+            const cat: Cat = new Cat(parseInt(mes.joins[1], 16), plan.radius, plan);
+            console.log(allPlanets);
+            plan.setCat(cat);
+            // planet.setCat(cat);
+
+            cats.push(cat);
+            console.log('Cat added wih id: ' + String(parseInt(mes.joins[1], 16)));
+        } else {
+            cats.push(undefined);
+        }
+    }
+    if(mes.client === 'jump-message') {
+        const [otherScreen, otherPlanetID, otherFakeCat, catIndex] = mes.jdata;
+        if(otherScreen === myId.innerHTML) {
+            for(const planet of allPlanets) {
+                if(planet.id === Number(otherPlanetID)) {
+                    const cat = new Cat(otherFakeCat.id, otherFakeCat.radius, planet, otherFakeCat.mass);
+                    planet.setCat(cat);
+                    cat.positionOnPlanet = new Vector3(0, 0, 0);
+                    cats[catIndex] = cat;
+                }
+            }
+        }
+    }
     if(mes.client === 'endgame') {
         console.log('The game was ended.');
+        // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
         window.location.href = '/catcaster/screen/?id=' + getIdScreen();
     }
     if(mes.client === 'portal') {
