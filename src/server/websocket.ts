@@ -78,6 +78,7 @@ export function websocketEventHandlers(websocket: ws.Server) {
                 break;
 
             case 'jump-message':
+                console.log('jumpmessage received.');
                 websocket.clients.forEach((client) => {
                     client.send(JSON.stringify({client : 'jumpmessage', jdata: mes.data}));
                 });
@@ -114,6 +115,10 @@ export function websocketEventHandlers(websocket: ws.Server) {
 
             case 'endgame':
                 console.log('The game was ended.');
+                let cids:Array<string> = database.getControllerIds();
+                cids.forEach(element => {
+                    database.removeController(element);
+                })
                 websocket.clients.forEach((client) => {
                     client.send(JSON.stringify({client : 'endgame'}));
                 });
