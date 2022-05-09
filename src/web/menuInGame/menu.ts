@@ -10,17 +10,9 @@ websocket.onopen = () => {
 };
 
 playButton.addEventListener('click', function() {
-    const url: string = 'wss' + window.location.href.substr(5);
     const cid : string|null = getId();
-
-    const websocket = new WebSocket(url);
-    console.log('Starting Websocket connection...');
-
-    websocket.onopen = () => {
-    console.log('Connection established.');
     websocket.send(JSON.stringify({client: 'join', id:cid}))
     window.location.href = '/catcaster/controller/?id=' + cid + '&mode=multiscreen';
-    };
 });
 
 deleteButton.addEventListener('click', function() {
