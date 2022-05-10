@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { Scene, Vector3 } from 'three';
+import { Euler, Scene, Vector3 } from 'three';
 import { Planet } from './planet';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
 import { Portal } from './portal';
@@ -33,19 +33,21 @@ export class Cat {
         this.mesh = new THREE.Mesh(this.sphere, material);
         this.catPositionAngle = [0, 0];
         const scene = planet.scene;
-        scene.add( this.mesh );
+        // scene.add( this.mesh );
         // load a resource
         this.loader.load(
             // resource URL
             'cat.obj',
             // called when resource is loaded
-            function ( object ) {
+            ( object ) => {
                 console.log('Object is loaded');
                 object.traverse(function(child) {
                     if (child instanceof THREE.Mesh) {
                         child.material = material;
                     }
                 });
+                // object.scale.copy(new THREE.Vector3(0., 0.1, 0.1));
+                this.mesh = object;
                 scene.add( object );
 
             },
@@ -122,6 +124,7 @@ export class Cat {
 
         const absPosition = copyVector.add(this.planet.coordinates);
         this.mesh!.position.copy(copyVector);
+        // this.mesh!.normalMatrix.copy(this.planet.object3dGroup.normalMatrix.clone());
 
     }
 
