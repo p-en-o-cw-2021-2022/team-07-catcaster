@@ -28,7 +28,6 @@ export function sendScreenId(ctx: context) {
 
 export function getControllerRedirectPage(ctx: context) {
     const params = ctx.request.query;
-    console.log(params);
     if (params.id == null) {
         ctx.response.status = 200;
         ctx.type = 'html';
