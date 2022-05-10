@@ -82,6 +82,10 @@ export function websocketEventHandlers(websocket: ws.Server) {
                     ws.send(JSON.stringify({client : 'disconnect', id : mes.id}));
                 }
 
+                websocket.clients.forEach(function(client) {
+                    client.send(JSON.stringify({client: 'screenState', mode: 'Catcaster'}));
+                })
+
                 //Send the controller the ID of the screen, as to establish a webRTC connection
                 websocket.clients.forEach(function(client) {
                     client.send(JSON.stringify({client: 'controller', id:controllerid}));
@@ -89,6 +93,7 @@ export function websocketEventHandlers(websocket: ws.Server) {
                 for(const sid of screenid) {
                     ws.send(JSON.stringify({client : 'screen', id : sid}));
                 }
+
                 setTimeout(() => {ws.send(JSON.stringify({client : 'connect', id : 0}));}, 500);
                 //start ping-pong process
                 it = setInterval(() => {
