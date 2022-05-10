@@ -20,6 +20,7 @@ let number: number;
 const queryString = window.location.search;
 const urlParams = new URLSearchParams(queryString);
 const id: string | null = urlParams.get('id');
+let recurseAmount = 0;
 
 export class QRlocation {
     id : string;
@@ -215,6 +216,10 @@ multiple_screen_button.addEventListener('click', function() {
 //If a QR code is found, it is removed from the image so others can be found
 //If not enough QR codes can be found (due to inaccuracies), take a new image, try again
 function QR(number: number) {
+    recurseAmount++;
+    if (recurseAmount > 400) {
+        throw 'Too much recursion.';
+    }
     const imageData = cameraSensor.getContext('2d')!.getImageData(0, 0, cameraSensor.width, cameraSensor.height);
     cameraSensor.getContext('2d')!.drawImage(cameraView, 0, 0);
     if (imageData === null || imageData === undefined) {
