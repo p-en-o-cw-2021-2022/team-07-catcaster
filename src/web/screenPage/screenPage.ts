@@ -103,7 +103,7 @@ websocket.onmessage = (message:WebSocketMessage) => {
     console.log('received message from : ', mes.id, '  |  client is: ', mes.client);
     if(mes.client === 'controller') {
         controllerId = mes.id;
-        controllerId2 = mes.id;
+        controllerId2 = mes.id[mes.id.length-1];
     }
     if(mes.client === 'disconnect' && mes.id === myId.innerHTML) {
         console.log('Illegal ID, removing websocket connection.');
@@ -154,6 +154,7 @@ websocket.onmessage = (message:WebSocketMessage) => {
         }
     }
     if(mes.client === 'addCat') {
+        console.log(controllerId2);
         if(controllerId2!=null) {
             conAdd();
             // const contID = (controllers[controllers_count - 1] as HTMLParagraphElement).innerText;
