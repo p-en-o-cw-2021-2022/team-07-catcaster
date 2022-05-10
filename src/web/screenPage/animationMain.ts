@@ -193,6 +193,10 @@ function animate() {
                                 cat.setPlanet(planet);
                                 planet.setCat(cat);
                                 cat.positionOnPlanet = new Vector3(0, 0, 0);
+                                cat.xF = 0;
+                                cat.yF = 0;
+                                cat.xVel = 0;
+                                cat.yVel = 0;
                             }
                         }
                     }

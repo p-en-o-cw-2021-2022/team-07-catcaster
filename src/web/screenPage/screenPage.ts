@@ -7,6 +7,10 @@ import { Cat } from '../js/cat.js';
 import { commandDir } from 'yargs';
 const debug = <HTMLButtonElement>document.getElementById('debug-info');
 const gyrodata =  <HTMLElement>document.getElementById('gyrodatas');
+const screenstate = <HTMLSpanElement>document.getElementById('Screen-state');
+const websocketState = <HTMLSpanElement>document.getElementById('Websocket-state');
+screenstate.innerHTML = 'Free';
+websocketState.innerHTML = 'Starting Websocket...';
 
 debug.addEventListener('click',  function() {
 
@@ -24,6 +28,7 @@ interface Message {
     'data': {[key: string]: [number, Planet[]]}
     'jdata': [string, number, Cat, number]
     'joins': [string, string]
+    'mode': string;
 }
 
 interface WebSocketMessage {
@@ -96,6 +101,7 @@ console.log('Starting Websocket connection...');
 websocket.onopen = () => {
     console.log('Connection established.');
     websocket.send(JSON.stringify({client: 'screen', id: myId.innerHTML}));
+    websocketState.innerHTML = 'Connected';
 };
 
 websocket.onmessage = (message:WebSocketMessage) => {
@@ -218,6 +224,18 @@ websocket.onmessage = (message:WebSocketMessage) => {
                 }
             }
             console.log('changedplanet: ', planet);
+        }
+    }
+    if(mes.client === '__ping__'){
+        websocket.send(JSON.stringify({client: '__pong__', id: myId.innerHTML}));
+    }
+    if(mes.client === 'screenState'){
+        console.log('screenstate ontvangen');
+        if(mes.mode === 'Catcaster'){
+            screenstate.innerHTML = 'Game';
+        }
+        if(mes.mode === 'Free'){
+            screenstate.innerHTML = 'Free';
         }
     }
 };

@@ -20,6 +20,7 @@ let number: number;
 const queryString = window.location.search;
 const urlParams = new URLSearchParams(queryString);
 const id: string | null = urlParams.get('id');
+let recurseAmount = 0;
 
 export class QRlocation {
     id : string;
@@ -107,70 +108,69 @@ function cameraStart() {
 }
 
 function getQRLocations() {
-    try {
-        //Scan camera for locations and contents of QR codes
-        const qrlocations:Array<QRlocation> = QR(number);
-        alert('QR-codes found');
-        const sites: {x: number; y: number; id: string}[] = [];
+    
+    //Scan camera for locations and contents of QR codes
+    const qrlocations:Array<QRlocation> = QR(number);
+    alert('QR-codes found');
+    const sites: {x: number; y: number; id: string}[] = [];
 
-        for (const qrloc of qrlocations) {
-            sites.push({x: qrloc.middle_location.x, y: qrloc.middle_location.y, id: qrloc.id});
-        }
-        //Create voronoi triangulation, neighbours contains edges
-        const neighboursPerID = findNeighborsVoronoi(sites);
-
-        for (const qrID of neighboursPerID) {
-            let qr: QRlocation;
-            let neighbour: QRlocation;
-            for (const qrloc of qrlocations) {
-                if (qrID.id === qrloc.id) {
-                    qr = qrloc;
-                }
-            }
-            for (const neighbourid of qrID.neighborsOfID) {
-                for (const qrloc of qrlocations) {
-                    if (neighbourid === qrloc.id) {
-                        neighbour = qrloc;
-                    }
-                }
-            qr!.addNeighbour(neighbour!);
-            }
-        }
-
-        websocket.send(JSON.stringify({client:'qrlocations', data: qrlocations}));
-        window.location.href = '/catcaster/controller/?id='+id+'&mode=multiscreen';
-
-        /* server code */
-    } catch(e) {
-        alert('No QR-codes found\r\n' + e);
+    for (const qrloc of qrlocations) {
+        sites.push({x: qrloc.middle_location.x, y: qrloc.middle_location.y, id: qrloc.id});
     }
+    //Create voronoi triangulation, neighbours contains edges
+    const neighboursPerID = findNeighborsVoronoi(sites);
+
+    for (const qrID of neighboursPerID) {
+        let qr: QRlocation;
+        let neighbour: QRlocation;
+        for (const qrloc of qrlocations) {
+            if (qrID.id === qrloc.id) {
+                qr = qrloc;
+            }
+        }
+        for (const neighbourid of qrID.neighborsOfID) {
+            for (const qrloc of qrlocations) {
+                if (neighbourid === qrloc.id) {
+                    neighbour = qrloc;
+                }
+            }
+        qr!.addNeighbour(neighbour!);
+        }
+    }
+
+    websocket.send(JSON.stringify({client:'qrlocations', data: qrlocations}));
+    window.location.href = '/catcaster/controller/?id='+id+'&mode=multiscreen';
+
 }
+
 
 cameraTrigger.onclick = function() {
 
-
-    const displayPromise = new Promise(function(resolve, reject) {
+    try {
         cameraTrigger.style.display = 'none';
         loaderQR.style.display = 'block';
         cameraTrigger.disabled = true;
 
         cameraSensor.width = cameraView.videoWidth;
         cameraSensor.height = cameraView.videoHeight;
+        cameraSensor.style.display = 'block'
+
         cameraSensor.getContext('2d')!.drawImage(cameraView, 0, 0);
         cameraOutput.src = cameraSensor.toDataURL('image/webp');
         cameraOutput.classList.add('taken');
         cameraMain.style.display = 'block';
         cameraView.style.display = 'none';
-        resolve(1);
-    });
 
-    displayPromise.then(
-        function() {
-            getQRLocations();
-            loaderQR.style.display = 'none';
-        }
+        getQRLocations();
+        loaderQR.style.display = 'none';
+    } catch {
+        alert("Couldn't find the required amount of QR codes. Please try taking a better picture.")
+        location.reload(); 
+    }
+    
+        
 
-    );
+  
 
 
 
@@ -216,6 +216,10 @@ multiple_screen_button.addEventListener('click', function() {
 //If a QR code is found, it is removed from the image so others can be found
 //If not enough QR codes can be found (due to inaccuracies), take a new image, try again
 function QR(number: number) {
+    recurseAmount++;
+    if (recurseAmount > 400) {
+        throw 'Too much recursion.';
+    }
     const imageData = cameraSensor.getContext('2d')!.getImageData(0, 0, cameraSensor.width, cameraSensor.height);
     cameraSensor.getContext('2d')!.drawImage(cameraView, 0, 0);
     if (imageData === null || imageData === undefined) {
@@ -233,7 +237,7 @@ function QR(number: number) {
         const qr = jsQR(data.slice(), cameraSensor.width, cameraSensor.height, {inversionAttempts: 'dontInvert'});
 
         //If the scan fails, create a new image, try again
-        if (qr === null) {
+        if (qr === null || qr.data === '') {
             const qrlocs: QRlocation[] = QR(number);
             return qrlocs;
 
