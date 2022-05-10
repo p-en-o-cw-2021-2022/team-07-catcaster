@@ -1,22 +1,24 @@
+import { Color } from 'three';
+import { Cat } from '../js/cat';
+
 const id = <HTMLDivElement>document.getElementById('sender-id');
 const screenId = <HTMLDivElement>document.getElementById('receiver-id');
 const connectiondiv = <HTMLDivElement>document.getElementById('connection-div');
-const debug_controller = <HTMLButtonElement>document.getElementById("debug-info-controller");
-const controller_data =  <HTMLElement>document.getElementById("data");
+const debug_controller = <HTMLButtonElement>document.getElementById('debug-info-controller');
+const controller_data =  <HTMLElement>document.getElementById('data');
 
 debug_controller.addEventListener('click',  function() {
-    
     controller_data.hidden = !controller_data.hidden;
-    
 });
 
 
-interface Message {
+export interface Message {
     'id': string;
     'client': string;
+    'catcol': Cat;
 }
 
-interface WebSocketMessage {
+export interface WebSocketMessage {
     'data': string;
 }
 
@@ -55,6 +57,14 @@ function eventHandlersController() {
         }
         if(mes.client === 'screen') {
             screenId.innerHTML += mes.id;
+        }
+        if(mes.client === 'catColor') {
+            const cat: Cat = mes.catcol;
+            if(cat.id == id.innerHTML) {
+                const color = cat.color;
+                alert(color);
+                document.body.style.backgroundColor = '0x' + (<Color>color).getHex().toString(16);
+            }
         }
         if(mes.client === 'endgame') {
             window.location.href = '/catcaster/endgame/';

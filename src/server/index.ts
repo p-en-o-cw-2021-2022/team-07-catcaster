@@ -24,6 +24,7 @@ const startscreen_controller = 'dist/webroot/web/QR-test'
 const errorMessage = 'dist/webroot/web/errorPage'
 const endGamePage = 'dist/webroot/web/endGamePage'
 const menuInGame = 'dist/webroot/web/menuInGame'
+const models = 'dist/webroot/web/models'
 const router = new Router();
 
 // When we run this server we serve you all of our `dist/webroot` folder.
@@ -37,6 +38,7 @@ app.use(mount('/catcaster/js/', serve(animation)));
 app.use(mount('/catcaster/controller/', serve(startscreen_controller)));
 app.use(mount('/catcaster/menu/', serve(menuInGame)))
 app.use(mount('/catcaster/endgame/', serve(endGamePage)));
+app.use(mount('/catcaster/screen/', serve(models)));
 app.use(router.routes()).use(router.allowedMethods());
 
 export var database = new IdDatabase();

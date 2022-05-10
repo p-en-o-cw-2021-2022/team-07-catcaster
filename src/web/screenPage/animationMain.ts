@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 import * as THREE from 'three';
 import { Vector3 } from 'three';
 import { Cat } from '../js/cat.js';
@@ -22,11 +25,13 @@ export let controllers_count = 0;
 export let controllers = document.getElementById('controllers')!.children;
 // const camera = new THREE.OrthographicCamera( window.innerWidth/-20, window.innerWidth / 20, window.innerHeight / 20, window.innerHeight / -20, -100, 100);
 const camera = new THREE.OrthographicCamera( -sceneHeight * aspectRatio / 2 , sceneHeight * aspectRatio / 2, sceneHeight / 2, -sceneHeight / 2, -500, 500);
+camera.rotateOnAxis(new Vector3(1,0,0), Math.PI/4);
 // camera.position.y = -10;
 // camera.rotateX(Math.PI/4);
 
 // Initialize renderer
 const renderer = new THREE.WebGLRenderer();
+
 const scaleFactor = 1; // Scale factor for the resolution of window
 renderer.setSize( window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(window.devicePixelRatio * scaleFactor);
@@ -38,20 +43,23 @@ if (document.getElementById('Game') !== null) {
     document.getElementById('Game')?.appendChild( renderer.domElement );
 }
 
+
 // const planet = new Planet(scene, 0, 20, 0, [0,0,0]);
 
 //-------------------------------------------------------------------------------------
 export const allPlanets : Planet[] = [];
-const screenCount = 1;
-const maxPlanets = 3*screenCount;
-const minPlanets = 1;
 // let noOfPlanets = Math.floor(Math.random() * (maxPlanets-minPlanets+1)+minPlanets);
-const noOfPlanets = 3;
+const randomNO = Math.random();
+let noOfPlanets;
+if(randomNO <= 0.15) {
+    noOfPlanets = 1;
+} else if(randomNO <= 0.4) {
+    noOfPlanets = 2;
+} else {
+    noOfPlanets = 3;
+}
 for (let planetID = 1; planetID <= noOfPlanets; planetID++) {
-    const [planet_x, planet_y, planet_r] = generatePlanetCoo();
-    const planet: Planet = new Planet(scene, planetID, planet_r, 10, [planet_x,planet_y,0]);
-    allPlanets.push(planet);
-    console.log('Created planet at: ', String([planet_x, planet_y, planet_r]));
+    createPlanet(planetID);
 }
 // for (let i = 0, len = allPlanets.length; i < len; i++) {
 //     const shortestPlanet: Planet | null = allPlanets[i].seekShortestPlanet(allPlanets);
@@ -70,6 +78,13 @@ for (let planetID = 1; planetID <= noOfPlanets; planetID++) {
 //         shortestPlanet.addNeighbour(allPlanets[i], yourShortestVectorNormalized.multiplyScalar(yourPlanetR-2));
 //     }
 // }
+
+export function createPlanet(planetID: number) {
+    const [planet_x, planet_y, planet_r] = generatePlanetCoo();
+    const planet: Planet = new Planet(scene, planetID, planet_r, 10, [planet_x,planet_y,0]);
+    allPlanets.push(planet);
+    console.log('Created planet at: ', String([planet_x, planet_y, planet_r]));
+}
 
 function generatePlanetCoo() : number[] {
     const max_r = 100;
@@ -110,14 +125,14 @@ function isValidPosition(thisX:number, thisY:number, thisR:number) {
 //-------------------------------------------------------------------------------------
 
 // Create planet and cat objects with default values
-const dt = 0.05;
+const dt = 0.025;
 // const planet: Planet = new Planet(scene, 0, 5, 10, [0,0,0]);
 // const planet2: Planet = new Planet(scene, 1, 5, 10, [10,0,0]);
 // planet.addNeighbour(planet2, new Vector3(3,0,0));
 // planet2.addNeighbour(planet, new Vector3(-3,0,0));
 renderer.render( scene, camera );
 
-export function conAdd(){
+export function conAdd() {
     controllers = document.getElementById('controllers')!.children;
 }
 
@@ -140,10 +155,10 @@ export function conAdd(){
 
 function animate() {
     // console.log('cats???', cats, catsData);
-    if( cats.length === catsData.length){
+    if( cats.length === catsData.length) {
         for (let i = 0, len = cats.length; i < len; i++) {
             const cat = cats[i];
-            if(cat != undefined) {
+            if(cat !== undefined) {
                 const jumpdata = catsData[i][1].innerText;
                 if (jumpdata === 'true') {
                     cat.jump = true;
@@ -151,20 +166,24 @@ function animate() {
                     cat.jump = false;
                 }
                 const gyrodata = catsData[i][0].innerText;
-                if ((gyrodata !== '') || (gyrodata !== undefined)) {
+                if ((gyrodata !== '') && (gyrodata !== undefined)) {
                     const datalist = gyrodata?.split(' ');
                     const beta = datalist[0];
                     const gamma = datalist[1];
                     cat.xF = Number(gamma);
                     cat.yF = Number(beta);
                 }
-                const portal = cat.updateVelocity(dt);
+                const portal = cat.updateVelocity(dt, allPlanets);
                 if(portal !== undefined) {
+                    cat.xVel = 0;
+                    cat.yVel = 0;
+                    cat.xF = 0;
+                    cat.yF = 0;
                     console.log(portal);
                     cat.planet.cats.delete(cat.id);
                     // Send teleport message over websocket
                     if (portal.otherScreen !== myId.innerHTML) {
-                        // hier is iets fout
+                        cat.planet.scene.remove(cat.mesh!);
                         cats[i] = undefined;
                         const jumpmessage = [portal.otherScreen, portal.otherPlanetID, cat, i];
                         sendMessage('jump-message', jumpmessage);

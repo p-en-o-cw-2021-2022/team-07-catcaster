@@ -3,7 +3,7 @@ import jsQR from 'jsqr';
 import { Point } from 'jsqr/dist/locator';
 import { string } from 'yargs';
 import { findNeighborsVoronoi } from './voronoi.js';
-
+import { Message, WebSocketMessage } from './controllerPage';
 
 const constraints = { video: { facingMode: 'environment' }, audio: false };
 const cameraView = <HTMLVideoElement>document.querySelector('#camera--view');
@@ -218,7 +218,7 @@ multiple_screen_button.addEventListener('click', function() {
 function QR(number: number) {
     recurseAmount++;
     if (recurseAmount > 400) {
-        throw 'Too much recursion';
+        throw 'Too much recursion.';
     }
     const imageData = cameraSensor.getContext('2d')!.getImageData(0, 0, cameraSensor.width, cameraSensor.height);
     cameraSensor.getContext('2d')!.drawImage(cameraView, 0, 0);
