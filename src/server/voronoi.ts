@@ -26,8 +26,6 @@ export function findNeighborsVoronoi(sites: {x: number; y: number; id: string}[]
     for (const neighbor of neighbors) {
         let left_id: string;
         let right_id: string;
-        left_id = '';
-        right_id = '';
         for (const site of sites) {
             if ((site.x === neighbor[0][0]) && (site.y === neighbor[0][1])) {
                 left_id = site.id;
@@ -36,7 +34,8 @@ export function findNeighborsVoronoi(sites: {x: number; y: number; id: string}[]
                 right_id = site.id;
             }
         }
-        const pair_ids: [string, string] = [left_id, right_id];
+
+        const pair_ids: [string, string] = [left_id!, right_id!];
         neighbors_ids.push(pair_ids);
     }
 

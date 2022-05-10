@@ -1,4 +1,7 @@
-import { ColorRepresentation, Vector3 } from 'three';
+import * as THREE from 'three';
+import { Color, ColorRepresentation, Plane, Scene, Vector3 } from 'three';
+import { Cat } from './cat.js';
+import { Planet } from './planet';
 
 
 export class Portal {

@@ -1,9 +1,10 @@
 import { Planet } from '../js/planet.js';
 import { Scene, Vector3, Color } from 'three';
-import { allPlanets, cats, conAdd } from './animationMain.js';
+import { allPlanets, cats, conAdd, controllers, controllers_count } from './animationMain.js';
 import { Portal } from '../js/portal.js';
 import { findNeighborsVoronoi } from './voronoi.js';
 import { Cat } from '../js/cat.js';
+import { commandDir } from 'yargs';
 const debug = <HTMLButtonElement>document.getElementById('debug-info');
 const gyrodata =  <HTMLElement>document.getElementById('gyrodatas');
 
@@ -133,17 +134,18 @@ websocket.onmessage = (message:WebSocketMessage) => {
                 const neighborID = Number(neighborToAdd);
                 const neighbor = getPlanet(neighborID);
                 const portalCoordinates = getPortalCoordinates(planet, neighbor);
-                const portal: Portal = new Portal(myId.innerHTML, portalCoordinates, neighborID);
+                const portal = new Portal(myId.innerHTML, portalCoordinates, neighborID);
                 let randomColor = randomColorCreation();
                 for(const planet of allPlanets) {
-                    if(planet.id === neighborID) {
+                    if(planet.id == neighborID) {
                         for(const neighborPortal of planet.portals) {
-                            if(neighborPortal.otherPlanetID === planetID) {
+                            if(neighborPortal.otherPlanetID == planetID) {
                                 randomColor = neighborPortal.color;
                             }
                         }
                     }
                 }
+                console.log('colorro', randomColor);
                 portal.addColor(new Color(randomColor));
                 planet.addPortal(portal);
             }
