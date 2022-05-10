@@ -7,7 +7,7 @@
   "files": [],
   "scripts": {
     "clean": "rimraf dist/",
-    "copy-files-web": "copyfiles -u 1 src/**/*.html src/**/**/*.html src/**/*.css src/**/**/*.css src/**/*.pem dist/webroot",
+    "copy-files-web": "copyfiles -u 1 src/**/*.html src/**/**/*.html src/**/*.css src/**/**/*.css src/**/**/*.obj src/**/*.pem dist/webroot",
     "tsc-web": "tsc -b src/web/tsconfig.json",
     "tsc-server": "tsc -b tsconfig.json",
     "tsc": "npm run tsc-server && npm run tsc-web",
