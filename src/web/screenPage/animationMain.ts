@@ -42,11 +42,16 @@ if (document.getElementById('Game') !== null) {
 
 //-------------------------------------------------------------------------------------
 export const allPlanets : Planet[] = [];
-const screenCount = 1;
-const maxPlanets = 3*screenCount;
-const minPlanets = 1;
 // let noOfPlanets = Math.floor(Math.random() * (maxPlanets-minPlanets+1)+minPlanets);
-const noOfPlanets = 3;
+const randomNO = Math.random();
+let noOfPlanets;
+if(randomNO <= 0.15) {
+    noOfPlanets = 1;
+} else if(randomNO <= 0.4) {
+    noOfPlanets = 2;
+} else {
+    noOfPlanets = 3;
+}
 for (let planetID = 1; planetID <= noOfPlanets; planetID++) {
     const [planet_x, planet_y, planet_r] = generatePlanetCoo();
     const planet: Planet = new Planet(scene, planetID, planet_r, 10, [planet_x,planet_y,0]);
@@ -158,7 +163,7 @@ function animate() {
                     cat.xF = Number(gamma);
                     cat.yF = Number(beta);
                 }
-                const portal = cat.updateVelocity(dt);
+                const portal = cat.updateVelocity(dt, allPlanets);
                 if(portal !== undefined) {
                     console.log(portal);
                     cat.planet.cats.delete(cat.id);
