@@ -7,7 +7,7 @@ import { Portal } from './portal';
 
 export class Cat {
 
-    id: number;
+    id: string;
     mass: number;
     radius: number;
     positionOnPlanet: Vector3;
@@ -22,14 +22,14 @@ export class Cat {
     catPositionAngle: number[];
     color: THREE.ColorRepresentation | undefined;
 
-    constructor(id: number, radius: number, planet: Planet, mass: number = 10) {
+    constructor(id: string, radius: number, planet: Planet, mass: number = 10) {
         this.id = id;
         this.mass = mass;
         this.radius = radius;
         this.positionOnPlanet = new Vector3(0, 0, 0);
         this.planet = planet;
         this.sphere = new THREE.SphereGeometry( 3, 32, 16 );
-        const color = this.generateColor(id);
+        const color = this.generateColor(parseInt(id));
         this.color = color;
         const material = new THREE.MeshLambertMaterial( { color: color } ); // This should be taken in as a constructor argument, but might break things when that happens
         this.mesh = new THREE.Mesh( this.sphere, material);

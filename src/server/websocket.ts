@@ -85,8 +85,9 @@ export function websocketEventHandlers(websocket: ws.Server) {
                 break;
             case 'catColor':
                 console.log('catColor received.');
+                console.log(mes.catcol.id, mes.catcol.color);
                 websocket.clients.forEach((client) => {
-                    client.send(JSON.stringify({client : 'catColor', catcol: mes.catcol}));
+                    client.send(JSON.stringify({client : 'catColor', id : 'k', catcol : mes.catcol}));
                 });
                 break;
 

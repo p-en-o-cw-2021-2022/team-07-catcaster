@@ -59,10 +59,11 @@ function eventHandlersController() {
             screenId.innerHTML += mes.id;
         }
         if(mes.client === 'catColor') {
-            alert('a');
             const cat: Cat = mes.catcol;
-            const color: Color = <Color>cat.color;
-            alert(color?.toString());
+            if(cat.id == id.innerHTML) {
+                const color = cat.color;
+                alert(color);
+            }
         }
         if(mes.client === 'endgame') {
             window.location.href = '/catcaster/endgame/';

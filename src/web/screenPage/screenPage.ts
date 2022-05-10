@@ -15,7 +15,8 @@ debug.addEventListener('click',  function() {
 });
 
 const myId = <HTMLDivElement>document.getElementById('receiver-id');
-let controllerId = null;
+let controllerId: string | null = null;
+let controllerId2: string | null = null;
 
 interface Message {
     'id': string;
@@ -102,6 +103,7 @@ websocket.onmessage = (message:WebSocketMessage) => {
     console.log('received message from : ', mes.id, '  |  client is: ', mes.client);
     if(mes.client === 'controller') {
         controllerId = mes.id;
+        controllerId2 = mes.id;
     }
     if(mes.client === 'disconnect' && mes.id === myId.innerHTML) {
         console.log('Illegal ID, removing websocket connection.');
@@ -152,23 +154,30 @@ websocket.onmessage = (message:WebSocketMessage) => {
         }
     }
     if(mes.client === 'addCat') {
-        if(mes.joins[0] === myId.innerHTML) {
+        if(controllerId2!=null) {
             conAdd();
             // const contID = (controllers[controllers_count - 1] as HTMLParagraphElement).innerText;
 
             // const cat: Cat = new Cat(scene, parseInt(id, 16), allPlanets[0].radius, planet);
             const plan = allPlanets[Math.floor(Math.random() * allPlanets.length)];
-            const cat: Cat = new Cat(parseInt(mes.joins[1], 16), plan.radius, plan);
-            console.log(allPlanets);
-            plan.setCat(cat);
-            // planet.setCat(cat);
-
-            cats.push(cat);
-            websocket.send(JSON.stringify({client: 'catColor', catcol: cat}));
-            console.log('Cat added wih id: ' + String(parseInt(mes.joins[1], 16)));
-        } else {
-            cats.push(undefined);
-        }
+            if(mes.joins[0] === myId.innerHTML){
+                const cat: Cat = new Cat(controllerId2, plan.radius, plan);
+                console.log(allPlanets);
+                plan.setCat(cat);
+                // planet.setCat(cat);
+    
+                cats.push(cat);
+                //setTimeout( ()=> websocket.send(JSON.stringify({client: 'catColor', catcol: cat})), 5000);
+                websocket.send(JSON.stringify({client: 'catColor', catcol: cat}));
+                console.log('Cat added wih id: ' + String(parseInt(mes.joins[1], 16)));
+                } else {
+                    cats.push(undefined);
+                }
+            controllerId2 = null;
+            }
+            else{
+                websocket.send(JSON.stringify({client: 'join'}));
+            }
     }
     if(mes.client === 'jumpmessage') {
         const [otherScreen, otherPlanetID, otherFakeCat, catIndex] = mes.jdata;

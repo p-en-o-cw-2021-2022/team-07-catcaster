@@ -7,7 +7,7 @@ export class Planet {
     id: number;
     radius: number;
     coordinates: Vector3;
-    cats: Map<number, Cat>;
+    cats: Map<string, Cat>;
     friction: number;
     alpha:number = 0;
     beta:number = 0;
@@ -27,7 +27,7 @@ export class Planet {
         this.radius = radius;
         this.friction = friction;
         this.neighbours = new Map<number, Planet>();
-        this.cats = new Map<number, Cat>();
+        this.cats = new Map<string, Cat>();
         this.portals = new Array<Portal>();
         this.circle = new THREE.CircleGeometry( this.radius, 32 );
         this.mesh = new THREE.Mesh( this.circle, new THREE.MeshNormalMaterial() );
