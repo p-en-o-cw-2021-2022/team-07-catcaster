@@ -113,7 +113,7 @@ export function websocketEventHandlers(websocket: ws.Server) {
                 });
                 ws.send(JSON.stringify({client: 'multiscreen-send'}));
                 break;
-
+                
             case 'single-screen':
                 websocket.clients.forEach((client) => {
                     client.send(JSON.stringify({client : 'singleScreen'}));
@@ -133,7 +133,12 @@ export function websocketEventHandlers(websocket: ws.Server) {
                     client.send(JSON.stringify({client : 'catColor', id : 'k', catcol : mes.catcol}));
                 });
                 break;
-
+            case 'catInfo':
+                console.log('catinfo received.');
+                websocket.clients.forEach((client) => {
+                    client.send(JSON.stringify({client : 'catInfo', joins: mes.joins}));
+                });
+                break;
             case 'join':
                 const screens = database.getScreenIds();
                 const screen = screens[Math.floor(Math.random() * screens.length)];

@@ -207,6 +207,11 @@ function animate() {
     }
     updatePlanets();
     renderer.render( scene, camera );
+    for(const cat of cats){
+        if(cat != undefined){
+            setDebugInfo(cat);
+        }
+    }
     requestAnimationFrame(animate);
 }
 
@@ -267,17 +272,17 @@ function firstTouch() {
     });
 }
 
-// function setDebugInfo() {
+function setDebugInfo(cat: Cat) {
 
-//     setInnerText('xF', cat.xF);
-//     setInnerText('yF', cat.yF);
-//     setInnerText('xP', cat.positionOnPlanet.x.toFixed(3));
-//     setInnerText('yP', cat.positionOnPlanet.y.toFixed(3));
-//     setInnerText('zP', cat.positionOnPlanet.z.toFixed(3));
-//     setInnerText('angle', [planet.alpha * (180/Math.PI), planet.beta* (180/Math.PI), planet.gamma* (180/Math.PI)].toString());
-//     setInnerText('catPosAngle', [cat.catPositionAngle[0] * (180/Math.PI), cat.catPositionAngle[1] * (180/Math.PI)].toString());
+    setInnerText(cat.id + '-xF', cat.xF);
+    setInnerText(cat.id + '-yF', cat.yF);
+    setInnerText(cat.id + '-xP', cat.positionOnPlanet.x.toFixed(3));
+    setInnerText(cat.id + '-yP', cat.positionOnPlanet.y.toFixed(3));
+    setInnerText(cat.id + '-zP', cat.positionOnPlanet.z.toFixed(3));
+    setInnerText(cat.id + '-angle', [cat.planet.alpha * (180/Math.PI), cat.planet.beta* (180/Math.PI), cat.planet.gamma* (180/Math.PI)].toString());
+    setInnerText(cat.id + '-catPosAngle', [cat.catPositionAngle[0] * (180/Math.PI), cat.catPositionAngle[1] * (180/Math.PI)].toString());
 
-// }
+}
 
 function newController() {
     const controllers = document.getElementById('gyrodatas')?.children;
