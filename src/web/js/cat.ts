@@ -46,8 +46,9 @@ export class Cat {
                         child.material = material;
                     }
                 });
-                // object.scale.copy(new THREE.Vector3(0., 0.1, 0.1));
+                object.scale.copy(new THREE.Vector3(0.1, 0.1, 0.1));
                 this.mesh = object;
+
                 scene.add( object );
 
             },
@@ -124,7 +125,8 @@ export class Cat {
 
         const absPosition = copyVector.add(this.planet.coordinates);
         this.mesh!.position.copy(copyVector);
-        // this.mesh!.normalMatrix.copy(this.planet.object3dGroup.normalMatrix.clone());
+        this.mesh!.rotation.copy(this.planet.object3dGroup.rotation.clone());
+        this.mesh!.rotateOnAxis(new Vector3(1,0,0), Math.PI/2);
 
     }
 
