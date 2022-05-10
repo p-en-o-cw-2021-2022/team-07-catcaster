@@ -1,15 +1,14 @@
-import { Cat } from "../js/cat";
+import { Color } from 'three';
+import { Cat } from '../js/cat';
 
 const id = <HTMLDivElement>document.getElementById('sender-id');
 const screenId = <HTMLDivElement>document.getElementById('receiver-id');
 const connectiondiv = <HTMLDivElement>document.getElementById('connection-div');
-const debug_controller = <HTMLButtonElement>document.getElementById("debug-info-controller");
-const controller_data =  <HTMLElement>document.getElementById("data");
+const debug_controller = <HTMLButtonElement>document.getElementById('debug-info-controller');
+const controller_data =  <HTMLElement>document.getElementById('data');
 
 debug_controller.addEventListener('click',  function() {
-    
     controller_data.hidden = !controller_data.hidden;
-    
 });
 
 
@@ -61,8 +60,8 @@ function eventHandlersController() {
         }
         if(mes.client === 'catColor') {
             alert('a');
-            const cat = mes.catcol;
-            const color = cat.color;
+            const cat: Cat = mes.catcol;
+            const color: Color = <Color>cat.color;
             alert(color?.toString());
         }
         if(mes.client === 'endgame') {
