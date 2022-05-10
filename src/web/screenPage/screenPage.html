@@ -41,8 +41,9 @@
                     <table id = "table" class="display">
                         <tr>
                             <td class="title">ID:</td>
-                            <td class="title">Messages:</td>
+
                         </tr>
+                        <tr><br></br></tr>
                         <tr>
                             <td>
                                 <div id="receiver-id" style="font-weight: bold;" title="Copy this ID to the input on send.html.">ID:</div>
@@ -216,9 +217,9 @@
                 };
 
                 function onConnChange() {
-                    connectionString = 'Connected to: <br>';
+                    connectionString = 'Connected to: <br><b>';
                     for (connection in connections) {
-                        connectionString += (connection + '<br>');
+                        connectionString += (connection + '</b><br>');
                     }
                     return connectionString;
                 }
