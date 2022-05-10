@@ -83,6 +83,12 @@ export function websocketEventHandlers(websocket: ws.Server) {
                     client.send(JSON.stringify({client : 'jumpmessage', jdata: mes.data}));
                 });
                 break;
+            case 'catColor':
+                console.log('catColor received.');
+                websocket.clients.forEach((client) => {
+                    client.send(JSON.stringify({client : 'catColor', catcol: mes.catcol}));
+                });
+                break;
 
             case 'join':
                 const screens = database.getScreenIds();

@@ -110,7 +110,7 @@ function isValidPosition(thisX:number, thisY:number, thisR:number) {
 //-------------------------------------------------------------------------------------
 
 // Create planet and cat objects with default values
-const dt = 0.05;
+const dt = 0.01;
 // const planet: Planet = new Planet(scene, 0, 5, 10, [0,0,0]);
 // const planet2: Planet = new Planet(scene, 1, 5, 10, [10,0,0]);
 // planet.addNeighbour(planet2, new Vector3(3,0,0));

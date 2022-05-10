@@ -20,6 +20,7 @@ export class Cat {
     sphere: THREE.SphereGeometry;
     mesh: THREE.Object3D | undefined;
     catPositionAngle: number[];
+    color: THREE.ColorRepresentation | undefined;
 
     constructor(id: number, radius: number, planet: Planet, mass: number = 10) {
         this.id = id;
@@ -28,7 +29,9 @@ export class Cat {
         this.positionOnPlanet = new Vector3(0, 0, 0);
         this.planet = planet;
         this.sphere = new THREE.SphereGeometry( 3, 32, 16 );
-        const material = new THREE.MeshLambertMaterial( { color: this.generateColor(id) } ); // This should be taken in as a constructor argument, but might break things when that happens
+        const color = this.generateColor(id);
+        this.color = color;
+        const material = new THREE.MeshLambertMaterial( { color: color } ); // This should be taken in as a constructor argument, but might break things when that happens
         this.mesh = new THREE.Mesh( this.sphere, material);
         this.catPositionAngle = [0,0];
         const scene = planet.scene;
@@ -67,8 +70,8 @@ export class Cat {
         if (!this.isValidPos(this.positionOnPlanet)) {
             this.xVel = 0;
             this.yVel = 0;
-            // this.xF = 0;
-            // this.yF = 0;
+            this.xF = 0;
+            this.yF = 0;
             this.positionOnPlanet = new Vector3(0,0,0);
             return;
         }

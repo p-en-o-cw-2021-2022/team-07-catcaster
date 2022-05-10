@@ -1,3 +1,5 @@
+import { Cat } from "../js/cat";
+
 const id = <HTMLDivElement>document.getElementById('sender-id');
 const screenId = <HTMLDivElement>document.getElementById('receiver-id');
 const connectiondiv = <HTMLDivElement>document.getElementById('connection-div');
@@ -11,12 +13,13 @@ debug_controller.addEventListener('click',  function() {
 });
 
 
-interface Message {
+export interface Message {
     'id': string;
     'client': string;
+    'catcol': Cat;
 }
 
-interface WebSocketMessage {
+export interface WebSocketMessage {
     'data': string;
 }
 
@@ -55,6 +58,12 @@ function eventHandlersController() {
         }
         if(mes.client === 'screen') {
             screenId.innerHTML += mes.id;
+        }
+        if(mes.client === 'catColor') {
+            alert('a');
+            const cat = mes.catcol;
+            const color = cat.color;
+            alert(color?.toString());
         }
         if(mes.client === 'endgame') {
             window.location.href = '/catcaster/endgame/';

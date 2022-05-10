@@ -164,6 +164,7 @@ websocket.onmessage = (message:WebSocketMessage) => {
             // planet.setCat(cat);
 
             cats.push(cat);
+            websocket.send(JSON.stringify({client: 'catColor', catcol: cat}));
             console.log('Cat added wih id: ' + String(parseInt(mes.joins[1], 16)));
         } else {
             cats.push(undefined);

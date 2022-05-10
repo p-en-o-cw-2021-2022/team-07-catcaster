@@ -1,3 +1,5 @@
+import { Message, WebSocketMessage} from '../controllerPage/controllerPage'
+
 requestControllerID();
 
 async function requestControllerID() {
