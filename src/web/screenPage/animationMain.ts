@@ -169,6 +169,10 @@ function animate() {
                 }
                 const portal = cat.updateVelocity(dt, allPlanets);
                 if(portal !== undefined) {
+                    cat.xVel = 0;
+                    cat.yVel = 0;
+                    cat.xF = 0;
+                    cat.yF = 0;
                     console.log(portal);
                     cat.planet.cats.delete(cat.id);
                     // Send teleport message over websocket
