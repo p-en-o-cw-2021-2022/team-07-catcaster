@@ -160,7 +160,7 @@ function animate() {
                     cat.jump = false;
                 }
                 const gyrodata = catsData[i][0].innerText;
-                if ((gyrodata !== '') || (gyrodata !== undefined)) {
+                if ((gyrodata !== '') && (gyrodata !== undefined)) {
                     const datalist = gyrodata?.split(' ');
                     const beta = datalist[0];
                     const gamma = datalist[1];

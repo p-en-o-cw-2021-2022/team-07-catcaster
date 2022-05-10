@@ -50,7 +50,7 @@ export class Planet {
         const portalMesh = new THREE.Mesh(circleGeom, new THREE.MeshLambertMaterial( { color: color } ));
         this.object3dGroup.add(portalMesh);
         portalMesh.position.copy(portalCoords); // Move the portal relative to the group center
-        portalMesh.position.add(new Vector3(0,0,1)); // Move the portal a bit forward to prevent clipping
+        portalMesh.position.add(new Vector3(0,0,this.portals.length)); // Move the portal a bit forward to prevent clipping
     }
 
 
