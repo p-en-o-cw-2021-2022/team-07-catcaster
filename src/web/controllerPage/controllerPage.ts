@@ -63,6 +63,7 @@ function eventHandlersController() {
             if(cat.id == id.innerHTML) {
                 const color = cat.color;
                 alert(color);
+                document.body.style.backgroundColor = '0x' + (<Color>color).getHex().toString(16);
             }
         }
         if(mes.client === 'endgame') {
