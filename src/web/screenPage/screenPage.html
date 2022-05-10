@@ -14,7 +14,7 @@
         <title>Receiver</title>
         <link href="data:image/x-icon;base64,AAABAAEAEBAAAAAAAABoBQAAFgAAACgAAAAQAAAAIAAAAAEACAAAAAAAAAEAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP//AAD//wAA+B8AAOfnAADf+wAA3rsAAL1dAAC//QAAt/UAAL/9AAC//QAAvD0AANvbAADX6wAA7/cAAP//AAA=" rel="icon" type="image/x-icon" />
         <meta name ="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
-        <link rel="stylesheet" type="text/css" href="animationStylesheet.css">
+        <link rel="stylesheet" type="text/css" href="stylesheetScreen.css">
         
         <!-- <script async src="https://unpkg.com/es-module-shims@0.13.1/dist/es-module-shims.js"></script> -->
 
@@ -31,58 +31,86 @@
         <script type="module" src="./qr-code.js"></script>
     </head>
     <body>
-        <div id="Game"></div>
-        <div id="Info" style="margin-left: 2%;">
-            <img id="qrcode", style="width: 15%; display: none;" ></img>
-
-            <div id="overlay" , style="position: fixed;
-                                        display: BLOCK;
-                                        width: 100%;
-                                        height: 100%;
-                                        top: 0;
-                                        left: 0;
-                                        right: 0;
-                                        bottom: 0;
-                                        background-color: rgba(0,0,0,0.5);
-                                        z-index: 100;
-                                        cursor: pointer;">
-                <img id="qrcodelarge" , style="position: absolute;
-                display: BLOCK;
-                left: 50%;
-                margin-right: -50%;transform: translate(-50%);height: 100%;
-                z-index: 101;">
+        <div class="sideMenu" id="side-menu">
+            <a class="closebtn" href="javascript:void(0)" onclick="closeNav()">×</a>
+            <div class="main-menu">
+                <div id="Info" style="margin-left: 2%;">
+                    <img id="qrcode", style="width: 280px; display: none;" ></img>
+        
+                    
+                    <table id = "table" class="display">
+                        <tr>
+                            <td class="title">ID:</td>
+                            <td class="title">Messages:</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div id="receiver-id" style="font-weight: bold;" title="Copy this ID to the input on send.html.">ID:</div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><div id="status" class="status"></div></td>
+                        </tr>
+                    </table>
+        
+                    <button id="debug-info" style="font-size: 20px;">Debug Info</button>
+                    <p >State: <span id="Screen-state"></span></p>
+                    <p >Websocket State: <span id="Websocket-state"></span></p>
+                    <div id="controllers" ></div>
+                    <div id="gyrodatas" ></div>
+                    <p >X-force: <span id="xF">n/a</span></p>
+                    <p >Y-force: <span id="yF">n/a</span></p>
+                    <p >X-coord: <span id="xP">n/a</span></p>
+                    <p >Y-coord: <span id="yP">n/a</span></p>
+                    <p >Z-coord: <span id="zP">n/a</span></p>
+                    <p >Planet Angle: <span id="angle">n/a</span></p>
+                    <p >Cat Position Angle: <span id="catPosAngle">n/a</span></p>
+                    <p >Accelaration: <span id="acc">n/a</span></p>
+                </div>
             </div>
-            <table id = "table" class="display">
-                <tr>
-                    <td class="title">ID:</td>
-                    <td class="title">Messages:</td>
-                </tr>
-                <tr>
-                    <td>
-                        <div id="receiver-id" style="font-weight: bold;" title="Copy this ID to the input on send.html.">ID:</div>
-                    </td>
-                </tr>
-                <tr>
-                    <td><div id="status" class="status"></div></td>
-                </tr>
-            </table>
-
-            <button id="debug-info" style="font-size: 20px;">Debug Info</button>
-            <p >State: <span id="Screen-state"></span></p>
-            <p >Websocket State: <span id="Websocket-state"></span></p>
-            <div id="controllers" ></div>
-            <div id="gyrodatas" ></div>
-            <p >X-force: <span id="xF">n/a</span></p>
-            <p >Y-force: <span id="yF">n/a</span></p>
-            <p >X-coord: <span id="xP">n/a</span></p>
-            <p >Y-coord: <span id="yP">n/a</span></p>
-            <p >Z-coord: <span id="zP">n/a</span></p>
-            <p >Planet Angle: <span id="angle">n/a</span></p>
-            <p >Cat Position Angle: <span id="catPosAngle">n/a</span></p>
-            <p >Accelaration: <span id="acc">n/a</span></p>
         </div>
+        <div id="content-area">
+            <button id="openmenu", onclick="openNav()" style="opacity: 0.6;font-size:30px;cursor:pointer; position: absolute; top:0;left:0; z-index: 1; margin-top: 12px; margin-left: 5px;">☰ Menu</button>
+            <div id="Game" class="game"></div>
+        </div>
+        <script>
+        function openNav() {
+         document.getElementById("side-menu").style.width = "320px";
+         document.getElementById("side-menu").style.paddingLeft = "20px";
+         document.getElementById("openmenu").style.display = "none";
+
+        }
+    
+        function closeNav() {
+         document.getElementById("side-menu").style.width = "0";
+         document.getElementById("side-menu").style.paddingLeft = "0";
+         document.getElementById("openmenu").style.display = "block";
+        }
+        </script>
+                
+        
+                    <div id="overlay" , style="position: fixed;
+                                                display: BLOCK;
+                                                width: 100%;
+                                                height: 100%;
+                                                top: 0;
+                                                left: 0;
+                                                right: 0;
+                                                bottom: 0;
+                                                background-color: rgba(0,0,0,0.5);
+                                                z-index: 100;
+                                                cursor: pointer;">
+                        <img id="qrcodelarge" , style="position: absolute;
+                        display: BLOCK;
+                        left: 50%;
+                        margin-right: -50%;transform: translate(-50%);height: 100%;
+                        z-index: 101;">
+                    </div>
+                    
+                    
+
         <script> var exports = {}; </script>
-        <script type = "module" src = screenPage.js>var exports = {};</script>
+        <script type = "module" src = "screenPage.js">var exports = {};</script>
         <script src = "https://unpkg.com/peerjs@1.3.1/dist/peerjs.min.js">var exports = {};</script>
         <script type = "text/javascript">
             (function () {
