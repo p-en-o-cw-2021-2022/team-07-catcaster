@@ -126,6 +126,13 @@ export function websocketEventHandlers(websocket: ws.Server) {
                     client.send(JSON.stringify({client : 'jumpmessage', jdata: mes.data}));
                 });
                 break;
+            case 'catColor':
+                console.log('catColor received.');
+                console.log(mes.catcol.id, mes.catcol.color);
+                websocket.clients.forEach((client) => {
+                    client.send(JSON.stringify({client : 'catColor', id : 'k', catcol : mes.catcol}));
+                });
+                break;
 
             case 'join':
                 const screens = database.getScreenIds();
@@ -234,6 +241,21 @@ function calculatePortalCoordinates(myPlanet: Planet, otherPlanet: Planet, ratio
     return localPlanetCoordinates;
 }
 
+function randomColorCreation(): THREE.ColorRepresentation | undefined {
+    const id = Math.floor((Math.random() * 1000000));
+    let hash: number = 5381;
+
+    for (let i = 0; i < id.toString().length; i++) {
+        hash = ((hash << 5) + hash) + id.toString().charCodeAt(i); /* hash * 33 + c */
+    }
+
+    const r = (hash & 0xFF0000) >> 16;
+    const g = (hash & 0x00FF00) >> 8;
+    const b = hash & 0x0000FF;
+
+    return '#' + ('0' + r.toString(16)).substr(-2) + ('0' + g.toString(16)).substr(-2) + ('0' + b.toString(16)).substr(-2);
+}
+
 function generateSites(): Portal[] {
     const ratio = Object();
     const sites: {x: number; y: number; id: string}[] = [];
@@ -265,19 +287,41 @@ function generatePortals(sites: {x: number; y: number; id: string}[], planetsIDs
     const neighbors = findNeighborsVoronoi(sites);
     console.log('neighbors: ', neighbors);
     const portals: Portal[] = [];
+    const screenPlanets: [string, Planet][] = [];
     for(const planet of neighbors) {
         const myID = planet.id;
         const myPlanet = findPlanetWithGlobalID(Number(myID), planetsIDs);
         const neighborsToAdd = planet.neighborsOfID;
+        const [screenID, myPlanetID] = planetsIDs[Number(myID)];
+        screenPlanets.push([screenID, new Planet(new Scene(), myPlanetID, 0, 0, [0,0,0])]);
         for(const neighborToAdd of neighborsToAdd) {
             const [otherScreen, otherPlanetID] = planetsIDs[Number(neighborToAdd)];
-            const screenID = planetsIDs[Number(myID)][0];
             const otherPlanet = findPlanetWithLocalID(otherPlanetID, otherScreen);
             const screenCoordinates = findScreenCoordinates(screenID);
             const screenVector = new Vector3();
             screenVector.set(screenCoordinates.x, screenCoordinates.y, 0);
             const portalCoordinates = calculatePortalCoordinates(myPlanet, otherPlanet, ratio[screenID], screenVector);
             const portal = new Portal(otherScreen, portalCoordinates, otherPlanetID);
+            for(const [sID, colorPlanet] of screenPlanets) {
+                if(otherScreen == sID) {
+                    for(const colorPortal of colorPlanet.portals) {
+                        if(colorPortal.otherScreen == screenID && colorPortal.otherPlanetID == myPlanetID && otherPlanetID == colorPlanet.id) {
+                            portal.addColor(colorPortal.color);
+                        }
+                    }
+                }
+            }
+            if(portal.color == 0xfffff) {
+                const randomColor = randomColorCreation();
+                portal.addColor(randomColor);
+            }
+            for(let i = screenPlanets.length - 1 ; i >= 0; i--) {
+                const [sID, colorPlanet] = screenPlanets[i];
+                if(sID == screenID) {
+                    colorPlanet.addPortal(portal);
+                    break;
+                }
+            }
             myPlanet.addPortal(portal);
             portals.push(portal);
         }

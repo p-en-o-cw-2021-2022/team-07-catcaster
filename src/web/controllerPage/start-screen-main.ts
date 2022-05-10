@@ -3,7 +3,7 @@ import jsQR from 'jsqr';
 import { Point } from 'jsqr/dist/locator';
 import { string } from 'yargs';
 import { findNeighborsVoronoi } from './voronoi.js';
-
+import { Message, WebSocketMessage } from './controllerPage';
 
 const constraints = { video: { facingMode: 'environment' }, audio: false };
 const cameraView = <HTMLVideoElement>document.querySelector('#camera--view');

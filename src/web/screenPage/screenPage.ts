@@ -1,6 +1,6 @@
 import { Planet } from '../js/planet.js';
-import { Scene, Vector3 } from 'three';
-import { allPlanets, cats, conAdd, controllers, controllers_count } from './animationMain.js';
+import { Scene, Vector3, Color } from 'three';
+import { allPlanets, cats, createPlanet, conAdd, controllers, controllers_count } from './animationMain.js';
 import { Portal } from '../js/portal.js';
 import { findNeighborsVoronoi } from './voronoi.js';
 import { Cat } from '../js/cat.js';
@@ -19,7 +19,8 @@ debug.addEventListener('click',  function() {
 });
 
 const myId = <HTMLDivElement>document.getElementById('receiver-id');
-let controllerId = null;
+let controllerId: string | null = null;
+let latestControllerID: string | null = null;
 
 interface Message {
     'id': string;
@@ -77,6 +78,21 @@ export function sendMessage(mesclient: string, mesdata: (string | number | Cat)[
     console.log('jumped here');
 }
 
+function randomColorCreation(): THREE.ColorRepresentation | undefined {
+    const id = Math.floor((Math.random() * 1000000));
+    let hash: number = 5381;
+
+    for (let i = 0; i < id.toString().length; i++) {
+        hash = ((hash << 5) + hash) + id.toString().charCodeAt(i); /* hash * 33 + c */
+    }
+
+    const r = (hash & 0xFF0000) >> 16;
+    const g = (hash & 0x00FF00) >> 8;
+    const b = hash & 0x0000FF;
+
+    return '#' + ('0' + r.toString(16)).substr(-2) + ('0' + g.toString(16)).substr(-2) + ('0' + b.toString(16)).substr(-2);
+}
+
 const url = 'wss' + window.location.href.substr(5);
 
 const websocket = new WebSocket(url);
@@ -93,6 +109,7 @@ websocket.onmessage = (message:WebSocketMessage) => {
     console.log('received message from : ', mes.id, '  |  client is: ', mes.client);
     if(mes.client === 'controller') {
         controllerId = mes.id;
+        latestControllerID = mes.id[mes.id.length-1];
     }
     if(mes.client === 'disconnect' && mes.id === myId.innerHTML) {
         console.log('Illegal ID, removing websocket connection.');
@@ -111,6 +128,9 @@ websocket.onmessage = (message:WebSocketMessage) => {
     }
     if(mes.client === 'singleScreen') {
         console.log('Single screen selected.');
+        while(allPlanets.length < 3){
+            createPlanet(allPlanets.length+1);
+        }
         const sites: {x: number; y: number; id: string}[] = [];
         for(const planet of allPlanets) {
             const site = {x: planet.coordinates.x, y: planet.coordinates.y, id: planet.id.toString()};
@@ -126,28 +146,37 @@ websocket.onmessage = (message:WebSocketMessage) => {
                 const neighbor = getPlanet(neighborID);
                 const portalCoordinates = getPortalCoordinates(planet, neighbor);
                 const portal = new Portal(myId.innerHTML, portalCoordinates, neighborID);
+                let randomColor = randomColorCreation();
+                for(const planet of allPlanets) {
+                    if(planet.id == neighborID) {
+                        for(const neighborPortal of planet.portals) {
+                            if(neighborPortal.otherPlanetID == planetID) {
+                                randomColor = neighborPortal.color;
+                            }
+                        }
+                    }
+                }
+                console.log('colorro', randomColor);
+                portal.addColor(new Color(randomColor));
                 planet.addPortal(portal);
             }
         }
     }
     if(mes.client === 'addCat') {
-        if(mes.joins[0] === myId.innerHTML) {
-            conAdd();
-            // const contID = (controllers[controllers_count - 1] as HTMLParagraphElement).innerText;
-        
-            // const cat: Cat = new Cat(scene, parseInt(id, 16), allPlanets[0].radius, planet);
-            const plan = allPlanets[Math.floor(Math.random() * allPlanets.length)];
-            const cat: Cat = new Cat(parseInt(mes.joins[1], 16), plan.radius, plan);
+        setTimeout( () => {
+        conAdd();
+        const plan = allPlanets[Math.floor(Math.random() * allPlanets.length)];
+        if(mes.joins[0] === myId.innerHTML){
+            const cat: Cat = new Cat(latestControllerID!, plan.radius, plan);
             console.log(allPlanets);
             plan.setCat(cat);
-            // planet.setCat(cat);
-        
             cats.push(cat);
+            websocket.send(JSON.stringify({client: 'catColor', catcol: cat}));
             console.log('Cat added wih id: ' + String(parseInt(mes.joins[1], 16)));
-        }
-        else {
-            cats.push(undefined);
-        }
+            } else {
+                cats.push(undefined);
+            }
+        }, 1000);
     }
     if(mes.client === 'jumpmessage') {
         const [otherScreen, otherPlanetID, otherFakeCat, catIndex] = mes.jdata;
@@ -164,7 +193,7 @@ websocket.onmessage = (message:WebSocketMessage) => {
     }
     if(mes.client === 'endgame') {
         console.log('The game was ended.');
-        window.location.href = '/catcaster/screen/?id=' + getIdScreen();
+        window.location.href = '/catcaster/screen/?id=' + <string>getIdScreen();
     }
     if(mes.client === 'portal') {
         console.log('Portals received.');
@@ -177,6 +206,7 @@ websocket.onmessage = (message:WebSocketMessage) => {
             for(const fakePortal of fakePlanet.portals) {
                 const coords: Vector3 = new Vector3(fakePortal.myCoordinates.x, fakePortal.myCoordinates.y, 0);
                 const portal = new Portal(fakePortal.otherScreen, coords, fakePortal.otherPlanetID);
+                portal.addColor(fakePortal.color);
                 planet.addPortal(portal);
             }
             planets.push(planet);
@@ -185,7 +215,9 @@ websocket.onmessage = (message:WebSocketMessage) => {
             for(const serverPlanet of planets) {
                 if(planet.id === serverPlanet.id) {
                     for(const portal of serverPlanet.portals) {
-                        // planet.addPortal(new Portal(portal.otherScreen, portal.myCoordinates.add(planet.coordinates), portal.otherPlanetID));
+                        // hier color adden
+                        // const randomColor = randomColorCreation();
+                        // portal.addColor(randomColor);
                         planet.addPortal(portal);
                         console.log('added portal:', portal);
                     }
