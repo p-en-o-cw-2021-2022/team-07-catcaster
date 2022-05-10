@@ -183,7 +183,7 @@ function animate() {
                     cat.planet.cats.delete(cat.id);
                     // Send teleport message over websocket
                     if (portal.otherScreen !== myId.innerHTML) {
-                        // hier is iets fout
+                        cat.planet.scene.remove(cat.mesh!);
                         cats[i] = undefined;
                         const jumpmessage = [portal.otherScreen, portal.otherPlanetID, cat, i];
                         sendMessage('jump-message', jumpmessage);
