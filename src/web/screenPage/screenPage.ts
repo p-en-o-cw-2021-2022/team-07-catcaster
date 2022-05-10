@@ -188,6 +188,9 @@ websocket.onmessage = (message:WebSocketMessage) => {
             console.log('changedplanet: ', planet);
         }
     }
+    if(mes.client === '__ping__'){
+        websocket.send(JSON.stringify({client: '__pong__', id: myId.innerHTML}));
+    }
 };
 
 websocket.onclose = () => {
