@@ -1,0 +1,143 @@
+body {
+    margin: 0;
+    padding: 0;
+    background-color: white;
+}
+
+p {
+  color: white;
+}
+
+span {
+  color: white;
+}
+
+td {
+  color: white;
+}
+
+/* From uiverse.io */
+button {
+  padding: 1.3em 3em;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 2.5px;
+  font-weight: 500;
+  color: #000;
+  background-color: #fff;
+  border: none;
+  border-radius: 45px;
+  box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease 0s;
+  cursor: pointer;
+  outline: none;
+  margin-bottom: 1em;
+  margin-top: 1em;
+ }
+ 
+ button:hover {
+  background-color: #2EE59D;
+  box-shadow: 0px 15px 20px rgba(46, 229, 157, 0.4);
+  color: #fff;
+  transform: translateY(-7px);
+  opacity: 1;
+ }
+ 
+ button:active {
+  transform: translateY(-1px);
+ }
+
+.loader {
+  border: 16px solid #f3f3f3; /* Light grey */
+  border-top: 16px solid #2EE59D;
+  border-radius: 50%;
+  width: 120px;
+  height: 120px;
+  z-index: 20;
+  margin: auto;
+  margin-top: 1em;
+  animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+body {
+	margin: 0;
+	font-family: 'Poppins', sans-serif;
+}
+.sideMenu {
+	height: 100%;
+	width: 0;
+	position: fixed;
+	z-index: 1;
+	top: 0;
+	left: 0;
+	background: #15f89fbf;
+	overflow-x: hidden;
+	transition: 0.5s;
+	padding-top: 60px;
+
+}
+.main-menu h2 {
+	text-align: center;
+	letter-spacing: 7px;
+	color: #fff;
+	background: #111;
+	padding: 20px 0;
+}
+.sideMenu a {
+	padding: 8px 8px 8px 32px;
+	text-decoration: none;
+	color: #fff;
+	display: block;
+	transition: 0.3s;
+	font-size: 18px;
+	margin-bottom: 20px;
+	text-transform: uppercase;
+	font-weight: 900;
+}
+.sideMenu a i {
+	padding-right: 15px;
+}
+.main-menu a:hover {
+	color: #f1f1f1;
+	background: #111;
+}
+.sideMenu .closebtn {
+	position: absolute;
+	top: 0;
+	right: 25px;
+	font-size: 36px;
+	margin-left: 50px;
+}
+#content-area {
+	transition: margin-left .5s;
+	padding: 16px;
+}
+.content-text {
+	padding: 100px 180px;
+	text-align: center;
+}
+.content-text h2 {
+	background: darksalmon;
+	display: inline-block;
+	padding: 15px 35px;
+	text-transform: uppercase;
+	font-size: 50px;
+	color: #fff;
+}
+.content-text h3 {
+	text-transform: uppercase;
+	font-size: 45px;
+	margin: 0;
+	letter-spacing: 3px;
+}
+
+.game {
+  position: absolute;
+    top: 0;
+    left: 0;
+}
