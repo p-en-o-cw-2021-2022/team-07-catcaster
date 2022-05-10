@@ -62,8 +62,7 @@ function eventHandlersController() {
             const cat: Cat = mes.catcol;
             if(cat.id == id.innerHTML) {
                 const color = cat.color;
-                alert(color);
-                document.body.style.backgroundColor = '0x' + (<Color>color).getHex().toString(16);
+                document.body.style.backgroundColor = color!.toString();
             }
         }
         if(mes.client === 'endgame') {
