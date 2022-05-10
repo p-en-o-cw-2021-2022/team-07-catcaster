@@ -1,6 +1,6 @@
 import { Planet } from '../js/planet.js';
 import { Scene, Vector3, Color } from 'three';
-import { allPlanets, cats, conAdd, controllers, controllers_count } from './animationMain.js';
+import { allPlanets, cats, createPlanet, conAdd, controllers, controllers_count } from './animationMain.js';
 import { Portal } from '../js/portal.js';
 import { findNeighborsVoronoi } from './voronoi.js';
 import { Cat } from '../js/cat.js';
@@ -16,7 +16,7 @@ debug.addEventListener('click',  function() {
 
 const myId = <HTMLDivElement>document.getElementById('receiver-id');
 let controllerId: string | null = null;
-let controllerId2: string | null = null;
+let latestControllerID: string | null = null;
 
 interface Message {
     'id': string;
@@ -103,7 +103,7 @@ websocket.onmessage = (message:WebSocketMessage) => {
     console.log('received message from : ', mes.id, '  |  client is: ', mes.client);
     if(mes.client === 'controller') {
         controllerId = mes.id;
-        controllerId2 = mes.id[mes.id.length-1];
+        latestControllerID = mes.id[mes.id.length-1];
     }
     if(mes.client === 'disconnect' && mes.id === myId.innerHTML) {
         console.log('Illegal ID, removing websocket connection.');
@@ -122,6 +122,9 @@ websocket.onmessage = (message:WebSocketMessage) => {
     }
     if(mes.client === 'singleScreen') {
         console.log('Single screen selected.');
+        while(allPlanets.length < 3){
+            createPlanet(allPlanets.length+1);
+        }
         const sites: {x: number; y: number; id: string}[] = [];
         for(const planet of allPlanets) {
             const site = {x: planet.coordinates.x, y: planet.coordinates.y, id: planet.id.toString()};
@@ -154,31 +157,20 @@ websocket.onmessage = (message:WebSocketMessage) => {
         }
     }
     if(mes.client === 'addCat') {
-        console.log(controllerId2);
-        if(controllerId2!=null) {
-            conAdd();
-            // const contID = (controllers[controllers_count - 1] as HTMLParagraphElement).innerText;
-
-            // const cat: Cat = new Cat(scene, parseInt(id, 16), allPlanets[0].radius, planet);
-            const plan = allPlanets[Math.floor(Math.random() * allPlanets.length)];
-            if(mes.joins[0] === myId.innerHTML){
-                const cat: Cat = new Cat(controllerId2, plan.radius, plan);
-                console.log(allPlanets);
-                plan.setCat(cat);
-                // planet.setCat(cat);
-    
-                cats.push(cat);
-                //setTimeout( ()=> websocket.send(JSON.stringify({client: 'catColor', catcol: cat})), 5000);
-                websocket.send(JSON.stringify({client: 'catColor', catcol: cat}));
-                console.log('Cat added wih id: ' + String(parseInt(mes.joins[1], 16)));
-                } else {
-                    cats.push(undefined);
-                }
-            controllerId2 = null;
+        setTimeout( () => {
+        conAdd();
+        const plan = allPlanets[Math.floor(Math.random() * allPlanets.length)];
+        if(mes.joins[0] === myId.innerHTML){
+            const cat: Cat = new Cat(latestControllerID!, plan.radius, plan);
+            console.log(allPlanets);
+            plan.setCat(cat);
+            cats.push(cat);
+            websocket.send(JSON.stringify({client: 'catColor', catcol: cat}));
+            console.log('Cat added wih id: ' + String(parseInt(mes.joins[1], 16)));
+            } else {
+                cats.push(undefined);
             }
-            else{
-                websocket.send(JSON.stringify({client: 'join'}));
-            }
+        }, 1000);
     }
     if(mes.client === 'jumpmessage') {
         const [otherScreen, otherPlanetID, otherFakeCat, catIndex] = mes.jdata;

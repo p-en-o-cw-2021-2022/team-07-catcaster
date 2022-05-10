@@ -53,10 +53,7 @@ if(randomNO <= 0.15) {
     noOfPlanets = 3;
 }
 for (let planetID = 1; planetID <= noOfPlanets; planetID++) {
-    const [planet_x, planet_y, planet_r] = generatePlanetCoo();
-    const planet: Planet = new Planet(scene, planetID, planet_r, 10, [planet_x,planet_y,0]);
-    allPlanets.push(planet);
-    console.log('Created planet at: ', String([planet_x, planet_y, planet_r]));
+    createPlanet(planetID);
 }
 // for (let i = 0, len = allPlanets.length; i < len; i++) {
 //     const shortestPlanet: Planet | null = allPlanets[i].seekShortestPlanet(allPlanets);
@@ -75,6 +72,13 @@ for (let planetID = 1; planetID <= noOfPlanets; planetID++) {
 //         shortestPlanet.addNeighbour(allPlanets[i], yourShortestVectorNormalized.multiplyScalar(yourPlanetR-2));
 //     }
 // }
+
+export function createPlanet(planetID: number) {
+    const [planet_x, planet_y, planet_r] = generatePlanetCoo();
+    const planet: Planet = new Planet(scene, planetID, planet_r, 10, [planet_x,planet_y,0]);
+    allPlanets.push(planet);
+    console.log('Created planet at: ', String([planet_x, planet_y, planet_r]));
+}
 
 function generatePlanetCoo() : number[] {
     const max_r = 100;
@@ -115,7 +119,7 @@ function isValidPosition(thisX:number, thisY:number, thisR:number) {
 //-------------------------------------------------------------------------------------
 
 // Create planet and cat objects with default values
-const dt = 0.01;
+const dt = 0.025;
 // const planet: Planet = new Planet(scene, 0, 5, 10, [0,0,0]);
 // const planet2: Planet = new Planet(scene, 1, 5, 10, [10,0,0]);
 // planet.addNeighbour(planet2, new Vector3(3,0,0));

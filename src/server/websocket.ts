@@ -24,7 +24,7 @@ export function websocketEventHandlers(websocket: ws.Server) {
 
         ws.on('message', (message) => {
             const mes : any = <string>JSON.parse(message.toString());
-            console.log('Received message from: ', mes.id);
+            // console.log('Received message from: ', mes.id);
             const controllerid = database.getControllerIds();
             const screenid = database.getScreenIds();
             const id = <string>mes.id;
