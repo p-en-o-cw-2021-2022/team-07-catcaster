@@ -4,6 +4,8 @@ import { boolean } from 'yargs';
 import { Planet } from './planet';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
 import { Portal } from './portal';
+import { allPlanets } from '../screenPage/animationMain';
+
 
 export class Cat {
 
@@ -72,6 +74,8 @@ export class Cat {
             this.yVel = 0;
             this.xF = 0;
             this.yF = 0;
+            const newPlanet = allPlanets[Math.floor(Math.random()*allPlanets.length)];
+            this.planet = newPlanet;
             this.positionOnPlanet = new Vector3(0,0,0);
             return;
         }
