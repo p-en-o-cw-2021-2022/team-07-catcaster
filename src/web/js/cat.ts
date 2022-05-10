@@ -73,8 +73,10 @@ export class Cat {
             this.yVel = 0;
             this.xF = 0;
             this.yF = 0;
+            this.planet.cats.delete(this.id);
             const newPlanet = allPlanets[Math.floor(Math.random()*allPlanets.length)];
             this.planet = newPlanet;
+            this.planet.setCat(this);
             this.positionOnPlanet = new Vector3(0,0,0);
             return;
         }
