@@ -54,16 +54,7 @@ export class IdDatabase {
         return true;
     }
 
-    public removeScreen(id:string) {
-        if(!this.doesIdExist(id)) {
-            return false;
-        }
-
-        this.ids.delete(id);
-        return true;
-    }
-
-    public removeController(id:string) {
+    public removeID(id:string) {
         if(!this.doesIdExist(id)) {
             return false;
         }
