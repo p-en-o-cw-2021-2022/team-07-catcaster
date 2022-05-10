@@ -20,14 +20,13 @@ const screenPage = 'dist/webroot/web/screenPage';
 const controllerRedirect = 'dist/webroot/web/controllerRedirect';
 const controllerPage = 'dist/webroot/web/controllerPage';
 const animation = 'dist/webroot/web/js';
-const startscreen_controller = 'dist/webroot/web/QR-test'
-const errorMessage = 'dist/webroot/web/errorPage'
-const endGamePage = 'dist/webroot/web/endGamePage'
-const menuInGame = 'dist/webroot/web/menuInGame'
+const startscreen_controller = 'dist/webroot/web/QR-test';
+const errorMessage = 'dist/webroot/web/errorPage';
+const endGamePage = 'dist/webroot/web/endGamePage';
+const menuInGame = 'dist/webroot/web/menuInGame';
 const router = new Router();
 
 // When we run this server we serve you all of our `dist/webroot` folder.
-const webroot = __dirname + '/../../dist/webroot';
 app.use(mount('/catcaster/screen/', serve(redirectPage)));
 app.use(mount('/catcaster/screen/', serve(screenPage)));
 app.use(mount('/catcaster/controller/', serve(controllerRedirect)));
@@ -35,12 +34,12 @@ app.use(mount('/catcaster/controller/', serve(controllerPage)));
 app.use(mount('/catcaster/error/', serve(errorMessage)));
 app.use(mount('/catcaster/js/', serve(animation)));
 app.use(mount('/catcaster/controller/', serve(startscreen_controller)));
-app.use(mount('/catcaster/menu/', serve(menuInGame)))
+app.use(mount('/catcaster/menu/', serve(menuInGame)));
 app.use(mount('/catcaster/endgame/', serve(endGamePage)));
 app.use(router.routes()).use(router.allowedMethods());
 
-export var database = new IdDatabase();
-export var nbusers = 0;
+export const database = new IdDatabase();
+export const nbusers = 0;
 
 // Configure some REST points:
 router

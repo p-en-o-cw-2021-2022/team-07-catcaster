@@ -3,14 +3,14 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-import ws, { WebSocketServer } from 'ws';
+import ws from 'ws';
 import { QRlocation } from '../web/controllerPage/start-screen-main';
 import { Planet } from '../web/js/planet';
 import { Portal } from '../web/js/portal';
 import { database } from './index';
 import { findNeighborsVoronoi } from './voronoi.js';
-import { Scene, Vector2Tuple, Vector3 } from 'three';
-import { z } from 'zod';
+import { Scene, Vector3 } from 'three';
+
 
 const multiScreenData:{[key: string]: [number, Planet[]]} = {};
 let qrlocations: QRlocation[] = [];
@@ -115,10 +115,10 @@ export function websocketEventHandlers(websocket: ws.Server) {
 
             case 'endgame':
                 console.log('The game was ended.');
-                let cids:Array<string> = database.getControllerIds();
+                const cids:Array<string> = database.getControllerIds();
                 cids.forEach(element => {
                     database.removeController(element);
-                })
+                });
                 websocket.clients.forEach((client) => {
                     client.send(JSON.stringify({client : 'endgame'}));
                 });
@@ -249,21 +249,21 @@ function generatePortals(sites: {x: number; y: number; id: string}[], planetsIDs
             const portalCoordinates = calculatePortalCoordinates(myPlanet, otherPlanet, ratio[screenID], screenVector);
             const portal = new Portal(otherScreen, portalCoordinates, otherPlanetID);
             for(const [sID, colorPlanet] of screenPlanets) {
-                if(otherScreen == sID) {
+                if(otherScreen === sID) {
                     for(const colorPortal of colorPlanet.portals) {
-                        if(colorPortal.otherScreen == screenID && colorPortal.otherPlanetID == myPlanetID && otherPlanetID == colorPlanet.id) {
+                        if(colorPortal.otherScreen === screenID && colorPortal.otherPlanetID === myPlanetID && otherPlanetID === colorPlanet.id) {
                             portal.addColor(colorPortal.color);
                         }
                     }
                 }
             }
-            if(portal.color == 0xfffff) {
+            if(portal.color === 0xfffff) {
                 const randomColor = randomColorCreation();
                 portal.addColor(randomColor);
             }
             for(let i = screenPlanets.length - 1 ; i >= 0; i--) {
                 const [sID, colorPlanet] = screenPlanets[i];
-                if(sID == screenID) {
+                if(sID === screenID) {
                     colorPlanet.addPortal(portal);
                     break;
                 }
@@ -276,8 +276,8 @@ function generatePortals(sites: {x: number; y: number; id: string}[], planetsIDs
     return portals;
 }
 
-function ping(clients: any) {
-    clients.forEach(function(client: any) {
+function ping(clients: WebSocket[]) {
+    clients.forEach(function(client: WebSocket) {
         client.send(JSON.stringify({client: '__ping__'}));
 
     });

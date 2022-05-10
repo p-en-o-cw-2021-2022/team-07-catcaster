@@ -7,7 +7,7 @@ Classes used by the server.
 This class stores all ID's and helps to check if they are unique.
 */
 export class IdDatabase {
-    public ids:any;
+    public ids: Map<string, string>;
 
     public stringChars:string = '0123456789abcdef';
 
@@ -75,7 +75,7 @@ export class IdDatabase {
     public getScreenIds() {
         const list = [];
         for (const [key, value] of this.ids.entries()) {
-            if (value == 'screen') {
+            if (value === 'screen') {
                 list.push(key);
             }
         }
@@ -85,7 +85,7 @@ export class IdDatabase {
     public getControllerIds() {
         const list = [];
         for (const [key, value] of this.ids.entries()) {
-            if (value == 'controller') {
+            if (value === 'controller') {
                 list.push(key);
             }
         }

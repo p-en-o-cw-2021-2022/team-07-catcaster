@@ -2,13 +2,12 @@ import Koa from 'koa';
 import Router from '@koa/router';
 import fs from 'fs';
 import { database } from './index';
-import {nbusers} from './index';
 
 export type context = Koa.ParameterizedContext<Koa.DefaultState, Koa.DefaultContext & Router.RouterParamContext<Koa.DefaultState, Koa.DefaultContext>, unknown>;
 
 export function getScreenRedirectPage(ctx: context) {
     const params = ctx.request.query;
-    if (params.id == null) {
+    if (params.id === undefined) {
         ctx.response.status = 200;
         ctx.type = 'html';
         ctx.body = fs.createReadStream('dist/webroot/web/redirectPage/redirectPage.html');
@@ -29,19 +28,19 @@ export function sendScreenId(ctx: context) {
 export function getControllerRedirectPage(ctx: context) {
     const params = ctx.request.query;
     console.log(params);
-    if (params.id == null) {
+    if (params.id === undefined) {
         ctx.response.status = 200;
         ctx.type = 'html';
         ctx.body = fs.createReadStream('dist/webroot/web/controllerRedirect/controllerRedirect.html');
-    } else if (params.id != null && params.mode == null){
+    } else if (params.id !== undefined && params.mode === undefined) {
         ctx.response.status = 200;
         ctx.type = 'html';
         ctx.body = fs.createReadStream('dist/webroot/web/controllerPage/controller-start-screen.html');
-    } else if (params.mode == 'multiscreen') {
+    } else if (params.mode === 'multiscreen') {
         ctx.response.status = 200;
         ctx.type = 'html';
         ctx.body = fs.createReadStream('dist/webroot/web/controllerPage/controllerPage.html');
-    } else if (params.mode == 'singlescreen') {
+    } else if (params.mode === 'singlescreen') {
         ctx.response.status = 200;
         ctx.type = 'html';
         ctx.body = fs.createReadStream('dist/webroot/web/controllerPage/controllerPage.html');
