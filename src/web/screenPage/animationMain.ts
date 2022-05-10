@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 import * as THREE from 'three';
 import { Vector3 } from 'three';
 import { Cat } from '../js/cat.js';
@@ -22,11 +25,13 @@ export let controllers_count = 0;
 export let controllers = document.getElementById('controllers')!.children;
 // const camera = new THREE.OrthographicCamera( window.innerWidth/-20, window.innerWidth / 20, window.innerHeight / 20, window.innerHeight / -20, -100, 100);
 const camera = new THREE.OrthographicCamera( -sceneHeight * aspectRatio / 2 , sceneHeight * aspectRatio / 2, sceneHeight / 2, -sceneHeight / 2, -500, 500);
+camera.rotateOnAxis(new Vector3(1,0,0), Math.PI/4);
 // camera.position.y = -10;
 // camera.rotateX(Math.PI/4);
 
 // Initialize renderer
 const renderer = new THREE.WebGLRenderer();
+
 const scaleFactor = 1; // Scale factor for the resolution of window
 renderer.setSize( window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(window.devicePixelRatio * scaleFactor);
@@ -37,6 +42,7 @@ renderer.domElement.style.top = '0';
 if (document.getElementById('Game') !== null) {
     document.getElementById('Game')?.appendChild( renderer.domElement );
 }
+
 
 // const planet = new Planet(scene, 0, 20, 0, [0,0,0]);
 

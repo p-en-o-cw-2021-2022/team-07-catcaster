@@ -37,7 +37,7 @@ export class Cat {
         // load a resource
         this.loader.load(
             // resource URL
-            'cat.obj',
+            'cat2.obj',
             // called when resource is loaded
             ( object ) => {
                 console.log('Object is loaded');
@@ -46,7 +46,7 @@ export class Cat {
                         child.material = material;
                     }
                 });
-                object.scale.copy(new THREE.Vector3(0.1, 0.1, 0.1));
+                object.scale.copy(new THREE.Vector3(0.5, 0.5, 0.5));
                 this.mesh = object;
 
                 scene.add( object );
