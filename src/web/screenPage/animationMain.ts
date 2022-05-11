@@ -207,8 +207,8 @@ function animate() {
     }
     updatePlanets();
     renderer.render( scene, camera );
-    for(const cat of cats){
-        if(cat != undefined){
+    for(const cat of cats) {
+        if(cat != undefined) {
             setDebugInfo(cat);
         }
     }

@@ -16,30 +16,29 @@ const multiScreenData:{[key: string]: [number, Planet[]]} = {};
 let qrlocations: QRlocation[] = [];
 let tm: any;
 let it: any;
-let IDTimers: any = {};
+const IDTimers: any = {};
 
 function ping(id: string) {
-    if (tm === undefined){
+    if (tm === undefined) {
+        tm = setTimeout(function () {
+            database.removeID(id);
+            console.log('connection with ID: ' + id + ' timed out.\r\n removing ID from database...');
+        }, 600000);
+        IDTimers[id] = tm;
+    } else if (database.doesIdExist(id) && tm._destroyed === true) {
         tm = setTimeout(function () {
             database.removeID(id);
             console.log('connection with ID: ' + id + ' timed out.\r\n removing ID from database...');
         }, 600000);
         IDTimers[id] = tm;
     }
-    else if (database.doesIdExist(id) && tm._destroyed === true){
-        tm = setTimeout(function () {
-            database.removeID(id);
-            console.log('connection with ID: ' + id + ' timed out.\r\n removing ID from database...');
-        }, 600000);
-        IDTimers[id] = tm;
-    }
-    return tm
+    return tm;
 }
 function pong(tm: any, id: string) {
     if (IDTimers[id] == tm) {
-        clearTimeout(tm)
+        clearTimeout(tm);
     }
-}   
+}
 
 export function websocketEventHandlers(websocket: ws.Server) {
 
@@ -68,7 +67,7 @@ export function websocketEventHandlers(websocket: ws.Server) {
                 it = setInterval(() => {
                     ws.send(JSON.stringify({client: '__ping__'}));
                     tm = ping(id);
-                }, 20000)
+                }, 20000);
 
                 //ws.send(JSON.stringify({type: 'ControllerID', id: mes.id}));
                 break;
@@ -84,7 +83,7 @@ export function websocketEventHandlers(websocket: ws.Server) {
 
                 websocket.clients.forEach(function(client) {
                     client.send(JSON.stringify({client: 'screenState', mode: 'Catcaster'}));
-                })
+                });
 
                 //Send the controller the ID of the screen, as to establish a webRTC connection
                 websocket.clients.forEach(function(client) {
@@ -99,7 +98,7 @@ export function websocketEventHandlers(websocket: ws.Server) {
                 it = setInterval(() => {
                     ws.send(JSON.stringify({client: '__ping__'}));
                     tm = ping(id);
-                }, 20000)
+                }, 20000);
 
                 break;
 
@@ -113,7 +112,7 @@ export function websocketEventHandlers(websocket: ws.Server) {
                 });
                 ws.send(JSON.stringify({client: 'multiscreen-send'}));
                 break;
-                
+
             case 'single-screen':
                 websocket.clients.forEach((client) => {
                     client.send(JSON.stringify({client : 'singleScreen'}));
@@ -164,10 +163,10 @@ export function websocketEventHandlers(websocket: ws.Server) {
 
             case 'endgame':
                 console.log('The game was ended.');
-                let cids:Array<string> = database.getControllerIds();
+                const cids:Array<string> = database.getControllerIds();
                 cids.forEach(element => {
                     database.removeID(element);
-                })
+                });
                 websocket.clients.forEach((client) => {
                     client.send(JSON.stringify({client : 'endgame'}));
                 });
@@ -176,7 +175,7 @@ export function websocketEventHandlers(websocket: ws.Server) {
                 const controllerids = database.getControllerIds();
                 ws.send(JSON.stringify({client: controllerids}));
                 break;
-            
+
             case '__pong__':
                 pong(tm, id);
                 break;
