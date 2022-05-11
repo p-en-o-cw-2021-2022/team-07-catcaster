@@ -31,6 +31,7 @@
         <script type="module" src="./qr-code.js"></script>
     </head>
     <body>
+        <h1 style="text-align: center;">Catcaster - Screen</h1>
         <div class="sideMenu" id="side-menu">
             <a class="closebtn" href="javascript:void(0)" onclick="closeNav()">×</a>
             <div class="main-menu">
@@ -40,24 +41,23 @@
                     
                     <table id = "table" class="display">
                         <tr>
-                            <td class="title">ID:</td>
-
+                            <div>
+                                <div class="title" style="font-weight: bold;">This Screen ID:</div>
+                                <div id="receiver-id" style="font-weight: normal;" title="Copy this ID to the input on send.html.">ID:</div>
+                            </div>
                         </tr>
-                        <tr><br></br></tr>
+                        <br>
                         <tr>
-                            <td>
-                                <div id="receiver-id" style="font-weight: bold;" title="Copy this ID to the input on send.html.">ID:</div>
-                            </td>
+                            <div><div id="status" style="font-weight: bold;" class="status"></div></div>
                         </tr>
-                        <tr>
-                            <td><div id="status" class="status"></div></td>
-                        </tr>
+                        <br>
+                        <div style="font-weight: bold;">State: <div id="Screen-state" style="font-weight: normal;"></div></div>
+                        <br>
+                        <div style="font-weight: bold;">Websocket State: <div id="Websocket-state" style="font-weight: normal;"></div></div>
+                        <div id="controllers" hidden></div>
+                        <div id="gyrodatas" ></div>
                     </table>
-                    <p>State: <span id="Screen-state"></span></p>
-                    <p>Websocket State: <span id="Websocket-state"></span></p>
-                    <div id="controllers" ></div>
                     <button id="debug-info" style="font-size: 20px;">Debug Info</button>
-                    <div id="gyrodatas" ></div>
                     <div id="catsdata" ></div>
                     <br><br><br><br><br>
                 </div>
@@ -217,10 +217,11 @@
                 };
 
                 function onConnChange() {
-                    connectionString = 'Connected to: <br><b>';
+                    connectionString = 'Connected to: <div style="font-weight: normal;">';
                     for (connection in connections) {
-                        connectionString += (connection + '</b><br>');
+                        connectionString += (connection + '<br>');
                     }
+                    connectionString += '</div>';
                     return connectionString;
                 }
 

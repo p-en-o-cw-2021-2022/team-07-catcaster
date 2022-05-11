@@ -7,18 +7,19 @@ import { Cat } from '../js/cat.js';
 import { commandDir } from 'yargs';
 const debug = <HTMLButtonElement>document.getElementById('debug-info');
 const gyrodata =  <HTMLElement>document.getElementById('gyrodatas');
-const screenstate = <HTMLSpanElement>document.getElementById('Screen-state');
-const websocketState = <HTMLSpanElement>document.getElementById('Websocket-state');
+const screenstate = <HTMLDivElement>document.getElementById('Screen-state');
+const websocketState = <HTMLDivElement>document.getElementById('Websocket-state');
 const catsdata = <HTMLDivElement>document.getElementById('catsdata');
 
 screenstate.innerHTML = 'Free';
 websocketState.innerHTML = 'Starting Websocket...';
 
 gyrodata.hidden = true;
+catsdata.hidden = true;
 
 debug.addEventListener('click',  function() {
 
-    gyrodata.hidden = !gyrodata.hidden;
+    catsdata.hidden = !catsdata.hidden;
 
 });
 
@@ -86,7 +87,6 @@ function createHTML(controllerid: string){
     let div = document.createElement('div');
     catsdata.appendChild(div);
     div.id = controllerid;
-    // div.innerHTML = 'Controller: ' + cat.id;
 
     let p1 = document.createElement('p');
     p1.innerHTML = 'X-force: ';
@@ -94,48 +94,63 @@ function createHTML(controllerid: string){
     let span1 = document.createElement('span');
     p1.appendChild(span1);
     span1.id = controllerid + '-xF';
+
+
     let p2 = document.createElement('p');
     p2.innerHTML = 'Y-force: ';
     div.appendChild(p2);
     let span2 = document.createElement('span');
     p2.appendChild(span2);
     span2.id = controllerid + '-yF';
+
     let p3 = document.createElement('p');
-    p3.innerHTML = 'X-coord: ';
+    p3.innerHTML = 'Jump: ';
     div.appendChild(p3);
     let span3 = document.createElement('span');
     p3.appendChild(span3);
-    span3.id = controllerid + '-xP';
+    span3.id = controllerid + '-Jump';
+
     let p4 = document.createElement('p');
-    p4.innerHTML = 'Y-coord: ';
+    p4.innerHTML = 'X-coord: ';
     div.appendChild(p4);
     let span4 = document.createElement('span');
     p4.appendChild(span4);
-    span4.id = controllerid + '-yP';
+    span4.id = controllerid + '-xP';
+
     let p5 = document.createElement('p');
-    p5.innerHTML = 'Z-coord: ';
+    p5.innerHTML = 'Y-coord: ';
     div.appendChild(p5);
     let span5 = document.createElement('span');
     p5.appendChild(span5);
-    span5.id = controllerid + '-zP';
+    span5.id = controllerid + '-yP';
+
     let p6 = document.createElement('p');
-    p6.innerHTML = 'Planet Angle: ';
+    p6.innerHTML = 'Z-coord: ';
     div.appendChild(p6);
     let span6 = document.createElement('span');
     p6.appendChild(span6);
-    span6.id = controllerid + '-angle';
+    span6.id = controllerid + '-zP';
+
     let p7 = document.createElement('p');
-    p7.innerHTML = 'Cat Position Angle: ';
+    p7.innerHTML = 'Planet Angle: ';
     div.appendChild(p7);
     let span7 = document.createElement('span');
     p7.appendChild(span7);
-    span7.id = controllerid + '-catPosAngle';
+    span7.id = controllerid + '-angle';
+
     let p8 = document.createElement('p');
-    p8.innerHTML = 'Accelaration: ';
+    p8.innerHTML = 'Cat Position Angle: ';
     div.appendChild(p8);
     let span8 = document.createElement('span');
     p8.appendChild(span8);
-    span8.id = controllerid + '-acc';
+    span8.id = controllerid + '-catPosAngle';
+
+    let p9 = document.createElement('p');
+    p9.innerHTML = 'Accelaration: ';
+    div.appendChild(p9);
+    let span9 = document.createElement('span');
+    p9.appendChild(span9);
+    span9.id = controllerid + '-acc';
 
     div.hidden = true;
 
@@ -144,6 +159,7 @@ function createHTML(controllerid: string){
         div.hidden = !div.hidden;
     
     };
+    but.disabled = true;
 }
 
 export function sendMessage(mesclient: string, mesdata: (string | number | Cat)[]) {
@@ -152,8 +168,7 @@ export function sendMessage(mesclient: string, mesdata: (string | number | Cat)[
     console.log('jumped here');
 }
 
-function randomColorCreation(): THREE.ColorRepresentation | undefined {
-    const id = Math.floor((Math.random() * 1000000));
+function randomColorCreation(id: number = Math.floor((Math.random() * 1000000))): THREE.ColorRepresentation | undefined {
     let hash: number = 5381;
 
     for (let i = 0; i < id.toString().length; i++) {
@@ -236,30 +251,22 @@ websocket.onmessage = (message:WebSocketMessage) => {
             }
         }
     }
-    if(mes.client === 'catInfo') {
-        const [contid, scrid] = mes.joins;
-        if(myId.innerHTML != scrid) {
-            createHTML(contid);
-            const catinfo = <HTMLButtonElement>document.getElementById(contid + '-info');
-            const catdiv = <HTMLDivElement>document.getElementById(contid);
-            catinfo.disabled = true;
-            catdiv.hidden = true;
-        }
-    }
     if(mes.client === 'addCat') {
         console.log('START TIMEOUT!')
         const timeout = 1000;
         setTimeout( () => {
             console.log('TIMEOUT ENDED: ', timeout);
+            createHTML(latestControllerID!);
+            const catinfo = <HTMLButtonElement>document.getElementById(latestControllerID! + '-info');
+            catinfo.style.backgroundColor = randomColorCreation(parseInt(latestControllerID!))!.toString();
             conAdd();
             const plan = allPlanets[Math.floor(Math.random() * allPlanets.length)];
             if(mes.joins[0] === myId.innerHTML){
                 const cat: Cat = new Cat(latestControllerID!, plan.radius, plan);
                 console.log(allPlanets);
+                catinfo.disabled = false;
                 plan.setCat(cat);
                 cats.push(cat);
-                createHTML(cat.id);
-                websocket.send(JSON.stringify({client: 'catInfo', joins: [cat.id, myId.innerHTML]}));
                 websocket.send(JSON.stringify({client: 'catColor', catcol: cat}));
                 console.log('Cat added wih id: ' + mes.joins[1]);
             } else {
