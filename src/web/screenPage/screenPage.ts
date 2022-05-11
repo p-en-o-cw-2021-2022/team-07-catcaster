@@ -95,7 +95,6 @@ function createHTML(controllerid: string) {
     p1.appendChild(span1);
     span1.id = controllerid + '-xF';
 
-
     const p2 = document.createElement('p');
     p2.innerHTML = 'Y-force: ';
     div.appendChild(p2);
@@ -125,32 +124,18 @@ function createHTML(controllerid: string) {
     span5.id = controllerid + '-yP';
 
     const p6 = document.createElement('p');
-    p6.innerHTML = 'Z-coord: ';
+    p6.innerHTML = 'Beta-angle: ';
     div.appendChild(p6);
     const span6 = document.createElement('span');
     p6.appendChild(span6);
-    span6.id = controllerid + '-zP';
+    span6.id = controllerid + '-beta';
 
     const p7 = document.createElement('p');
-    p7.innerHTML = 'Planet Angle: ';
+    p7.innerHTML = 'Gamma-angle: ';
     div.appendChild(p7);
     const span7 = document.createElement('span');
     p7.appendChild(span7);
-    span7.id = controllerid + '-angle';
-
-    const p8 = document.createElement('p');
-    p8.innerHTML = 'Cat Position Angle: ';
-    div.appendChild(p8);
-    const span8 = document.createElement('span');
-    p8.appendChild(span8);
-    span8.id = controllerid + '-catPosAngle';
-
-    const p9 = document.createElement('p');
-    p9.innerHTML = 'Accelaration: ';
-    div.appendChild(p9);
-    const span9 = document.createElement('span');
-    p9.appendChild(span9);
-    span9.id = controllerid + '-acc';
+    span7.id = controllerid + '-gamma';
 
     div.hidden = true;
 
