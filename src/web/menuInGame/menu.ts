@@ -11,7 +11,7 @@ websocket.onopen = () => {
 
 playButton.addEventListener('click', function() {
     const cid : string|null = getId();
-    websocket.send(JSON.stringify({client: 'join', id:cid}))
+    websocket.send(JSON.stringify({client: 'join', id:cid}));
     window.location.href = '/catcaster/controller/?id=' + cid + '&mode=multiscreen';
 });
 
@@ -22,9 +22,9 @@ deleteButton.addEventListener('click', function() {
 });
 
 function getId(): string | null {
-    let queryString = window.location.search;
-    let urlParams = new URLSearchParams(queryString);
-    let id: string | null = urlParams.get('id');
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    const id: string | null = urlParams.get('id');
     if (id) {
         return id;
     } else {

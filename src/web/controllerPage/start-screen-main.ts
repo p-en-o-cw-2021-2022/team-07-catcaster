@@ -108,7 +108,7 @@ function cameraStart() {
 }
 
 function getQRLocations() {
-    
+
     //Scan camera for locations and contents of QR codes
     const qrlocations:Array<QRlocation> = QR(number);
     alert('QR-codes found');
@@ -154,7 +154,7 @@ cameraTrigger.onclick = function() {
 
         cameraSensor.width = cameraView.videoWidth;
         cameraSensor.height = cameraView.videoHeight;
-        cameraSensor.style.display = 'block'
+        cameraSensor.style.display = 'block';
 
         cameraSensor.getContext('2d')!.drawImage(cameraView, 0, 0);
         cameraOutput.src = cameraSensor.toDataURL('image/webp');
@@ -165,13 +165,13 @@ cameraTrigger.onclick = function() {
         getQRLocations();
         loaderQR.style.display = 'none';
     } catch {
-        alert("Couldn't find the required amount of QR codes. Please try taking a better picture.")
-        location.reload(); 
+        alert('Couldn\'t find the required amount of QR codes. Please try taking a better picture.');
+        location.reload();
     }
-    
-        
 
-  
+
+
+
 
 
 

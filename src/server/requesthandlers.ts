@@ -32,7 +32,7 @@ export function getControllerRedirectPage(ctx: context) {
         ctx.response.status = 200;
         ctx.type = 'html';
         ctx.body = fs.createReadStream('dist/webroot/web/controllerRedirect/controllerRedirect.html');
-    } else if (params.id != null && params.mode == null){
+    } else if (params.id != null && params.mode == null) {
         ctx.response.status = 200;
         ctx.type = 'html';
         ctx.body = fs.createReadStream('dist/webroot/web/controllerPage/controller-start-screen.html');
