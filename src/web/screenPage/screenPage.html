@@ -31,6 +31,7 @@
         <script type="module" src="./qr-code.js"></script>
     </head>
     <body>
+        <h1 style="text-align: center;">Catcaster - Screen</h1>
         <div class="sideMenu" id="side-menu">
             <a class="closebtn" href="javascript:void(0)" onclick="closeNav()">×</a>
             <div class="main-menu">
@@ -40,32 +41,25 @@
                     
                     <table id = "table" class="display">
                         <tr>
-                            <td class="title">ID:</td>
-                            <td class="title">Messages:</td>
+                            <div>
+                                <div class="title" style="font-weight: bold;">This Screen ID:</div>
+                                <div id="receiver-id" style="font-weight: normal;" title="Copy this ID to the input on send.html.">ID:</div>
+                            </div>
                         </tr>
+                        <br>
                         <tr>
-                            <td>
-                                <div id="receiver-id" style="font-weight: bold;" title="Copy this ID to the input on send.html.">ID:</div>
-                            </td>
+                            <div><div id="status" style="font-weight: bold;" class="status"></div></div>
                         </tr>
-                        <tr>
-                            <td><div id="status" class="status"></div></td>
-                        </tr>
+                        <br>
+                        <div style="font-weight: bold;">State: <div id="Screen-state" style="font-weight: normal;"></div></div>
+                        <br>
+                        <div style="font-weight: bold;">Websocket State: <div id="Websocket-state" style="font-weight: normal;"></div></div>
+                        <div id="controllers" hidden></div>
+                        <div id="gyrodatas" ></div>
                     </table>
-        
                     <button id="debug-info" style="font-size: 20px;">Debug Info</button>
-                    <p >State: <span id="Screen-state"></span></p>
-                    <p >Websocket State: <span id="Websocket-state"></span></p>
-                    <div id="controllers" ></div>
-                    <div id="gyrodatas" ></div>
-                    <p >X-force: <span id="xF">n/a</span></p>
-                    <p >Y-force: <span id="yF">n/a</span></p>
-                    <p >X-coord: <span id="xP">n/a</span></p>
-                    <p >Y-coord: <span id="yP">n/a</span></p>
-                    <p >Z-coord: <span id="zP">n/a</span></p>
-                    <p >Planet Angle: <span id="angle">n/a</span></p>
-                    <p >Cat Position Angle: <span id="catPosAngle">n/a</span></p>
-                    <p >Accelaration: <span id="acc">n/a</span></p>
+                    <div id="catsdata" ></div>
+                    <br><br><br><br><br>
                 </div>
             </div>
         </div>
@@ -223,10 +217,11 @@
                 };
 
                 function onConnChange() {
-                    connectionString = 'Connected to: <br>';
+                    connectionString = 'Connected to: <div style="font-weight: normal;">';
                     for (connection in connections) {
                         connectionString += (connection + '<br>');
                     }
+                    connectionString += '</div>';
                     return connectionString;
                 }
 

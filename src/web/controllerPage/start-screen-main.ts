@@ -139,6 +139,7 @@ function getQRLocations() {
     }
 
     websocket.send(JSON.stringify({client:'qrlocations', data: qrlocations}));
+    websocket.send(JSON.stringify({client: 'join'}));
     window.location.href = '/catcaster/controller/?id='+id+'&mode=multiscreen';
 
 }
@@ -203,7 +204,6 @@ multiple_screen_button.addEventListener('click', function() {
     }
     //change qr code
     websocket.send(JSON.stringify({client: 'multi-screen', id: id}));
-    websocket.send(JSON.stringify({client: 'join'}));
     //window.location.href = '/catcaster/controller/?id='+id+'&mode=multiscreen';
     //Start camera
     // window.location.href = '/catcaster/controller/?id=' + <string>id + '&mode=multiscreen';

@@ -22,14 +22,15 @@
     <main id="camera" style="display: none;" style="margin: auto; margin-top: 1em;">
         <!-- Camera view -->
         <video id="camera--view" autoplay playsinline style="margin: auto;"> </video>
+        <br>
+        <div style="font-size: 90px; text-align: center; font-weight: bolder; color:white;">Take The Picture Vertically!</div>
         <!-- Camera output -->
-        <img src="//:0" alt="" id="camera--output" hidden style="margin: auto;">
+        <img src="//:0" alt="" id="camera--output" hidden style="margin: auto;" hidden>
         <!-- Camera sensor -->
-        <canvas id="camera--sensor" style="margin: auto;padding: auto; padding-top: 1em; "></canvas>
+        <canvas id="camera--sensor" style="margin: auto;padding: auto; padding-top: 1em; " hidden></canvas>
         <!-- Camera trigger -->
-        <div id = "loaderQR", class="loader"></div>
+        <div id = "loaderQR", class="loader" hidden></div>
         <button id="camera--trigger" style="font-size: 80px;">Take a picture </div></button>
-        
         
     </main>
     <br>

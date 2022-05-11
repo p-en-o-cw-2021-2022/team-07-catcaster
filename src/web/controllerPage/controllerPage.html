@@ -9,35 +9,34 @@
         <script type="module" src="./controllerMain.js"></script>
     </head>
     <body>
-        <h1>Sender</h1>
+        <h1 style="text-align: center;">Catcaster - Controller</h1>
         
         <table class="control">
-            <tr>
-                <td class="title">ID:</td>
-                <td class="title">Messages:</td>
-            </tr>
+
             <tr>
                 <td>
                     <span style="font-weight: bold">ID: </span>
                     <div type="text" id="receiver-id"></div>
                     <div type="text" id="sender-id"></div> 
-                    <div type="text" id="connection-div"></div> 
-                    <p id="gyro-data"></p>
+                    <div type="text" id="connection-div" hidden></div> 
+                    <p id="gyro-data" hidden></p>
                 </td>
             </tr>
             <tr>
                 <td><div id="status" class="status"></div></td>
             </tr>
         </table>
-        <button id="debug-info-controller" style="font-size: 20px;">Debug Info</button>
-        <div id="data" hidden >
-        <p>Gamma sent: <span id="gamma"></span></p>
-        <p>Beta sent: <span id="beta"></span></p>
-        <p>Current y: <span id="currenty"></span></p>
-        <p>Highest y: <span id="highesty"></span></p>
-        <p>Lowest y: <span id="lowesty"></span></p>
-        <p>Jump: <span id="jump"></span></p>
+        <div style="text-align: center;">
+            <button id="debug-info-controller" style="font-size: 20px; margin-left: auto;">Debug Info</button>
         </div>
+        <div id="data" hidden >
+        <p style="font-weight: bold">Gamma sent: <span id="gamma" style="font-weight: normal"></span></p>
+        <p style="font-weight: bold">Beta sent: <span id="beta" style="font-weight: normal"></span></p>
+        <p style="font-weight: bold">Current y: <span id="currenty" style="font-weight: normal"></span></p>
+        <p style="font-weight: bold">Highest y: <span id="highesty" style="font-weight: normal"></span></p>
+        <p style="font-weight: bold">Jump: <span id="jump" style="font-weight: normal"></span></p>
+        </div>
+        <div id="touch" style="font-size: 40px; margin: auto; font-weight: bolder; text-align: center;">Touch The Screen To Start Playing!</div>
 
         <script> var exports = {}; </script>
         <script type = "module" src = controllerPage.js>var exports = {};</script>
@@ -119,7 +118,7 @@
                         connections[conn.peer] = conn;
 
                         conn.on('open', function () {
-                            status.innerHTML = "Connected to: " + conn.peer;
+                            status.innerHTML = "<b>Connected to:</b> " + conn.peer;
                             console.log("Connected to: " + conn.peer);
                             status.innerHTML = onConnChange()
                             // Check URL params for comamnds that should be sent immediately
@@ -162,7 +161,7 @@
 
                 function onConnChange() {
                     console.log(connections);
-                    connectionString = 'Connected to: <br>';
+                    connectionString = '<b>Connected to:</b> <br>';
                     for (connection in connections) {
                         connectionString += (connection + '<br>');
                     }

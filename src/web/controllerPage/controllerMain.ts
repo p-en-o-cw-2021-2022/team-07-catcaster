@@ -61,6 +61,8 @@ function detectJump() {
 }
 
 function firstTouch() {
+    const touch = document.getElementById('touch');
+    touch!.hidden = true;
     window.removeEventListener('touchend', firstTouch);
     // note the 'void' ignores the promise result here...
     void askPermissionIfNeeded().then(v => {
