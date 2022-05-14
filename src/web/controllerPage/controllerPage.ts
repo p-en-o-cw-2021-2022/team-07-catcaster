@@ -34,6 +34,7 @@ function getIdController(): string | null {
 }
 
 function eventHandlersController() {
+
     const url = 'wss' + window.location.href.substr(5);
 
     let websocket = new WebSocket(url);
@@ -71,6 +72,10 @@ function eventHandlersController() {
         if(mes.client === '__ping__') {
             websocket.send(JSON.stringify({client: '__pong__', id: id.innerHTML}));
         }
+    };
+
+    window.onbeforeunload = function() {
+        websocket.send(JSON.stringify({client: 'removeCat', id: id.innerHTML}));
     };
 
     websocket.onclose = () => {

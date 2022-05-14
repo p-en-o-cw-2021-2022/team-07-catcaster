@@ -179,12 +179,6 @@
                         });
                         // Connection closed
                         c.on('close', function () {
-                            let catID = c.peer.id;
-                            for(const cat of cats) {
-                                if (cat.id == catID) {
-                                    cat.planet.cats.delete(catID);
-                                }
-                            }
                             delete connections[c.peer];
                             status.innerHTML = onConnChange();
                         });
