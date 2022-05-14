@@ -149,7 +149,7 @@ function createHTML(controllerid: string) {
 
 export function sendMessage(mesclient: string, mesdata: (string | number | Cat)[]) {
     console.log('going to jump');
-    websocket.send(JSON.stringify({client : mesclient, data : mesdata}));
+    websocket.send(JSON.stringify({client : mesclient, data : mesdata, id: myId.innerHTML}));
     console.log('jumped here');
 }
 
@@ -252,7 +252,7 @@ websocket.onmessage = (message:WebSocketMessage) => {
                 catinfo.disabled = false;
                 plan.setCat(cat);
                 cats.push(cat);
-                websocket.send(JSON.stringify({client: 'catColor', catcol: cat}));
+                websocket.send(JSON.stringify({client: 'catColor', catcol: cat, id: myId.innerHTML}));
                 console.log('Cat added wih id: ' + mes.joins[1]);
             } else {
                 cats.push(undefined);
