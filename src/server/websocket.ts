@@ -17,6 +17,7 @@ let qrlocations: QRlocation[] = [];
 let tm: any;
 let it: any;
 const IDTimers: any = {};
+let mode: any = null;
 
 function ping(id: string) {
     if (tm === undefined) {
@@ -103,6 +104,7 @@ export function websocketEventHandlers(websocket: ws.Server) {
                 break;
 
             case 'multi-screen':
+                mode = 'multiscreen'
                 if (!database.doesIdExist(mes.id)) {
                     console.log('Received ID is not in the database, closing connection to client.');
                     ws.send(JSON.stringify({client : 'disconnect', id : mes.id}));
@@ -114,11 +116,16 @@ export function websocketEventHandlers(websocket: ws.Server) {
                 break;
 
             case 'single-screen':
+                mode = 'singlescreen'
                 websocket.clients.forEach((client) => {
                     client.send(JSON.stringify({client : 'singleScreen'}));
                 });
                 break;
-
+            
+            case 'get-mode':
+                ws.send(JSON.stringify({client: 'mode', mode: mode}));
+                break;
+            
             case 'jump-message':
                 console.log('jumpmessage received.');
                 websocket.clients.forEach((client) => {
@@ -170,6 +177,7 @@ export function websocketEventHandlers(websocket: ws.Server) {
                 websocket.clients.forEach((client) => {
                     client.send(JSON.stringify({client : 'endgame'}));
                 });
+                mode = null;
                 break;
             case 'nbcontrollers':
                 const controllerids = database.getControllerIds();
