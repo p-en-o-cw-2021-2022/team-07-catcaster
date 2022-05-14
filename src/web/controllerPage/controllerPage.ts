@@ -88,6 +88,10 @@ function eventHandlersController() {
             console.log('Reconnection failed, terminating...'); //ADD TO HTML PAGE !!!!
         }
     };
+
+    window.addEventListener('beforeunload', function() {
+        websocket.send(JSON.stringify({client: 'delcat', id: id.innerHTML}));
+    });
 }
 
 if (getIdController() !== null) {
