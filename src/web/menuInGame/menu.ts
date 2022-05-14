@@ -9,6 +9,8 @@ const websocket = new WebSocket(url);
 console.log('Starting Websocket connection...');
 
 websocket.onopen = () => {
+    const cid : string|null = getId();
+    websocket.send(JSON.stringify({id: cid}));
     console.log('Connection established.');
 };
 
@@ -17,11 +19,16 @@ websocket.onmessage = (message:WebSocketMessage) => {
     if (mes.client === 'mode'){
         mode = mes.mode;
     }
+    if (mes.client === 'disconnect'){
+        console.log('Illegal ID, removing websocket connection.');
+        websocket.close();
+        window.location.href = '/catcaster/error/';
+    }
 }
 
 playButton.addEventListener('click', function() {
     const cid : string|null = getId();
-    websocket.send(JSON.stringify({client: 'get-mode'}));
+    websocket.send(JSON.stringify({client: 'get-mode', id: cid}));
     websocket.send(JSON.stringify({client: 'join', id:cid}));
     setTimeout(() => {
         window.location.href = '/catcaster/controller/?id=' + cid + '&mode=' + mode;

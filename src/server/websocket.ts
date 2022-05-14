@@ -54,16 +54,14 @@ export function websocketEventHandlers(websocket: ws.Server) {
             const controllerid = database.getControllerIds();
             const screenid = database.getScreenIds();
             const id = <string>mes.id;
-
+            //Het id dat door de client wordt doorgestuurd moet reeds bestaan.
+            if (!database.doesIdExist(mes.id)) {
+                console.log('Received ID is not in the database, closing connection to client.');
+                ws.send(JSON.stringify({client : 'disconnect', id : mes.id}));
+            }
             switch (mes.client) {
             case 'screen':
                 console.log('Newly connected ID is from a screen.');
-
-                //Het id dat door de client wordt doorgestuurd moet reeds bestaan.
-                if (!database.doesIdExist(mes.id)) {
-                    console.log('Received ID is not in the database, closing connection to client.');
-                    ws.send(JSON.stringify({client : 'disconnect', id : mes.id}));
-                }
                 //start ping-pong process
                 it = setInterval(() => {
                     ws.send(JSON.stringify({client: '__ping__'}));
@@ -75,12 +73,6 @@ export function websocketEventHandlers(websocket: ws.Server) {
 
             case 'controller':
                 console.log('Newly connected ID is from a controller.');
-
-                //Het id dat door de client wordt doorgestuurd moet reeds bestaan.
-                if (!database.doesIdExist(mes.id)) {
-                    console.log('Received ID is not in the database, closing connection to client.');
-                    ws.send(JSON.stringify({client : 'disconnect', id : mes.id}));
-                }
 
                 websocket.clients.forEach(function(client) {
                     client.send(JSON.stringify({client: 'screenState', mode: 'Catcaster'}));
@@ -105,10 +97,6 @@ export function websocketEventHandlers(websocket: ws.Server) {
 
             case 'multi-screen':
                 mode = 'multiscreen'
-                if (!database.doesIdExist(mes.id)) {
-                    console.log('Received ID is not in the database, closing connection to client.');
-                    ws.send(JSON.stringify({client : 'disconnect', id : mes.id}));
-                }
                 websocket.clients.forEach((client) => {
                     client.send(JSON.stringify({client : 'multi-screen'}));
                 });

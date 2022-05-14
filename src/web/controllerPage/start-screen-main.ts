@@ -44,7 +44,7 @@ export class QRlocation {
 
 single_screen_button.addEventListener('click',  function() {
     websocket.send(JSON.stringify({client: 'single-screen', id: id}));
-    websocket.send(JSON.stringify({client: 'join'}));
+    websocket.send(JSON.stringify({client: 'join', id: id}));
     window.location.href = '/catcaster/controller/?id=' + id + '&mode=singlescreen';
 });
 
@@ -54,6 +54,7 @@ let websocket = new WebSocket(url);
 console.log('Starting Websocket connection...');
 
 websocket.onopen = () => {
+    websocket.send(JSON.stringify({id: id}));
     console.log('Connection established.');
 };
 
@@ -138,8 +139,8 @@ function getQRLocations() {
         }
     }
 
-    websocket.send(JSON.stringify({client:'qrlocations', data: qrlocations}));
-    websocket.send(JSON.stringify({client: 'join'}));
+    websocket.send(JSON.stringify({client:'qrlocations', data: qrlocations, id: id}));
+    websocket.send(JSON.stringify({client: 'join', id: id}));
     window.location.href = '/catcaster/controller/?id='+id+'&mode=multiscreen';
 
 }
