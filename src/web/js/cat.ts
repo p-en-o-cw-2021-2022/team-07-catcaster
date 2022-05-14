@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { Euler, Scene, Vector3 } from 'three';
+import { Vector3 } from 'three';
 import { Planet } from './planet';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
 import { Portal } from './portal';
@@ -63,7 +63,7 @@ export class Cat {
 
             },
             // called when loading has errors
-            function ( error ) {
+            function ( ) {
 
                 console.log( 'An error happened' );
 
@@ -131,19 +131,14 @@ export class Cat {
         copyVector.applyAxisAngle(new Vector3(0, 1, 0), this.planet.gamma);
         copyVector.applyAxisAngle(new Vector3(1, 0, 0), this.planet.beta);
 
-        const absPosition = copyVector.add(this.planet.coordinates);
-        this.mesh!.position.copy(copyVector);
-        this.mesh!.rotation.copy(this.planet.object3dGroup.rotation.clone());
-        this.mesh!.rotateOnAxis(new Vector3(1,0,0), Math.PI/2);
+        this.mesh?.position.copy(copyVector);
+        this.mesh?.rotation.copy(this.planet.object3dGroup.rotation.clone());
+        this.mesh?.rotateOnAxis(new Vector3(1,0,0), Math.PI/2);
 
     }
 
     // Check if the given position is on planet
     isValidPos(vector: Vector3): boolean {
-        // vector.distanceTo(new Vector3(0,0,0)) <= this.planet.radius;
-        // const xCond = Math.abs(vector.x) <= this.planet.radius;
-        // const yCond = Math.abs(vector.y) <= this.planet.radius;
-        // const zCond = Math.abs(vector.z) <= this.planet.radius * Math.sin(this.planet.MAX_ANGLE);
 
         return vector.distanceTo(new Vector3(0, 0, 0)) <= this.planet.radius;
     }
@@ -165,31 +160,3 @@ export class Cat {
 }
 
 
-
-
-// calcFriction(axis: string, force: number):number {
-
-//     let angle = 0;
-//     let vel = 0;
-//     switch(axis) {
-//     case 'x':
-//         angle = this.planet.gamma;
-//         vel = this.xVel;
-//         break;
-//     case 'y':
-//         angle = this.planet.beta;
-//         vel = this.yVel;
-//         break;
-//     case 'z':
-//         angle = this.planet.alpha;
-//         break;
-//     }
-
-//     if ( vel < 0) {
-//         return this.planet.friction * -this.planet.g * Math.cos(angle) * this.mass;
-//     } else if ( vel > 0) {
-//         return -this.planet.friction * -this.planet.g * Math.cos(angle) * this.mass;
-//     } else {
-//         return 0;
-//     }
-// }

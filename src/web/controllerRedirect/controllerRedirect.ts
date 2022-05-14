@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/require-await */
 import { Message, WebSocketMessage} from '../controllerPage/controllerPage';
 
-requestControllerID();
+void requestControllerID();
 
 async function requestControllerID() {
     const response = await fetch('/catcaster/controller/', {
@@ -12,7 +13,9 @@ async function requestControllerID() {
     });
 
     if (response.ok) {
-        const id = await response.json();
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        const id: string = await response.json();
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
         setTimeout(() => {}, 50);
         const url: string = 'wss' + window.location.href.substr(5);
 
@@ -25,7 +28,7 @@ async function requestControllerID() {
         };
         websocket.onmessage = async (message:WebSocketMessage) => {
             const mes = <Message>JSON.parse(message.data);
-            if (mes.client.length == 1 || mes.client.length == 0) {
+            if (mes.client.length === 1 || mes.client.length === 0) {
                 window.location.href = '/catcaster/controller/?id='+id;
             } else {
                 window.location.href = '/catcaster/menu/?id=' + id;

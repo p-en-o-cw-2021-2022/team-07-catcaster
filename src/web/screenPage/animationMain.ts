@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
@@ -22,7 +24,7 @@ scene.background = new THREE.Color('white');
 export const cats : (Cat | undefined )[] = [];
 const catsData : HTMLElement[][] = [];
 export let controllers_count = 0;
-export let controllers = document.getElementById('controllers')!.children;
+export let controllers = document.getElementById('controllers')?.children;
 // const camera = new THREE.OrthographicCamera( window.innerWidth/-20, window.innerWidth / 20, window.innerHeight / 20, window.innerHeight / -20, -100, 100);
 const camera = new THREE.OrthographicCamera( -sceneHeight * aspectRatio / 2 , sceneHeight * aspectRatio / 2, sceneHeight / 2, -sceneHeight / 2, -500, 500);
 camera.rotateOnAxis(new Vector3(1,0,0), Math.PI/4);
@@ -133,7 +135,7 @@ const dt = 0.025;
 renderer.render( scene, camera );
 
 export function conAdd() {
-    controllers = document.getElementById('controllers')!.children;
+    controllers = document.getElementById('controllers')?.children;
 }
 
 // export function addCat() {
@@ -183,6 +185,7 @@ function animate() {
                     cat.planet.cats.delete(cat.id);
                     // Send teleport message over websocket
                     if (portal.otherScreen !== myId.innerHTML) {
+                        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                         cat.planet.scene.remove(cat.mesh!);
                         cats[i] = undefined;
                         const jumpmessage = [portal.otherScreen, portal.otherPlanetID, cat, i];
@@ -208,55 +211,21 @@ function animate() {
     updatePlanets();
     renderer.render( scene, camera );
     for(const cat of cats) {
-        if(cat != undefined) {
+        if(cat !== undefined) {
             setDebugInfo(cat);
         }
     }
     requestAnimationFrame(animate);
 }
 
-// function update(e: KeyboardEvent) {
-//     switch(e.key) {
-//     case 'd' :
-//         // cat.updateForce('x', cat.xF + 5);
-//         cats[0].xVel += 1;
-//         break;
-//     case 's' :
-//         // cat.updateForce('y', cat.yF - 5);
-//         cats[0].yVel -= 1;
-//         break;
-//     case 'w' :
-//         // cat.updateForce('y', cat.yF + 5);
-//         cats[0].yVel += 1;
-//         break;
-//     case 'a' :
-//         // cat.updateForce('x', cat.xF - 5);
-//         cats[0].xVel -= 1;
-//         break;
-//     case 'l' :
-//         // cat.updateForce('x', cat.xF + 5);
-//         cat2.xVel += 1;
-//         break;
-//     case 'k' :
-//         // cat.updateForce('y', cat.yF - 5);
-//         cat2.yVel -= 1;
-//         break;
-//     case 'i' :
-//         // cat.updateForce('y', cat.yF + 5);
-//         cat2.yVel += 1;
-//         break;
-//     case 'j' :
-//         // cat.updateForce('x', cat.xF - 5);
-//         cat2.xVel -= 1;
-//         break;
-//     }
-// }
 
 function update2(e: DeviceOrientationEvent) {
     for (let i = 0, len = cats.length; i < len; i++) {
         const cat = cats[i];
-        if(cat != undefined) {
+        if(cat !== undefined) {
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             cat.updateForce('x', e.gamma!);
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             cat.updateForce('y', -e.beta!);
         }
     }
@@ -296,7 +265,7 @@ function newController() {
 
 function updatePlanets() {
     for (const planet of allPlanets) {
-        planet.updateAngles(dt);
+        planet.updateAngles();
     }
 }
 

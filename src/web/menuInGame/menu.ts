@@ -12,6 +12,7 @@ websocket.onopen = () => {
 playButton.addEventListener('click', function() {
     const cid : string|null = getId();
     websocket.send(JSON.stringify({client: 'join', id:cid}));
+    // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
     window.location.href = '/catcaster/controller/?id=' + cid + '&mode=multiscreen';
 });
 

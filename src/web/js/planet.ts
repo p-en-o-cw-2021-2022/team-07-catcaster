@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { Euler, Plane, Scene, Vector, Vector3 } from 'three';
+import { Euler, Scene, Vector3 } from 'three';
 import { Cat } from './cat.js';
 import { Portal } from './portal.js';
 export class Planet {
@@ -53,22 +53,6 @@ export class Planet {
         portalMesh.position.add(new Vector3(0,0,this.portals.length)); // Move the portal a bit forward to prevent clipping
     }
 
-
-    // Add a new neighbouring planet if not already added.
-    // Portal vector is relative to center of the neightbour planet
-    // addNeighbour(newNeighbour: Planet, portalVector: Vector3) {
-    //     if (!this.neighbours.has(newNeighbour.id)) {
-    //         this.neighbours.set(newNeighbour.id, newNeighbour);
-    //         const x = this.coordinates[0];
-    //         const y = this.coordinates[1];
-    //         const z = this.coordinates[2];
-    //         const portalCoords = new Vector3(x,y,z);
-    //         console.log('portalvetor: ', portalVector)
-    //         console.log('portalcoordinates: ', portalCoords)
-    //         this.portals.set(newNeighbour.id, portalVector.add(portalCoords));
-    //     }
-    // }
-
     setAngle(axis: string, angle: number) {
 
         if (!this.isValidAngle(angle)) {
@@ -120,7 +104,7 @@ export class Planet {
         }
     }
 
-    updateAngles(dt: number) {
+    updateAngles() {
 
         // TODO: Make this work with the Map of cats
         // update gamma x
@@ -159,27 +143,5 @@ export class Planet {
             }
         }
         return;
-        // this.cats.delete(cat.id);
-        // // Send teleport message over websocket
-        // if (entry.otherScreen != myScreen) {
-        //     const url = 'wss' + window.location.href.substr(5);
-        //     const websocket = new WebSocket(url);
-        //     const jumpmessage = [entry.otherScreen, entry.otherPlanetID, cat];
-        //     websocket.send(JSON.stringify({client: 'jump-message', data: jumpmessage}));
-        // }
-        // else {
-        //     console.log('myscreen!');
-        //     for(const planet of allPlanets) {
-        //         if(planet.id == entry.otherPlanetID){
-        //             cat.setPlanet(planet);
-        //             planet.setCat(cat);
-        //             const x = planet.coordinates.x;
-        //             const y = planet.coordinates.y;
-        //             cat.positionOnPlanet = new Vector3(x, y, 0);
-        //         }
-        //     }
-        // }
-        // }
-        // }
     }
 }

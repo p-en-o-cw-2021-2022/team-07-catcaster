@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/restrict-plus-operands */
 import jsQR from 'jsqr';
 import { Point } from 'jsqr/dist/locator';
-import { string } from 'yargs';
 import { findNeighborsVoronoi } from './voronoi.js';
 import { Message, WebSocketMessage } from './controllerPage';
 
@@ -57,25 +56,26 @@ websocket.onopen = () => {
     console.log('Connection established.');
 };
 
+// eslint-disable-next-line @typescript-eslint/require-await
 websocket.onmessage = async (message:WebSocketMessage) => {
     const mes = <Message>JSON.parse(message.data);
     console.log('received message from : ', mes.id, '  |  client is: ', mes.client);
-    if(mes.client == 'disconnect' && mes.id == id) {
+    if(mes.client === 'disconnect' && mes.id === id) {
         console.log('Illegal ID, removing websocket connection.');
         websocket.close();
         window.location.href = '/catcaster/error/';
     }
 };
 
-websocket.onclose = (event) => {
+websocket.onclose = (_event) => {
     websocket.send(JSON.stringify({client: 'disconnected', id: id}));
     console.log('Connection lost, attempting to reconnect...'); //ADD TO HTML PAGE !!!!
     let tries = 0;
-    while (websocket.readyState == 3 && tries <= 10) {
+    while (websocket.readyState === 3 && tries <= 10) {
         websocket = new WebSocket(url);
         tries += 1;
     }
-    if (websocket.readyState == 1) {
+    if (websocket.readyState === 1) {
         console.log('Reconnected succesfully.'); //ADD TO HTML PAGE !!!!
     } else {
         console.log('Reconnection failed, terminating...'); //ADD TO HTML PAGE !!!!
@@ -99,7 +99,6 @@ function cameraStart() {
     navigator.mediaDevices
         .getUserMedia(constraints)
         .then(function(stream) {
-            const track = stream.getTracks()[0];
             cameraView.srcObject = stream;
         })
         .catch(function(error) {
@@ -134,6 +133,7 @@ function getQRLocations() {
                     neighbour = qrloc;
                 }
             }
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         qr!.addNeighbour(neighbour!);
         }
     }
@@ -156,7 +156,7 @@ cameraTrigger.onclick = function() {
         cameraSensor.height = cameraView.videoHeight;
         cameraSensor.style.display = 'block';
 
-        cameraSensor.getContext('2d')!.drawImage(cameraView, 0, 0);
+        cameraSensor.getContext('2d')?.drawImage(cameraView, 0, 0);
         cameraOutput.src = cameraSensor.toDataURL('image/webp');
         cameraOutput.classList.add('taken');
         cameraMain.style.display = 'block';
@@ -168,12 +168,6 @@ cameraTrigger.onclick = function() {
         alert('Couldn\'t find the required amount of QR codes. Please try taking a better picture.');
         location.reload();
     }
-
-
-
-
-
-
 
 };
 
@@ -188,6 +182,7 @@ multiple_screen_button.addEventListener('click', function() {
         number = parseInt(input);
 
         while (number < 2 ||number === null || number === undefined) {
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             number = parseInt(prompt('Please enter more than one screen:')!);
         }
         cameraMain.style.display = 'block';
@@ -220,8 +215,8 @@ function QR(number: number) {
     if (recurseAmount > 400) {
         throw 'Too much recursion.';
     }
-    const imageData = cameraSensor.getContext('2d')!.getImageData(0, 0, cameraSensor.width, cameraSensor.height);
-    cameraSensor.getContext('2d')!.drawImage(cameraView, 0, 0);
+    const imageData = cameraSensor.getContext('2d')?.getImageData(0, 0, cameraSensor.width, cameraSensor.height);
+    cameraSensor.getContext('2d')?.drawImage(cameraView, 0, 0);
     if (imageData === null || imageData === undefined) {
         alert('Image not found');
         throw new Error('imageData was null');

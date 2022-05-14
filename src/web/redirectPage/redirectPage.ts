@@ -1,4 +1,5 @@
-requestScreenID();
+
+void requestScreenID();
 
 async function requestScreenID() {
     const response = await fetch('/catcaster/screen/', {
@@ -10,8 +11,9 @@ async function requestScreenID() {
     });
 
     if (response.ok) {
-        const id = await response.json();
-        window.location.href = '/catcaster/screen/?id='+id;
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        const id: string = await response.json();
+        window.location.href = '/catcaster/screen/?id=' + id;
     }
 }
 

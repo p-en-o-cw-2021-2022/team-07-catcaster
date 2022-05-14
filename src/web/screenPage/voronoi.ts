@@ -35,6 +35,7 @@ export function findNeighborsVoronoi(sites: {x: number; y: number; id: string}[]
             }
         }
 
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const pair_ids: [string, string] = [left_id!, right_id!];
         neighbors_ids.push(pair_ids);
     }

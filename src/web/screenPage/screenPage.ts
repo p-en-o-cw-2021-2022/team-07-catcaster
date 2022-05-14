@@ -1,10 +1,10 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { Planet } from '../js/planet.js';
 import { Scene, Vector3, Color } from 'three';
-import { allPlanets, cats, createPlanet, conAdd, controllers, controllers_count } from './animationMain.js';
+import { allPlanets, cats, createPlanet, conAdd } from './animationMain.js';
 import { Portal } from '../js/portal.js';
 import { findNeighborsVoronoi } from './voronoi.js';
 import { Cat } from '../js/cat.js';
-import { commandDir } from 'yargs';
 const debug = <HTMLButtonElement>document.getElementById('debug-info');
 const gyrodata =  <HTMLElement>document.getElementById('gyrodatas');
 const screenstate = <HTMLDivElement>document.getElementById('Screen-state');
@@ -222,9 +222,9 @@ websocket.onmessage = (message:WebSocketMessage) => {
                 const portal = new Portal(myId.innerHTML, portalCoordinates, neighborID);
                 let randomColor = randomColorCreation();
                 for(const planet of allPlanets) {
-                    if(planet.id == neighborID) {
+                    if(planet.id === neighborID) {
                         for(const neighborPortal of planet.portals) {
-                            if(neighborPortal.otherPlanetID == planetID) {
+                            if(neighborPortal.otherPlanetID === planetID) {
                                 randomColor = neighborPortal.color;
                             }
                         }

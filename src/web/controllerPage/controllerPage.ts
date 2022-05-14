@@ -1,4 +1,3 @@
-import { Color } from 'three';
 import { Cat } from '../js/cat';
 
 const id = <HTMLDivElement>document.getElementById('sender-id');
@@ -60,9 +59,11 @@ function eventHandlersController() {
         }
         if(mes.client === 'catColor') {
             const cat: Cat = mes.catcol;
-            if(cat.id == id.innerHTML) {
+            if(cat.id === id.innerHTML) {
                 const color = cat.color;
-                document.body.style.backgroundColor = color!.toString();
+                if (color !== undefined) {
+                    document.body.style.backgroundColor = color.toString();
+                }
             }
         }
         if(mes.client === 'endgame') {
