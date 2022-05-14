@@ -31,7 +31,7 @@ export class Cat {
         this.positionOnPlanet = new Vector3(0, 0, 0);
         this.planet = planet;
         this.sphere = new THREE.SphereGeometry( 3, 32, 16 );
-        const color = this.generateColor(parseInt(id));
+        const color = this.generateColor(id);
         this.color = color;
         const material = new THREE.MeshLambertMaterial( { color: color } ); // This should be taken in as a constructor argument, but might break things when that happens
         this.mesh = new THREE.Mesh( this.sphere, material);
@@ -148,12 +148,12 @@ export class Cat {
         return vector.distanceTo(new Vector3(0, 0, 0)) <= this.planet.radius;
     }
 
-    generateColor(id: number): THREE.ColorRepresentation | undefined {
+    generateColor(id: string): THREE.ColorRepresentation | undefined {
 
         let hash: number = 5381;
 
-        for (let i = 0; i < id.toString().length; i++) {
-            hash = ((hash << 5) + hash) + id.toString().charCodeAt(i); /* hash * 33 + c */
+        for (let i = 0; i < id.length; i++) {
+            hash = ((hash << 5) + hash) + id.charCodeAt(i); /* hash * 33 + c */
         }
 
         const r = (hash & 0xFF0000) >> 16;
