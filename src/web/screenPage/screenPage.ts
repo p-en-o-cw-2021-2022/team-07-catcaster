@@ -77,87 +77,72 @@ function getPortalCoordinates(myPlanet: Planet, otherPlanet: Planet): Vector3 {
     return vector;
 }
 
-function createHTML(controllerid: string){
-    let but = document.createElement('button');
+function createHTML(controllerid: string) {
+    const but = document.createElement('button');
     catsdata.appendChild(but);
     but.type = 'button';
     but.id = controllerid + '-info';
     but.innerHTML = 'Controller: ' + controllerid;
 
-    let div = document.createElement('div');
+    const div = document.createElement('div');
     catsdata.appendChild(div);
     div.id = controllerid;
 
-    let p1 = document.createElement('p');
+    const p1 = document.createElement('p');
     p1.innerHTML = 'X-force: ';
     div.appendChild(p1);
-    let span1 = document.createElement('span');
+    const span1 = document.createElement('span');
     p1.appendChild(span1);
     span1.id = controllerid + '-xF';
 
-
-    let p2 = document.createElement('p');
+    const p2 = document.createElement('p');
     p2.innerHTML = 'Y-force: ';
     div.appendChild(p2);
-    let span2 = document.createElement('span');
+    const span2 = document.createElement('span');
     p2.appendChild(span2);
     span2.id = controllerid + '-yF';
 
-    let p3 = document.createElement('p');
+    const p3 = document.createElement('p');
     p3.innerHTML = 'Jump: ';
     div.appendChild(p3);
-    let span3 = document.createElement('span');
+    const span3 = document.createElement('span');
     p3.appendChild(span3);
     span3.id = controllerid + '-Jump';
 
-    let p4 = document.createElement('p');
+    const p4 = document.createElement('p');
     p4.innerHTML = 'X-coord: ';
     div.appendChild(p4);
-    let span4 = document.createElement('span');
+    const span4 = document.createElement('span');
     p4.appendChild(span4);
     span4.id = controllerid + '-xP';
 
-    let p5 = document.createElement('p');
+    const p5 = document.createElement('p');
     p5.innerHTML = 'Y-coord: ';
     div.appendChild(p5);
-    let span5 = document.createElement('span');
+    const span5 = document.createElement('span');
     p5.appendChild(span5);
     span5.id = controllerid + '-yP';
 
-    let p6 = document.createElement('p');
-    p6.innerHTML = 'Z-coord: ';
+    const p6 = document.createElement('p');
+    p6.innerHTML = 'Beta-angle: ';
     div.appendChild(p6);
-    let span6 = document.createElement('span');
+    const span6 = document.createElement('span');
     p6.appendChild(span6);
-    span6.id = controllerid + '-zP';
+    span6.id = controllerid + '-beta';
 
-    let p7 = document.createElement('p');
-    p7.innerHTML = 'Planet Angle: ';
+    const p7 = document.createElement('p');
+    p7.innerHTML = 'Gamma-angle: ';
     div.appendChild(p7);
-    let span7 = document.createElement('span');
+    const span7 = document.createElement('span');
     p7.appendChild(span7);
-    span7.id = controllerid + '-angle';
-
-    let p8 = document.createElement('p');
-    p8.innerHTML = 'Cat Position Angle: ';
-    div.appendChild(p8);
-    let span8 = document.createElement('span');
-    p8.appendChild(span8);
-    span8.id = controllerid + '-catPosAngle';
-
-    let p9 = document.createElement('p');
-    p9.innerHTML = 'Accelaration: ';
-    div.appendChild(p9);
-    let span9 = document.createElement('span');
-    p9.appendChild(span9);
-    span9.id = controllerid + '-acc';
+    span7.id = controllerid + '-gamma';
 
     div.hidden = true;
 
     but.onclick =  function() {
 
         div.hidden = !div.hidden;
-    
+
     };
     but.disabled = true;
 }
@@ -217,7 +202,7 @@ websocket.onmessage = (message:WebSocketMessage) => {
     }
     if(mes.client === 'singleScreen') {
         console.log('Single screen selected.');
-        while(allPlanets.length < 3){
+        while(allPlanets.length < 3) {
             createPlanet(allPlanets.length+1);
         }
         const sites: {x: number; y: number; id: string}[] = [];
@@ -252,7 +237,7 @@ websocket.onmessage = (message:WebSocketMessage) => {
         }
     }
     if(mes.client === 'addCat') {
-        console.log('START TIMEOUT!')
+        console.log('START TIMEOUT!');
         const timeout = 1000;
         setTimeout( () => {
             console.log('TIMEOUT ENDED: ', timeout);
@@ -261,7 +246,7 @@ websocket.onmessage = (message:WebSocketMessage) => {
             catinfo.style.backgroundColor = randomColorCreation(parseInt(latestControllerID!))!.toString();
             conAdd();
             const plan = allPlanets[Math.floor(Math.random() * allPlanets.length)];
-            if(mes.joins[0] === myId.innerHTML){
+            if(mes.joins[0] === myId.innerHTML) {
                 const cat: Cat = new Cat(latestControllerID!, plan.radius, plan);
                 console.log(allPlanets);
                 catinfo.disabled = false;
@@ -270,8 +255,8 @@ websocket.onmessage = (message:WebSocketMessage) => {
                 websocket.send(JSON.stringify({client: 'catColor', catcol: cat}));
                 console.log('Cat added wih id: ' + mes.joins[1]);
             } else {
-                    cats.push(undefined);
-                }
+                cats.push(undefined);
+            }
         }, timeout);
     }
     if(mes.client === 'jumpmessage') {
@@ -289,12 +274,11 @@ websocket.onmessage = (message:WebSocketMessage) => {
                     cats[catIndex] = cat;
                 }
             }
-        }
-        else {
-        const catinfo = <HTMLButtonElement>document.getElementById(otherFakeCat.id + '-info');
-        const catdiv = <HTMLDivElement>document.getElementById(otherFakeCat.id);
-        catinfo.disabled = true;
-        catdiv.hidden = true;
+        } else {
+            const catinfo = <HTMLButtonElement>document.getElementById(otherFakeCat.id + '-info');
+            const catdiv = <HTMLDivElement>document.getElementById(otherFakeCat.id);
+            catinfo.disabled = true;
+            catdiv.hidden = true;
         }
     }
     if(mes.client === 'endgame') {
@@ -332,15 +316,15 @@ websocket.onmessage = (message:WebSocketMessage) => {
             console.log('changedplanet: ', planet);
         }
     }
-    if(mes.client === '__ping__'){
+    if(mes.client === '__ping__') {
         websocket.send(JSON.stringify({client: '__pong__', id: myId.innerHTML}));
     }
-    if(mes.client === 'screenState'){
+    if(mes.client === 'screenState') {
         console.log('screenstate ontvangen');
-        if(mes.mode === 'Catcaster'){
+        if(mes.mode === 'Catcaster') {
             screenstate.innerHTML = 'Game';
         }
-        if(mes.mode === 'Free'){
+        if(mes.mode === 'Free') {
             screenstate.innerHTML = 'Free';
         }
     }

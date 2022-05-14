@@ -207,8 +207,8 @@ function animate() {
     }
     updatePlanets();
     renderer.render( scene, camera );
-    for(const cat of cats){
-        if(cat != undefined){
+    for(const cat of cats) {
+        if(cat != undefined) {
             setDebugInfo(cat);
         }
     }
@@ -279,10 +279,8 @@ function setDebugInfo(cat: Cat) {
     setInnerText(cat.id + '-Jump', cat.jump);
     setInnerText(cat.id + '-xP', cat.positionOnPlanet.x.toFixed(3));
     setInnerText(cat.id + '-yP', cat.positionOnPlanet.y.toFixed(3));
-    setInnerText(cat.id + '-zP', cat.positionOnPlanet.z.toFixed(3));
-    setInnerText(cat.id + '-angle', [cat.planet.alpha * (180/Math.PI), cat.planet.beta* (180/Math.PI), cat.planet.gamma* (180/Math.PI)].toString());
-    setInnerText(cat.id + '-catPosAngle', [cat.catPositionAngle[0] * (180/Math.PI), cat.catPositionAngle[1] * (180/Math.PI)].toString());
-    setInnerText(cat.id + '-acc', 'hier');
+    setInnerText(cat.id + '-beta', [cat.planet.beta* (180/Math.PI)].toString());
+    setInnerText(cat.id + '-gamma', [cat.planet.gamma* (180/Math.PI)].toString());
 
 }
 
