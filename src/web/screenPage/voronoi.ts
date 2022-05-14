@@ -6,7 +6,7 @@ import {Voronoi} from 'voronoi';
 export function findNeighborsVoronoi(sites: {x: number; y: number; id: string}[]) {
 
     const voronoi = new Voronoi();
-    const bbox = {xl: 0, xr: 8000, yt: 0, yb: 6000}; // xl is x-left, xr is x-right, yt is y-top, and yb is y-bottom
+    const bbox = {xl: -10000, xr: 10000, yt: -10000, yb: 10000}; // xl is x-left, xr is x-right, yt is y-top, and yb is y-bottom
 
     const diagram = voronoi.compute(sites, bbox);
 
