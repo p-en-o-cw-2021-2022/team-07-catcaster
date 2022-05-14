@@ -229,7 +229,9 @@ function calculatePortalCoordinates(myPlanet: Planet, otherPlanet: Planet, ratio
     console.log('vector: ', vector);
     vector.multiplyScalar(3*myPlanet.radius/4);
     const localPlanetCoordinates = new Vector3();
-    localPlanetCoordinates.addVectors(myPlanet.coordinates, screenCoordinates.multiplyScalar(-1));
+    const helpVec = new Vector3(screenCoordinates.x, screenCoordinates.y, 0);
+    helpVec.multiplyScalar(-1);
+    localPlanetCoordinates.addVectors(myPlanet.coordinates, helpVec);
     localPlanetCoordinates.multiplyScalar(1/ratio);
     localPlanetCoordinates.add(vector);
     return localPlanetCoordinates;
@@ -295,7 +297,9 @@ function generatePortals(sites: {x: number; y: number; id: string}[], planetsIDs
             const screenVector = new Vector3();
             screenVector.set(screenCoordinates.x, screenCoordinates.y, 0);
             const portalCoordinates = calculatePortalCoordinates(myPlanet, otherPlanet, ratio[screenID], screenVector);
+            const destCoordinates = calculatePortalCoordinates(otherPlanet, myPlanet, ratio[screenID], screenVector);
             const portal = new Portal(otherScreen, portalCoordinates, otherPlanetID);
+            portal.addDestiny(destCoordinates);
             for(const [sID, colorPlanet] of screenPlanets) {
                 if(otherScreen == sID) {
                     for(const colorPortal of colorPlanet.portals) {
