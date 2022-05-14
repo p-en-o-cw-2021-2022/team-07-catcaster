@@ -107,6 +107,7 @@
         <script type = "module" src = "screenPage.js">var exports = {};</script>
         <script src = "https://unpkg.com/peerjs@1.3.1/dist/peerjs.min.js">var exports = {};</script>
         <script type = "text/javascript">
+            import cats from './animationMain.js'
             (function () {
 
                 var lastPeerId = null;
@@ -178,6 +179,12 @@
                         });
                         // Connection closed
                         c.on('close', function () {
+                            let catID = c.peer.id;
+                            for(const cat of cats) {
+                                if (cat.id == catID) {
+                                    cat.planet.cats.delete(catID);
+                                }
+                            }
                             delete connections[c.peer];
                             status.innerHTML = onConnChange();
                         });
