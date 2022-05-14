@@ -17,6 +17,7 @@ let qrlocations: QRlocation[] = [];
 let tm: any;
 let it: any;
 const IDTimers: any = {};
+let mode: any = null;
 
 function ping(id: string) {
     if (tm === undefined) {
@@ -53,16 +54,14 @@ export function websocketEventHandlers(websocket: ws.Server) {
             const controllerid = database.getControllerIds();
             const screenid = database.getScreenIds();
             const id = <string>mes.id;
-
+            //Het id dat door de client wordt doorgestuurd moet reeds bestaan.
+            if (!database.doesIdExist(mes.id)) {
+                console.log('Received ID is not in the database, closing connection to client.');
+                ws.send(JSON.stringify({client : 'disconnect', id : mes.id}));
+            }
             switch (mes.client) {
             case 'screen':
                 console.log('Newly connected ID is from a screen.');
-
-                //Het id dat door de client wordt doorgestuurd moet reeds bestaan.
-                if (!database.doesIdExist(mes.id)) {
-                    console.log('Received ID is not in the database, closing connection to client.');
-                    ws.send(JSON.stringify({client : 'disconnect', id : mes.id}));
-                }
                 //start ping-pong process
                 it = setInterval(() => {
                     ws.send(JSON.stringify({client: '__ping__'}));
@@ -74,12 +73,6 @@ export function websocketEventHandlers(websocket: ws.Server) {
 
             case 'controller':
                 console.log('Newly connected ID is from a controller.');
-
-                //Het id dat door de client wordt doorgestuurd moet reeds bestaan.
-                if (!database.doesIdExist(mes.id)) {
-                    console.log('Received ID is not in the database, closing connection to client.');
-                    ws.send(JSON.stringify({client : 'disconnect', id : mes.id}));
-                }
 
                 websocket.clients.forEach(function(client) {
                     client.send(JSON.stringify({client: 'screenState', mode: 'Catcaster'}));
@@ -103,10 +96,7 @@ export function websocketEventHandlers(websocket: ws.Server) {
                 break;
 
             case 'multi-screen':
-                if (!database.doesIdExist(mes.id)) {
-                    console.log('Received ID is not in the database, closing connection to client.');
-                    ws.send(JSON.stringify({client : 'disconnect', id : mes.id}));
-                }
+                mode = 'multiscreen'
                 websocket.clients.forEach((client) => {
                     client.send(JSON.stringify({client : 'multi-screen'}));
                 });
@@ -114,11 +104,16 @@ export function websocketEventHandlers(websocket: ws.Server) {
                 break;
 
             case 'single-screen':
+                mode = 'singlescreen'
                 websocket.clients.forEach((client) => {
                     client.send(JSON.stringify({client : 'singleScreen'}));
                 });
                 break;
-
+            
+            case 'get-mode':
+                ws.send(JSON.stringify({client: 'mode', mode: mode}));
+                break;
+            
             case 'jump-message':
                 console.log('jumpmessage received.');
                 websocket.clients.forEach((client) => {
@@ -170,6 +165,7 @@ export function websocketEventHandlers(websocket: ws.Server) {
                 websocket.clients.forEach((client) => {
                     client.send(JSON.stringify({client : 'endgame'}));
                 });
+                mode = null;
                 break;
             case 'nbcontrollers':
                 const controllerids = database.getControllerIds();

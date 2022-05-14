@@ -1,18 +1,38 @@
+import { WebSocketMessage, Message } from "../controllerPage/controllerPage";
+
 const playButton = <HTMLButtonElement>document.getElementById('play-multi-screen');
 const deleteButton = <HTMLButtonElement>document.getElementById('delete-multi-screen');
+let mode: any = null;
 
 const url: string = 'wss' + window.location.href.substr(5);
 const websocket = new WebSocket(url);
 console.log('Starting Websocket connection...');
 
 websocket.onopen = () => {
+    const cid : string|null = getId();
+    websocket.send(JSON.stringify({id: cid}));
     console.log('Connection established.');
 };
 
+websocket.onmessage = (message:WebSocketMessage) => {
+    const mes = <Message>JSON.parse(message.data);
+    if (mes.client === 'mode'){
+        mode = mes.mode;
+    }
+    if (mes.client === 'disconnect'){
+        console.log('Illegal ID, removing websocket connection.');
+        websocket.close();
+        window.location.href = '/catcaster/error/';
+    }
+}
+
 playButton.addEventListener('click', function() {
     const cid : string|null = getId();
+    websocket.send(JSON.stringify({client: 'get-mode', id: cid}));
     websocket.send(JSON.stringify({client: 'join', id:cid}));
-    window.location.href = '/catcaster/controller/?id=' + cid + '&mode=multiscreen';
+    setTimeout(() => {
+        window.location.href = '/catcaster/controller/?id=' + cid + '&mode=' + mode;
+    }, 200)
 });
 
 deleteButton.addEventListener('click', function() {

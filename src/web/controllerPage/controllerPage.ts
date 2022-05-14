@@ -16,6 +16,7 @@ export interface Message {
     'id': string;
     'client': string;
     'catcol': Cat;
+    'mode': string;
 }
 
 export interface WebSocketMessage {
