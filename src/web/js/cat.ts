@@ -1,8 +1,10 @@
 import * as THREE from 'three';
-import { Euler, Scene, Vector3 } from 'three';
+import { Euler, MeshLambertMaterial, Scene, Vector3 } from 'three';
 import { Planet } from './planet';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
+import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry';
 import { Portal } from './portal';
+import { FontLoader } from 'three/examples/jsm/loaders/FontLoader';
 
 
 export class Cat {
@@ -17,11 +19,13 @@ export class Cat {
     yVel: number = 0;
     jump: boolean = false;
     planet: Planet;
-    sphere: THREE.SphereGeometry;
     mesh: THREE.Object3D | undefined;
     catPositionAngle: number[];
     color: THREE.ColorRepresentation | undefined;
+    textGeometry: TextGeometry | undefined;
     loader = new OBJLoader();
+    object3dGroup: THREE.Group;
+
 
 
     constructor(id: string, radius: number, planet: Planet, mass: number = 10) {
@@ -30,13 +34,16 @@ export class Cat {
         this.radius = radius;
         this.positionOnPlanet = new Vector3(0, 0, 0);
         this.planet = planet;
-        this.sphere = new THREE.SphereGeometry( 3, 32, 16 );
-        const color = this.generateColor(parseInt(id));
-        this.color = color;
-        const material = new THREE.MeshLambertMaterial( { color: color } ); // This should be taken in as a constructor argument, but might break things when that happens
-        this.mesh = new THREE.Mesh( this.sphere, material);
         this.catPositionAngle = [0,0];
+
+
+        const color = this.generateColor(parseInt(id));
+        const material = new THREE.MeshLambertMaterial( { color: color } ); // This should be taken in as a constructor argument, but might break things when that happens
         const scene = planet.scene;
+        this.object3dGroup = new THREE.Group();
+
+        const loader = new FontLoader();
+
         // scene.add( this.mesh );
         // load a resource
         this.loader.load(
@@ -51,9 +58,9 @@ export class Cat {
                     }
                 });
                 object.scale.copy(new THREE.Vector3(0.5, 0.5, 0.5));
-                this.mesh = object;
-
-                scene.add( object );
+                // this.mesh = object;
+                this.object3dGroup.add(object);
+                // scene.add( object );
 
             },
             // called when loading is in progresses
@@ -69,6 +76,34 @@ export class Cat {
 
             }
         );
+
+        loader.load( 'https://threejs.org/examples/fonts/helvetiker_regular.typeface.json', ( font ) => {
+
+            const textGeo:TextGeometry = new TextGeometry( id , {
+                font: font,
+                size: 80,
+                height: 5,
+                curveSegments: 12,
+                bevelEnabled: true,
+                bevelThickness: 1,
+                bevelSize: 8,
+                bevelOffset: 0,
+                bevelSegments: 5
+            } );
+
+            this.textGeometry = textGeo;
+            this.textGeometry.translate(0,0,0);
+            this.textGeometry.scale(0.2,0.2,0.2);
+            const material = new THREE.MeshLambertMaterial( { color: 'black' } ); // This should be taken in as a constructor argument, but might break things when that happens
+            const texMesh = new THREE.Mesh(this.textGeometry, material);
+            texMesh.lookAt(0,-1,1);
+            this.object3dGroup.add(texMesh);
+
+        } );
+
+        this.mesh = this.object3dGroup;
+        scene.add(this.mesh);
+
     }
 
 
