@@ -180,6 +180,13 @@ export function websocketEventHandlers(websocket: ws.Server) {
                     client.send(JSON.stringify({client : 'delcat', id: mes.id}));
                 });
                 database.removeID(mes.id);
+                if (database.getScreenIds.length === 0) {
+                    console.log('The game was ended.');
+                    websocket.clients.forEach((client) => {
+                        client.send(JSON.stringify({client : 'endgame'}));
+                    });
+                    mode = null;
+                }
                 break;
             }
         });
