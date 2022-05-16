@@ -179,7 +179,7 @@ export function websocketEventHandlers(websocket: ws.Server) {
                 websocket.clients.forEach((client) => {
                     client.send(JSON.stringify({client : 'delcat', id: mes.id}));
                 });
-                mode = null;
+                database.removeID(mes.id);
                 break;
             }
         });
