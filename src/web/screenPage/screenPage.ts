@@ -331,9 +331,15 @@ websocket.onmessage = (message:WebSocketMessage) => {
     if(mes.client === 'delcat') {
         for (let i=0; i< cats.length; i++) {
             if((cats[i]?.id === mes.id)) {
-                const planet = cats[i]?.planet;
-                planet?.cats.delete(mes.id);
-                cats.splice(i, 1);
+                const cat = cats[i];
+                if (cat !== undefined) {
+                    const planet = cats[i]?.planet;
+                    planet?.cats.delete(mes.id);
+                    if (cat.mesh !== undefined) {
+                        planet?.scene.remove(cat.mesh);
+                    }
+                    cats.splice(i, 1);
+                }
             }
         }
     }
