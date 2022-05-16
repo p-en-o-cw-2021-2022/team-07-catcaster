@@ -5,6 +5,7 @@ import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry';
 import { Portal } from './portal';
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader';
+import { text } from 'stream/consumers';
 
 
 export class Cat {
@@ -23,6 +24,7 @@ export class Cat {
     catPositionAngle: number[];
     color: THREE.ColorRepresentation | undefined;
     textGeometry: TextGeometry | undefined;
+    textMesh: THREE.Mesh | undefined;
     loader = new OBJLoader();
     object3dGroup: THREE.Group;
 
@@ -34,15 +36,8 @@ export class Cat {
         this.radius = radius;
         this.positionOnPlanet = new Vector3(0, 0, 0);
         this.planet = planet;
-        this.sphere = new THREE.SphereGeometry( 3, 32, 16 );
-        const color = this.generateColor(id);
-        this.color = color;
-        const material = new THREE.MeshLambertMaterial( { color: color } ); // This should be taken in as a constructor argument, but might break things when that happens
-        this.mesh = new THREE.Mesh( this.sphere, material);
         this.catPositionAngle = [0,0];
-
-
-        const color = this.generateColor(parseInt(id));
+        const color = this.generateColor(id);
         const material = new THREE.MeshLambertMaterial( { color: color } ); // This should be taken in as a constructor argument, but might break things when that happens
         const scene = planet.scene;
         this.object3dGroup = new THREE.Group();
@@ -84,25 +79,25 @@ export class Cat {
 
         loader.load( 'https://threejs.org/examples/fonts/helvetiker_regular.typeface.json', ( font ) => {
 
-            const textGeo:TextGeometry = new TextGeometry( id , {
+            const textGeo: TextGeometry = new TextGeometry( id , {
                 font: font,
-                size: 80,
+                size: 60,
                 height: 5,
                 curveSegments: 12,
-                bevelEnabled: true,
-                bevelThickness: 1,
+                bevelEnabled: false,
+                bevelThickness: 0.5,
                 bevelSize: 8,
                 bevelOffset: 0,
                 bevelSegments: 5
             } );
 
             this.textGeometry = textGeo;
-            this.textGeometry.translate(0,0,0);
-            this.textGeometry.scale(0.2,0.2,0.2);
-            const material = new THREE.MeshLambertMaterial( { color: 'black' } ); // This should be taken in as a constructor argument, but might break things when that happens
-            const texMesh = new THREE.Mesh(this.textGeometry, material);
-            texMesh.lookAt(0,-1,1);
-            this.object3dGroup.add(texMesh);
+            this.textGeometry.scale(0.1,0.1,0.1);
+            this.textGeometry.translate(-15,0,30);
+            this.textGeometry.rotateX(-Math.PI/2);
+            this.textMesh = new THREE.Mesh(this.textGeometry, new THREE.MeshLambertMaterial( { color: 'black' }));
+            this.object3dGroup.add(this.textMesh);
+
 
         } );
 
@@ -172,8 +167,11 @@ export class Cat {
         copyVector.applyAxisAngle(new Vector3(1, 0, 0), this.planet.beta);
 
         const absPosition = copyVector.add(this.planet.coordinates);
+
         this.mesh!.position.copy(copyVector);
         this.mesh!.rotation.copy(this.planet.object3dGroup.rotation.clone());
+        // this.textMesh?.rotation.copy(this.planet.object3dGroup.rotation.clone());
+
         this.mesh!.rotateOnAxis(new Vector3(1,0,0), Math.PI/2);
 
     }
