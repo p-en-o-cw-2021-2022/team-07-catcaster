@@ -5,7 +5,15 @@ const id = <HTMLDivElement>document.getElementById('sender-id');
 const screenId = <HTMLDivElement>document.getElementById('receiver-id');
 const connectiondiv = <HTMLDivElement>document.getElementById('connection-div');
 const debug_controller = <HTMLButtonElement>document.getElementById('debug-info-controller');
+const leaveButton = <HTMLButtonElement>document.getElementById('leave-button');
+const endButton = <HTMLButtonElement>document.getElementById('end-button');
 const controller_data =  <HTMLElement>document.getElementById('data');
+
+leaveButton.addEventListener('click',  function() {
+    window.close();
+    // werkt voor een of andere reden niet
+});
+
 
 debug_controller.addEventListener('click',  function() {
     controller_data.hidden = !controller_data.hidden;
@@ -40,12 +48,16 @@ function eventHandlersController() {
     let websocket = new WebSocket(url);
     console.log('Starting Websocket connection...');
 
-    function delcat() {
+
+    window.onunload = () => {
         websocket.send(JSON.stringify({client: 'delcat', id: id.innerHTML}));
-    }
+    };
 
-    window.onunload = delcat;
 
+    endButton.onclick = () => {
+        websocket.send(JSON.stringify({client: 'endgame'}))
+    };
+    
     websocket.onopen = () => {
         console.log('Connection established.');
         websocket.send(JSON.stringify({client: 'controller', id: id.innerHTML}));

@@ -1,6 +1,7 @@
 import { WebSocketMessage, Message } from "../controllerPage/controllerPage";
 
 const playButton = <HTMLButtonElement>document.getElementById('play-multi-screen');
+const rejoinButton = <HTMLButtonElement>document.getElementById('re-join');
 const deleteButton = <HTMLButtonElement>document.getElementById('delete-multi-screen');
 let mode: any = null;
 
@@ -33,6 +34,11 @@ playButton.addEventListener('click', function() {
     setTimeout(() => {
         window.location.href = '/catcaster/controller/?id=' + cid + '&mode=' + mode;
     }, 200)
+});
+
+rejoinButton.addEventListener('click', function() {
+    const previousid = prompt('What was your ID?');
+    window.location.href = '/catcaster/controller/?id=' + previousid;
 });
 
 deleteButton.addEventListener('click', function() {
