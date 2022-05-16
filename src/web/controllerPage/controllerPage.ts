@@ -42,10 +42,8 @@ function eventHandlersController() {
 
     function delcat() {
         websocket.send(JSON.stringify({client: 'delcat', id: id.innerHTML}));
-        return 'Do you really want to close?';
     }
 
-    window.onbeforeunload = delcat;
     window.onunload = delcat;
 
     websocket.onopen = () => {
