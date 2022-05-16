@@ -208,7 +208,7 @@ function animate() {
     updatePlanets();
     renderer.render( scene, camera );
     for(const cat of cats) {
-        if(cat != undefined) {
+        if(cat !== undefined) {
             setDebugInfo(cat);
         }
     }
@@ -255,7 +255,7 @@ function animate() {
 function update2(e: DeviceOrientationEvent) {
     for (let i = 0, len = cats.length; i < len; i++) {
         const cat = cats[i];
-        if(cat != undefined) {
+        if(cat !== undefined) {
             cat.updateForce('x', e.gamma!);
             cat.updateForce('y', -e.beta!);
         }
