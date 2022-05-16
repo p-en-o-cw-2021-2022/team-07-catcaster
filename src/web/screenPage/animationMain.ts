@@ -11,10 +11,17 @@ import { myId, sendMessage } from './screenPage.js';
 
 // Initialize animation scene and camera
 const scene = new THREE.Scene();
-const light = new THREE.AmbientLight(); // soft white light
+const light1 = new THREE.PointLight();
+const light2 = new THREE.PointLight();
+const light3 = new THREE.PointLight();
 const sceneHeight = 500;
 const aspectRatio = window.innerWidth/window.innerHeight;
-scene.add( light );
+scene.add( light1 );
+scene.add( light2 );
+scene.add( light3 );
+light1.position.set(0, -sceneHeight/2, 100);
+light2.position.set(-window.innerWidth/2, sceneHeight/2, 100);
+light3.position.set(window.innerWidth/2, sceneHeight/2, 100);
 scene.background = new THREE.Color('white');
 // scene.background = new THREE.Color(0x919bab);
 // const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, -1000, 1000 );
@@ -207,7 +214,7 @@ function animate() {
     updatePlanets();
     renderer.render( scene, camera );
     for(const cat of cats) {
-        if(cat != undefined) {
+        if(cat !== undefined) {
             setDebugInfo(cat);
         }
     }
@@ -254,7 +261,7 @@ function animate() {
 function update2(e: DeviceOrientationEvent) {
     for (let i = 0, len = cats.length; i < len; i++) {
         const cat = cats[i];
-        if(cat != undefined) {
+        if(cat !== undefined) {
             cat.updateForce('x', e.gamma!);
             cat.updateForce('y', -e.beta!);
         }
