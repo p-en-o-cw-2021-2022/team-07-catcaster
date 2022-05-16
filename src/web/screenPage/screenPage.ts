@@ -328,6 +328,18 @@ websocket.onmessage = (message:WebSocketMessage) => {
             screenstate.innerHTML = 'Free';
         }
     }
+    if(mes.client === 'delcat') {
+        for (let i=0; i< cats.length; i++) {
+            if((cats[i]?.id === mes.id)) {
+                console.log('deleting cat', cats.length);
+                const planet = cats[i]?.planet;
+                planet?.cats.delete(mes.id);
+                console.info(planet?.cats);
+                cats.splice(i, 1);
+                console.log(cats.length);
+            }
+        }
+    }
 };
 
 websocket.onclose = () => {

@@ -175,8 +175,13 @@ export function websocketEventHandlers(websocket: ws.Server) {
             case '__pong__':
                 pong(tm, id);
                 break;
+            case 'delcat':
+                websocket.clients.forEach((client) => {
+                    client.send(JSON.stringify({client : 'delcat', id: mes.id}));
+                });
+                mode = null;
+                break;
             }
-
         });
     });
 

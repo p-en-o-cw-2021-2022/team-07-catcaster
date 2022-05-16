@@ -40,6 +40,11 @@ function eventHandlersController() {
     let websocket = new WebSocket(url);
     console.log('Starting Websocket connection...');
 
+    window.onbeforeunload = function () {
+        websocket.send(JSON.stringify({client: 'delcat', id: id.innerHTML}));
+        return 'Do you really want to close?';
+    };
+
     websocket.onopen = () => {
         console.log('Connection established.');
         websocket.send(JSON.stringify({client: 'controller', id: id.innerHTML}));
@@ -88,13 +93,10 @@ function eventHandlersController() {
             console.log('Reconnection failed, terminating...'); //ADD TO HTML PAGE !!!!
         }
     };
-
-    window.addEventListener('beforeunload', function() {
-        websocket.send(JSON.stringify({client: 'delcat', id: id.innerHTML}));
-    });
 }
 
 if (getIdController() !== null) {
     id.innerHTML = <string>getIdController();
 }
+
 eventHandlersController();
