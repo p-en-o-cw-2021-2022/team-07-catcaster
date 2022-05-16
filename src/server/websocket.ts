@@ -179,14 +179,6 @@ export function websocketEventHandlers(websocket: ws.Server) {
                 websocket.clients.forEach((client) => {
                     client.send(JSON.stringify({client : 'delcat', id: mes.id}));
                 });
-                database.removeID(mes.id);
-                if (database.getControllerIds.length === 0) {
-                    console.log('The game was ended.');
-                    websocket.clients.forEach((client) => {
-                        client.send(JSON.stringify({client : 'endgame'}));
-                    });
-                    mode = null;
-                }
                 break;
             }
         });

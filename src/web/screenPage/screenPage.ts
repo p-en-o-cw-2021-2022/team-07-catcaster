@@ -78,73 +78,82 @@ function getPortalCoordinates(myPlanet: Planet, otherPlanet: Planet): Vector3 {
 }
 
 function createHTML(controllerid: string) {
-    const but = document.createElement('button');
-    catsdata.appendChild(but);
-    but.type = 'button';
-    but.id = controllerid + '-info';
-    but.innerHTML = 'Controller: ' + controllerid;
+    const catinfo = <HTMLButtonElement>document.getElementById(controllerid + '-info');
+    const catdiv = <HTMLDivElement>document.getElementById(controllerid);
+    if(catinfo != null && catdiv != null){
+        catinfo.hidden = false;
+        catinfo.disabled = false;
+        catdiv.hidden = true;
+    }
+    else {
+        const but = document.createElement('button');
+        catsdata.appendChild(but);
+        but.type = 'button';
+        but.id = controllerid + '-info';
+        but.innerHTML = 'Controller: ' + controllerid;
 
-    const div = document.createElement('div');
-    catsdata.appendChild(div);
-    div.id = controllerid;
+        const div = document.createElement('div');
+        catsdata.appendChild(div);
+        div.id = controllerid;
 
-    const p1 = document.createElement('p');
-    p1.innerHTML = 'X-force: ';
-    div.appendChild(p1);
-    const span1 = document.createElement('span');
-    p1.appendChild(span1);
-    span1.id = controllerid + '-xF';
+        const p1 = document.createElement('p');
+        p1.innerHTML = 'X-force: ';
+        div.appendChild(p1);
+        const span1 = document.createElement('span');
+        p1.appendChild(span1);
+        span1.id = controllerid + '-xF';
 
-    const p2 = document.createElement('p');
-    p2.innerHTML = 'Y-force: ';
-    div.appendChild(p2);
-    const span2 = document.createElement('span');
-    p2.appendChild(span2);
-    span2.id = controllerid + '-yF';
+        const p2 = document.createElement('p');
+        p2.innerHTML = 'Y-force: ';
+        div.appendChild(p2);
+        const span2 = document.createElement('span');
+        p2.appendChild(span2);
+        span2.id = controllerid + '-yF';
 
-    const p3 = document.createElement('p');
-    p3.innerHTML = 'Jump: ';
-    div.appendChild(p3);
-    const span3 = document.createElement('span');
-    p3.appendChild(span3);
-    span3.id = controllerid + '-Jump';
+        const p3 = document.createElement('p');
+        p3.innerHTML = 'Jump: ';
+        div.appendChild(p3);
+        const span3 = document.createElement('span');
+        p3.appendChild(span3);
+        span3.id = controllerid + '-Jump';
 
-    const p4 = document.createElement('p');
-    p4.innerHTML = 'X-coord: ';
-    div.appendChild(p4);
-    const span4 = document.createElement('span');
-    p4.appendChild(span4);
-    span4.id = controllerid + '-xP';
+        const p4 = document.createElement('p');
+        p4.innerHTML = 'X-coord: ';
+        div.appendChild(p4);
+        const span4 = document.createElement('span');
+        p4.appendChild(span4);
+        span4.id = controllerid + '-xP';
 
-    const p5 = document.createElement('p');
-    p5.innerHTML = 'Y-coord: ';
-    div.appendChild(p5);
-    const span5 = document.createElement('span');
-    p5.appendChild(span5);
-    span5.id = controllerid + '-yP';
+        const p5 = document.createElement('p');
+        p5.innerHTML = 'Y-coord: ';
+        div.appendChild(p5);
+        const span5 = document.createElement('span');
+        p5.appendChild(span5);
+        span5.id = controllerid + '-yP';
 
-    const p6 = document.createElement('p');
-    p6.innerHTML = 'Beta-angle: ';
-    div.appendChild(p6);
-    const span6 = document.createElement('span');
-    p6.appendChild(span6);
-    span6.id = controllerid + '-beta';
+        const p6 = document.createElement('p');
+        p6.innerHTML = 'Beta-angle: ';
+        div.appendChild(p6);
+        const span6 = document.createElement('span');
+        p6.appendChild(span6);
+        span6.id = controllerid + '-beta';
 
-    const p7 = document.createElement('p');
-    p7.innerHTML = 'Gamma-angle: ';
-    div.appendChild(p7);
-    const span7 = document.createElement('span');
-    p7.appendChild(span7);
-    span7.id = controllerid + '-gamma';
+        const p7 = document.createElement('p');
+        p7.innerHTML = 'Gamma-angle: ';
+        div.appendChild(p7);
+        const span7 = document.createElement('span');
+        p7.appendChild(span7);
+        span7.id = controllerid + '-gamma';
 
-    div.hidden = true;
+        div.hidden = true;
 
-    but.onclick =  function() {
+        but.onclick =  function() {
 
-        div.hidden = !div.hidden;
+            div.hidden = !div.hidden;
 
-    };
-    but.disabled = true;
+        };
+        but.disabled = true;
+    }
 }
 
 export function sendMessage(mesclient: string, mesdata: (string | number | Cat)[]) {
@@ -329,10 +338,13 @@ websocket.onmessage = (message:WebSocketMessage) => {
         }
     }
     if(mes.client === 'delcat') {
+        const catinfo = <HTMLButtonElement>document.getElementById(mes.id + '-info');
+        const catdiv = <HTMLDivElement>document.getElementById(mes.id);
+        catinfo.hidden = true;
+        catdiv.hidden = true;
         for (let i=0; i< cats.length; i++) {
-            if((cats[i]?.id === mes.id)) {
                 const cat = cats[i];
-                if (cat !== undefined) {
+                if ((cat !== undefined) && (cats[i]?.id === mes.id)) {
                     const planet = cats[i]?.planet;
                     planet?.cats.delete(mes.id);
                     if (cat.mesh !== undefined) {
@@ -340,7 +352,6 @@ websocket.onmessage = (message:WebSocketMessage) => {
                     }
                     cats[i] = undefined;
                 }
-            }
         }
     }
 };
