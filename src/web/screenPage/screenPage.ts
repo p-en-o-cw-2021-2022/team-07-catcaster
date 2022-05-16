@@ -149,8 +149,22 @@ function createHTML(controllerid: string) {
 
 export function sendMessage(mesclient: string, mesdata: (string | number | Cat)[]) {
     console.log('going to jump');
-    websocket.send(JSON.stringify({client : mesclient, data : mesdata}));
+    websocket.send(JSON.stringify({client : mesclient, data : mesdata, id: myId.innerHTML}));
     console.log('jumped here');
+}
+
+function colorCreation(id: string): THREE.ColorRepresentation | undefined {
+    let hash: number = 5381;
+
+    for (let i = 0; i < id.length; i++) {
+        hash = ((hash << 5) + hash) + id.charCodeAt(i); /* hash * 33 + c */
+    }
+
+    const r = (hash & 0xFF0000) >> 16;
+    const g = (hash & 0x00FF00) >> 8;
+    const b = hash & 0x0000FF;
+
+    return '#' + ('0' + r.toString(16)).substr(-2) + ('0' + g.toString(16)).substr(-2) + ('0' + b.toString(16)).substr(-2);
 }
 
 function randomColorCreation(id: number = Math.floor((Math.random() * 1000000))): THREE.ColorRepresentation | undefined {
@@ -219,7 +233,9 @@ websocket.onmessage = (message:WebSocketMessage) => {
                 const neighborID = Number(neighborToAdd);
                 const neighbor = getPlanet(neighborID);
                 const portalCoordinates = getPortalCoordinates(planet, neighbor);
+                const destCoordinates = getPortalCoordinates(neighbor, planet);
                 const portal = new Portal(myId.innerHTML, portalCoordinates, neighborID);
+                portal.addDestiny(destCoordinates);
                 let randomColor = randomColorCreation();
                 for(const planet of allPlanets) {
                     if(planet.id == neighborID) {
@@ -243,7 +259,7 @@ websocket.onmessage = (message:WebSocketMessage) => {
             console.log('TIMEOUT ENDED: ', timeout);
             createHTML(latestControllerID!);
             const catinfo = <HTMLButtonElement>document.getElementById(latestControllerID! + '-info');
-            catinfo.style.backgroundColor = randomColorCreation(parseInt(latestControllerID!))!.toString();
+            catinfo.style.backgroundColor = colorCreation(latestControllerID!)!.toString();
             conAdd();
             const plan = allPlanets[Math.floor(Math.random() * allPlanets.length)];
             if(mes.joins[0] === myId.innerHTML) {
@@ -252,7 +268,7 @@ websocket.onmessage = (message:WebSocketMessage) => {
                 catinfo.disabled = false;
                 plan.setCat(cat);
                 cats.push(cat);
-                websocket.send(JSON.stringify({client: 'catColor', catcol: cat}));
+                websocket.send(JSON.stringify({client: 'catColor', catcol: cat, id: myId.innerHTML}));
                 console.log('Cat added wih id: ' + mes.joins[1]);
             } else {
                 cats.push(undefined);
@@ -296,6 +312,7 @@ websocket.onmessage = (message:WebSocketMessage) => {
             for(const fakePortal of fakePlanet.portals) {
                 const coords: Vector3 = new Vector3(fakePortal.myCoordinates.x, fakePortal.myCoordinates.y, 0);
                 const portal = new Portal(fakePortal.otherScreen, coords, fakePortal.otherPlanetID);
+                portal.addDestiny(fakePortal.destCoordinates);
                 portal.addColor(fakePortal.color);
                 planet.addPortal(portal);
             }

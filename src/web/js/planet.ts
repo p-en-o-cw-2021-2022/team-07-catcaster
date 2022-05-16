@@ -42,6 +42,14 @@ export class Planet {
     addPortal(portal: Portal) {
         const color = portal.color;
         this.portals.push(portal);
+        const points = [];
+        points.push(portal.myCoordinates);
+        points.push(portal.destCoordinates);
+        const material = new THREE.LineBasicMaterial({color: color});
+        const geometry = new THREE.BufferGeometry().setFromPoints(points);
+        const line = new THREE.Line(geometry, material);
+        this.scene.add(line);
+        line.position.add(new Vector3(0,0,-1));
         // Coords need to be cloned because Vector3 methods are in place
         const planetCoords = this.coordinates.clone();
         const portalCoords = portal.myCoordinates.clone();
