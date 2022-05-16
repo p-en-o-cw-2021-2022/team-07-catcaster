@@ -40,10 +40,13 @@ function eventHandlersController() {
     let websocket = new WebSocket(url);
     console.log('Starting Websocket connection...');
 
-    window.onbeforeunload = function () {
+    function delcat() {
         websocket.send(JSON.stringify({client: 'delcat', id: id.innerHTML}));
         return 'Do you really want to close?';
-    };
+    }
+
+    window.onbeforeunload = delcat;
+    window.onunload = delcat;
 
     websocket.onopen = () => {
         console.log('Connection established.');
