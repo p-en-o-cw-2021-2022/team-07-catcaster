@@ -338,7 +338,7 @@ websocket.onmessage = (message:WebSocketMessage) => {
                     if (cat.mesh !== undefined) {
                         planet?.scene.remove(cat.mesh);
                     }
-                    cats.splice(i, 1);
+                    cats[i] = undefined;
                 }
             }
         }
