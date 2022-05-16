@@ -39,9 +39,28 @@ export class Cat {
         const scene = planet.scene;
         // scene.add( this.mesh );
         // load a resource
+        let rnd = Math.floor((Math.random() * 4));
+        if(rnd == 4){
+            rnd = 3;
+        }
+        const catsobj = ['cat.obj','cat2.obj','cat3.obj','cat4.obj'];
+        let obj = catsobj[rnd];
+        let size = 0.05;
+        if(rnd == 0){
+            size = 0.05;
+        }
+        if(rnd == 1){
+            size = 0.5;
+        }
+        if(rnd == 2){
+            size = 0.5;
+        }
+        if(rnd == 3){
+            size = 0.4;
+        }
         this.loader.load(
             // resource URL
-            'cat2.obj',
+            obj,
             // called when resource is loaded
             ( object ) => {
                 console.log('Object is loaded');
@@ -50,7 +69,7 @@ export class Cat {
                         child.material = material;
                     }
                 });
-                object.scale.copy(new THREE.Vector3(0.5, 0.5, 0.5));
+                object.scale.copy(new THREE.Vector3(size, size, size));
                 this.mesh = object;
 
                 scene.add( object );
