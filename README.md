@@ -38,3 +38,6 @@ In cmd of terminal (dus niet WSL!):
 2. Run: `node dist/server/index.js`
 #### 3
 Volg terug de vorige stappen in de juiste volgorde.
+
+## MIT License
+
