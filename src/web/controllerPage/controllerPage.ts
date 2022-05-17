@@ -74,11 +74,12 @@ function eventHandlersController() {
     websocket.onmessage = (message:WebSocketMessage) => {
         const mes = <Message>JSON.parse(message.data);
         console.log('received message from : ', mes.id, '  |  client is: ', mes.client);
+        /*
         if(mes.client === 'disconnect' && mes.id === id.innerHTML) {
             console.log('Illegal ID, removing websocket connection.');
             websocket.close();
             window.location.href = '/catcaster/error/';
-        }
+        }*/
         if (mes.client === 'connect') {
             connectiondiv.innerHTML = 'connect';
         }
@@ -101,18 +102,8 @@ function eventHandlersController() {
     };
 
     websocket.onclose = () => {
-        websocket.send(JSON.stringify({client: 'disconnected', id: id.innerHTML}));
         console.log('Connection lost, attempting to reconnect...'); //ADD TO HTML PAGE !!!!
-        let tries = 0;
-        while (websocket.readyState === 3 && tries <= 10) {
-            websocket = new WebSocket(url);
-            tries += 1;
-        }
-        if (websocket.readyState === 1) {
-            console.log('Reconnected succesfully.'); //ADD TO HTML PAGE !!!!
-        } else {
-            console.log('Reconnection failed, terminating...'); //ADD TO HTML PAGE !!!!
-        }
+        window.location.href = '/catcaster/error/';
     };
 }
 
