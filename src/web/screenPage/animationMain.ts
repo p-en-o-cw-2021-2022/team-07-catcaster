@@ -46,7 +46,7 @@ camera.rotateOnAxis(new Vector3(1,0,0), Math.PI/4);
 // Initialize renderer
 const renderer = new THREE.WebGLRenderer();
 
-const scaleFactor = 1; // Scale factor for the resolution of window
+const scaleFactor = 0.75; // Scale factor for the resolution of window
 renderer.setSize( window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(window.devicePixelRatio * scaleFactor);
 renderer.domElement.style.zIndex = '-1';
