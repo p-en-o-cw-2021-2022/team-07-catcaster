@@ -25,14 +25,14 @@ function ping(id: string, ws: ws.WebSocket) {
             database.removeID(id);
             console.log('connection with ID: ' + id + ' timed out.\r\n removing ID from database...');
             ws.close(1000, 'connection timed out.');
-        }, 10000);
+        }, 600000);
         IDTimers[id] = tm;
     } else if (database.doesIdExist(id) && tm._destroyed === true) {
         tm = setTimeout(function () {
             database.removeID(id);
             console.log('connection with ID: ' + id + ' timed out.\r\n removing ID from database...');
             ws.close(1000, 'connection timed out.');
-        }, 10000);
+        }, 600000);
         IDTimers[id] = tm;
     }
     return tm;
@@ -69,7 +69,7 @@ export function websocketEventHandlers(websocket: ws.Server) {
                 it = setInterval(() => {
                     ws.send(JSON.stringify({client: '__ping__'}));
                     tm = ping(id, ws);
-                }, 5000);
+                }, 20000);
 
                 //ws.send(JSON.stringify({type: 'ControllerID', id: mes.id}));
                 break;
@@ -94,7 +94,7 @@ export function websocketEventHandlers(websocket: ws.Server) {
                 it = setInterval(() => {
                     ws.send(JSON.stringify({client: '__ping__'}));
                     tm = ping(id, ws);
-                }, 5000);
+                }, 20000);
 
                 break;
 
