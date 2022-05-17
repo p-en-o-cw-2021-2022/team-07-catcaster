@@ -37,9 +37,13 @@ playButton.addEventListener('click', function() {
 });
 
 rejoinButton.addEventListener('click', function() {
+    const cid : string|null = getId();
+    websocket.send(JSON.stringify({client: 'removeID', id: cid}));
     const previousid = prompt('What was your ID?');
     websocket.send(JSON.stringify({client: 'get-mode', id: previousid}));
-    websocket.send(JSON.stringify({client: 'join', id:previousid}));
+    setTimeout(() => {
+        websocket.send(JSON.stringify({client: 'join', id: previousid}));
+    }, 200)
     setTimeout(() => {
         window.location.href = '/catcaster/controller/?id=' + previousid + '&mode=' + mode;
     }, 200)

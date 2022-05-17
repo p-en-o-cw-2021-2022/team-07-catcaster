@@ -168,6 +168,10 @@ export function websocketEventHandlers(websocket: ws.Server) {
                 });
                 mode = null;
                 break;
+            case 'removeID':
+                database.removeID(mes.id);
+                console.log('current controllers', database.getControllerIds());
+                break;
             case 'nbcontrollers':
                 const controllerids = database.getControllerIds();
                 ws.send(JSON.stringify({client: controllerids}));
