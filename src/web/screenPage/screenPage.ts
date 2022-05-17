@@ -262,27 +262,22 @@ websocket.onmessage = (message:WebSocketMessage) => {
         }
     }
     if(mes.client === 'addCat') {
-        console.log('START TIMEOUT!');
-        const timeout = 1000;
-        setTimeout( () => {
-            console.log('TIMEOUT ENDED: ', timeout);
-            createHTML(latestControllerID!);
-            const catinfo = <HTMLButtonElement>document.getElementById(latestControllerID! + '-info');
-            catinfo.style.backgroundColor = colorCreation(latestControllerID!)!.toString();
-            conAdd();
-            const plan = allPlanets[Math.floor(Math.random() * allPlanets.length)];
-            if(mes.joins[0] === myId.innerHTML) {
-                const cat: Cat = new Cat(latestControllerID!, plan.radius, plan);
-                console.log(allPlanets);
-                catinfo.disabled = false;
-                plan.setCat(cat);
-                cats.push(cat);
-                websocket.send(JSON.stringify({client: 'catColor', catcol: cat, id: myId.innerHTML}));
-                console.log('Cat added wih id: ' + mes.joins[1]);
-            } else {
-                cats.push(undefined);
-            }
-        }, timeout);
+        const catid = mes.joins[1];
+        createHTML(catid!);
+        const catinfo = <HTMLButtonElement>document.getElementById(catid! + '-info');
+        catinfo.style.backgroundColor = colorCreation(catid!)!.toString();
+        conAdd();
+        const plan = allPlanets[Math.floor(Math.random() * allPlanets.length)];
+        if(mes.joins[0] === myId.innerHTML) {
+            const cat = new Cat(catid!, plan.radius, plan);
+            console.log(allPlanets);
+            catinfo.disabled = false;
+            plan.setCat(cat);
+            cats.push(cat);
+            websocket.send(JSON.stringify({client: 'catColor', catcol: cat, id: myId.innerHTML}));
+        } else {
+            cats.push(undefined);
+        }
     }
     if(mes.client === 'jumpmessage') {
         const [otherScreen, otherPlanetID, otherFakeCat, catIndex] = mes.jdata;

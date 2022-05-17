@@ -22,9 +22,10 @@ export class Cat {
     catPositionAngle: number[];
     color: THREE.ColorRepresentation | undefined;
     loader = new OBJLoader();
+    object: string;
 
 
-    constructor(id: string, radius: number, planet: Planet, mass: number = 10) {
+    constructor(id: string, radius: number, planet: Planet, mass: number = 10, object: string = '') {
         this.id = id;
         this.mass = mass;
         this.radius = radius;
@@ -37,17 +38,13 @@ export class Cat {
         this.mesh = new THREE.Mesh( this.sphere, material);
         this.catPositionAngle = [0,0];
         const scene = planet.scene;
-        // scene.add( this.mesh );
         // load a resource
-        let rnd = Math.floor((Math.random() * 4));
-        if(rnd == 4){
-            rnd = 3;
-        }
+        let rnd = id.charCodeAt(0) % 4;
         const catsobj = ['cat.obj','cat2.obj','cat3.obj','cat4.obj'];
-        let obj = catsobj[rnd];
+        const obj = catsobj[rnd];
         let size = 0.05;
         if(rnd == 0){
-            size = 0.05;
+            size = 0.075;
         }
         if(rnd == 1){
             size = 0.5;
@@ -58,6 +55,7 @@ export class Cat {
         if(rnd == 3){
             size = 0.4;
         }
+        this.object = obj;
         this.loader.load(
             // resource URL
             obj,
@@ -143,10 +141,6 @@ export class Cat {
 
         const copyVector = this.positionOnPlanet.clone();
 
-        // const normalVectorY = new Vector3(0,1,0);
-        // copyVector.applyAxisAngle(new Vector3(0,1,0), this.planet.gamma);
-        // copyVector.applyAxisAngle(new Vector3(1,0,0), this.planet.beta);
-
         copyVector.applyAxisAngle(new Vector3(0, 1, 0), this.planet.gamma);
         copyVector.applyAxisAngle(new Vector3(1, 0, 0), this.planet.beta);
 
@@ -159,10 +153,6 @@ export class Cat {
 
     // Check if the given position is on planet
     isValidPos(vector: Vector3): boolean {
-        // vector.distanceTo(new Vector3(0,0,0)) <= this.planet.radius;
-        // const xCond = Math.abs(vector.x) <= this.planet.radius;
-        // const yCond = Math.abs(vector.y) <= this.planet.radius;
-        // const zCond = Math.abs(vector.z) <= this.planet.radius * Math.sin(this.planet.MAX_ANGLE);
 
         return vector.distanceTo(new Vector3(0, 0, 0)) <= this.planet.radius;
     }
@@ -182,33 +172,3 @@ export class Cat {
         return '#' + ('0' + r.toString(16)).substr(-2) + ('0' + g.toString(16)).substr(-2) + ('0' + b.toString(16)).substr(-2);
     }
 }
-
-
-
-
-// calcFriction(axis: string, force: number):number {
-
-//     let angle = 0;
-//     let vel = 0;
-//     switch(axis) {
-//     case 'x':
-//         angle = this.planet.gamma;
-//         vel = this.xVel;
-//         break;
-//     case 'y':
-//         angle = this.planet.beta;
-//         vel = this.yVel;
-//         break;
-//     case 'z':
-//         angle = this.planet.alpha;
-//         break;
-//     }
-
-//     if ( vel < 0) {
-//         return this.planet.friction * -this.planet.g * Math.cos(angle) * this.mass;
-//     } else if ( vel > 0) {
-//         return -this.planet.friction * -this.planet.g * Math.cos(angle) * this.mass;
-//     } else {
-//         return 0;
-//     }
-// }
