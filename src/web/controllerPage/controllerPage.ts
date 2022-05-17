@@ -5,7 +5,15 @@ const id = <HTMLDivElement>document.getElementById('sender-id');
 const screenId = <HTMLDivElement>document.getElementById('receiver-id');
 const connectiondiv = <HTMLDivElement>document.getElementById('connection-div');
 const debug_controller = <HTMLButtonElement>document.getElementById('debug-info-controller');
+// const leaveButton = <HTMLButtonElement>document.getElementById('leave-button');
+const endButton = <HTMLButtonElement>document.getElementById('end-button');
 const controller_data =  <HTMLElement>document.getElementById('data');
+
+// leaveButton.addEventListener('click',  function() {
+//     window.close();
+//     // werkt voor een of andere reden niet
+// });
+
 
 debug_controller.addEventListener('click',  function() {
     controller_data.hidden = !controller_data.hidden;
@@ -34,12 +42,30 @@ function getIdController(): string | null {
     }
 }
 
+
 function eventHandlersController() {
     const url = 'wss' + window.location.href.substr(5);
 
     let websocket = new WebSocket(url);
     console.log('Starting Websocket connection...');
 
+    addEventListener('visibilitychange', () => {
+        websocket.send(JSON.stringify({client: 'delcat', id: id.innerHTML}));
+    });
+    // window.onbeforeunload = () => {
+    //     const answer = prompt('Are yu sure? y/n');
+    //     if(answer == 'y'){
+    //         websocket.send(JSON.stringify({client: 'delcat', id: id.innerHTML}));
+    //     }
+    //     return 'Are yu sure? y/n';
+    // };
+
+
+
+    endButton.onclick = () => {
+        websocket.send(JSON.stringify({client: 'endgame'}))
+    };
+    
     websocket.onopen = () => {
         console.log('Connection established.');
         websocket.send(JSON.stringify({client: 'controller', id: id.innerHTML}));
@@ -93,4 +119,5 @@ function eventHandlersController() {
 if (getIdController() !== null) {
     id.innerHTML = <string>getIdController();
 }
+
 eventHandlersController();

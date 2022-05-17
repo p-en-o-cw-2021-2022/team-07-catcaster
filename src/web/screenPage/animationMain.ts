@@ -50,7 +50,6 @@ if (document.getElementById('Game') !== null) {
     document.getElementById('Game')?.appendChild( renderer.domElement );
 }
 
-
 // const planet = new Planet(scene, 0, 20, 0, [0,0,0]);
 
 //-------------------------------------------------------------------------------------

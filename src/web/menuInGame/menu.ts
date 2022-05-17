@@ -1,6 +1,7 @@
 import { WebSocketMessage, Message } from "../controllerPage/controllerPage";
 
 const playButton = <HTMLButtonElement>document.getElementById('play-multi-screen');
+const rejoinButton = <HTMLButtonElement>document.getElementById('re-join');
 const deleteButton = <HTMLButtonElement>document.getElementById('delete-multi-screen');
 let mode: any = null;
 
@@ -32,6 +33,15 @@ playButton.addEventListener('click', function() {
     websocket.send(JSON.stringify({client: 'join', id:cid}));
     setTimeout(() => {
         window.location.href = '/catcaster/controller/?id=' + cid + '&mode=' + mode;
+    }, 200)
+});
+
+rejoinButton.addEventListener('click', function() {
+    const previousid = prompt('What was your ID?');
+    websocket.send(JSON.stringify({client: 'get-mode', id: previousid}));
+    websocket.send(JSON.stringify({client: 'join', id:previousid}));
+    setTimeout(() => {
+        window.location.href = '/catcaster/controller/?id=' + previousid + '&mode=' + mode;
     }, 200)
 });
 

@@ -121,18 +121,19 @@ export function websocketEventHandlers(websocket: ws.Server) {
                 });
                 break;
             case 'catColor':
-                console.log('catColor received.');
-                console.log(mes.catcol.id, mes.catcol.color);
-                websocket.clients.forEach((client) => {
-                    client.send(JSON.stringify({client : 'catColor', id : 'k', catcol : mes.catcol}));
-                });
+                setTimeout(() => {                
+                    console.log('catColor received.');
+                    console.log(mes.catcol.id, mes.catcol.color);
+                    websocket.clients.forEach((client) => {
+                        client.send(JSON.stringify({client : 'catColor', id : 'k', catcol : mes.catcol}));
+                    });
+                } , 500);
                 break;
             case 'join':
                 const screens = database.getScreenIds();
                 const screen = screens[Math.floor(Math.random() * screens.length)];
-                const nbCont = database.getControllerIds().length;
                 websocket.clients.forEach((client) => {
-                    client.send(JSON.stringify({client : 'addCat', joins : [screen, nbCont.toString()]}));
+                    client.send(JSON.stringify({client : 'addCat', joins : [screen, mes.id]}));
                 });
                 break;
 
@@ -175,8 +176,12 @@ export function websocketEventHandlers(websocket: ws.Server) {
             case '__pong__':
                 pong(tm, id);
                 break;
+            case 'delcat':
+                websocket.clients.forEach((client) => {
+                    client.send(JSON.stringify({client : 'delcat', id: mes.id}));
+                });
+                break;
             }
-
         });
     });
 
