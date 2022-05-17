@@ -1,9 +1,11 @@
 import * as THREE from 'three';
-import { Euler, Scene, Vector3 } from 'three';
+import { Euler, MeshLambertMaterial, Scene, Vector3 } from 'three';
 import { Planet } from './planet';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
 import { Portal } from './portal';
-
+import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry';
+import { FontLoader } from 'three/examples/jsm/loaders/FontLoader';
+import { text } from 'stream/consumers';
 
 export class Cat {
 
@@ -17,12 +19,14 @@ export class Cat {
     yVel: number = 0;
     jump: boolean = false;
     planet: Planet;
-    sphere: THREE.SphereGeometry;
     mesh: THREE.Object3D | undefined;
     catPositionAngle: number[];
     color: THREE.ColorRepresentation | undefined;
+    textGeometry: TextGeometry | undefined;
+    textMesh: THREE.Mesh | undefined;
     loader = new OBJLoader();
     object: string;
+    object3dGroup: THREE.Group;
 
 
     constructor(id: string, radius: number, planet: Planet, mass: number = 10, object: string = '') {
@@ -31,13 +35,18 @@ export class Cat {
         this.radius = radius;
         this.positionOnPlanet = new Vector3(0, 0, 0);
         this.planet = planet;
-        this.sphere = new THREE.SphereGeometry( 3, 32, 16 );
+        this.catPositionAngle = [0,0];        
         const color = this.generateColor(id);
         this.color = color;
         const material = new THREE.MeshLambertMaterial( { color: color } ); // This should be taken in as a constructor argument, but might break things when that happens
-        this.mesh = new THREE.Mesh( this.sphere, material);
         this.catPositionAngle = [0,0];
         const scene = planet.scene;
+        this.object3dGroup = new THREE.Group();
+
+        const loader = new FontLoader();
+
+        // scene.add( this.mesh );
+
         // load a resource
         let rnd = id.charCodeAt(0) % 4;
         const catsobj = ['cat.obj','cat2.obj','cat3.obj','cat4.obj'];
@@ -68,9 +77,7 @@ export class Cat {
                     }
                 });
                 object.scale.copy(new THREE.Vector3(size, size, size));
-                this.mesh = object;
-
-                scene.add( object );
+                this.object3dGroup.add(object);
 
             },
             // called when loading is in progresses
@@ -86,6 +93,32 @@ export class Cat {
 
             }
         );
+        loader.load( 'https://threejs.org/examples/fonts/helvetiker_regular.typeface.json', ( font ) => {
+
+            const textGeo: TextGeometry = new TextGeometry( id , {
+                font: font,
+                size: 60,
+                height: 5,
+                curveSegments: 12,
+                bevelEnabled: false,
+                bevelThickness: 0.5,
+                bevelSize: 8,
+                bevelOffset: 0,
+                bevelSegments: 5
+            } );
+
+            this.textGeometry = textGeo;
+            this.textGeometry.scale(0.1,0.1,0.1);
+            this.textGeometry.translate(-15,0,30);
+            this.textGeometry.rotateX(-Math.PI/2);
+            this.textMesh = new THREE.Mesh(this.textGeometry, new THREE.MeshLambertMaterial( { color: 'black' }));
+            this.object3dGroup.add(this.textMesh);
+
+
+        } );
+
+        this.mesh = this.object3dGroup;
+        scene.add(this.mesh);
     }
 
 

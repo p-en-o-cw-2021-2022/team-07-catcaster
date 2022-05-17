@@ -130,7 +130,7 @@ export function websocketEventHandlers(websocket: ws.Server) {
                     websocket.clients.forEach((client) => {
                         client.send(JSON.stringify({client : 'catColor', id : 'k', catcol : mes.catcol}));
                     });
-                } , 500);
+                } , 1000);
                 break;
             case 'join':
                 const screens = database.getScreenIds();
@@ -170,6 +170,10 @@ export function websocketEventHandlers(websocket: ws.Server) {
                     client.send(JSON.stringify({client : 'endgame'}));
                 });
                 mode = null;
+                break;
+            case 'removeID':
+                database.removeID(mes.id);
+                console.log('current controllers', database.getControllerIds());
                 break;
             case 'nbcontrollers':
                 const controllerids = database.getControllerIds();

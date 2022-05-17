@@ -11,6 +11,13 @@ import { myId, sendMessage } from './screenPage.js';
 
 // Initialize animation scene and camera
 const scene = new THREE.Scene();
+
+const loader = new THREE.TextureLoader();
+loader.load('./stars.jpg' , function(texture)
+            {
+             scene.background = texture;  
+            });
+
 const light1 = new THREE.PointLight();
 const light2 = new THREE.PointLight();
 const light3 = new THREE.PointLight();
@@ -24,7 +31,7 @@ light2.position.set(-window.innerWidth/2, sceneHeight/2, 100);
 light3.position.set(window.innerWidth/2, sceneHeight/2, 100);
 scene.background = new THREE.Color('white');
 // scene.background = new THREE.Color(0x919bab);
-// const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, -1000, 1000 );
+// const camera = new THREE.PerspectiveCamera( 7f5, window.innerWidth / window.innerHeight, -1000, 1000 );
 // camera.position.z = 1000;
 export const cats : (Cat | undefined )[] = [];
 const catsData : HTMLElement[][] = [];
@@ -39,7 +46,7 @@ camera.rotateOnAxis(new Vector3(1,0,0), Math.PI/4);
 // Initialize renderer
 const renderer = new THREE.WebGLRenderer();
 
-const scaleFactor = 1; // Scale factor for the resolution of window
+const scaleFactor = 0.75; // Scale factor for the resolution of window
 renderer.setSize( window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(window.devicePixelRatio * scaleFactor);
 renderer.domElement.style.zIndex = '-1';
