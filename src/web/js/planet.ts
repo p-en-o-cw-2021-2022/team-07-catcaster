@@ -15,7 +15,7 @@ export class Planet {
     g = -9.8;
     MAX_ANGLE: number = Math.PI/4;
     mesh: THREE.Mesh;
-    circle: THREE.CylinderGeometry;
+    circle: THREE.CircleGeometry;
     portals: Portal[];
     neighbours: Map<number, Planet>;
     object3dGroup: THREE.Group;
@@ -29,8 +29,7 @@ export class Planet {
         this.neighbours = new Map<number, Planet>();
         this.cats = new Map<string, Cat>();
         this.portals = new Array<Portal>();
-        this.circle = new THREE.CylinderGeometry( this.radius, this.radius, 5, 32 );
-        this.circle.rotateX(Math.PI * 0.5);
+        this.circle = new THREE.CircleGeometry( this.radius, 32 );
         this.mesh = new THREE.Mesh( this.circle, new THREE.MeshNormalMaterial() );
         this.object3dGroup = new THREE.Group();
         this.object3dGroup.add(this.mesh);
@@ -59,7 +58,7 @@ export class Planet {
         const portalMesh = new THREE.Mesh(circleGeom, new THREE.MeshLambertMaterial( { color: color } ));
         this.object3dGroup.add(portalMesh);
         portalMesh.position.copy(portalCoords); // Move the portal relative to the group center
-        portalMesh.position.add(new Vector3(0,0,5)); // Move the portal a bit forward to prevent clipping
+        portalMesh.position.add(new Vector3(0,0,this.portals.length)); // Move the portal a bit forward to prevent clipping
     }
 
 
