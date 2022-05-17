@@ -39,7 +39,7 @@ camera.rotateOnAxis(new Vector3(1,0,0), Math.PI/4);
 // Initialize renderer
 const renderer = new THREE.WebGLRenderer();
 
-const scaleFactor = 1; // Scale factor for the resolution of window
+const scaleFactor = 0.75; // Scale factor for the resolution of window
 renderer.setSize( window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(window.devicePixelRatio * scaleFactor);
 renderer.domElement.style.zIndex = '-1';
@@ -58,11 +58,11 @@ export const allPlanets : Planet[] = [];
 const randomNO = Math.random();
 let noOfPlanets;
 if(randomNO <= 0.15) {
-    noOfPlanets = 1;
-} else if(randomNO <= 0.4) {
     noOfPlanets = 2;
+} else if(randomNO <= 0.4) {
+    noOfPlanets = 4;
 } else {
-    noOfPlanets = 3;
+    noOfPlanets = 5;
 }
 for (let planetID = 1; planetID <= noOfPlanets; planetID++) {
     createPlanet(planetID);
