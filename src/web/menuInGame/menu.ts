@@ -6,7 +6,7 @@ const deleteButton = <HTMLButtonElement>document.getElementById('delete-multi-sc
 let mode: any = null;
 
 const url: string = 'wss' + window.location.href.substr(5);
-const websocket = new WebSocket(url);
+let websocket = new WebSocket(url);
 console.log('Starting Websocket connection...');
 
 websocket.onopen = () => {
@@ -26,6 +26,11 @@ websocket.onmessage = (message:WebSocketMessage) => {
         window.location.href = '/catcaster/error/';
     }
 }
+
+websocket.onclose = () => {
+    console.log('Connection lost, attempting to reconnect...'); //ADD TO HTML PAGE !!!!
+    window.location.href = '/catcaster/error/';
+};
 
 playButton.addEventListener('click', function() {
     const cid : string|null = getId();

@@ -19,18 +19,20 @@ let it: any;
 const IDTimers: any = {};
 let mode: any = null;
 
-function ping(id: string) {
+function ping(id: string, ws: ws.WebSocket) {
     if (tm === undefined) {
         tm = setTimeout(function () {
             database.removeID(id);
             console.log('connection with ID: ' + id + ' timed out.\r\n removing ID from database...');
-        }, 600000);
+            ws.close(1000, 'connection timed out.');
+        }, 10000);
         IDTimers[id] = tm;
     } else if (database.doesIdExist(id) && tm._destroyed === true) {
         tm = setTimeout(function () {
             database.removeID(id);
             console.log('connection with ID: ' + id + ' timed out.\r\n removing ID from database...');
-        }, 600000);
+            ws.close(1000, 'connection timed out.');
+        }, 10000);
         IDTimers[id] = tm;
     }
     return tm;
@@ -57,7 +59,8 @@ export function websocketEventHandlers(websocket: ws.Server) {
             //Het id dat door de client wordt doorgestuurd moet reeds bestaan.
             if (!database.doesIdExist(mes.id)) {
                 console.log('Received ID is not in the database, closing connection to client.');
-                ws.send(JSON.stringify({client : 'disconnect', id : mes.id}));
+                //ws.send(JSON.stringify({client : 'disconnect', id : mes.id}));
+                ws.close(1000, 'ID not recognised.');
             }
             switch (mes.client) {
             case 'screen':
@@ -65,8 +68,8 @@ export function websocketEventHandlers(websocket: ws.Server) {
                 //start ping-pong process
                 it = setInterval(() => {
                     ws.send(JSON.stringify({client: '__ping__'}));
-                    tm = ping(id);
-                }, 20000);
+                    tm = ping(id, ws);
+                }, 5000);
 
                 //ws.send(JSON.stringify({type: 'ControllerID', id: mes.id}));
                 break;
@@ -90,8 +93,8 @@ export function websocketEventHandlers(websocket: ws.Server) {
                 //start ping-pong process
                 it = setInterval(() => {
                     ws.send(JSON.stringify({client: '__ping__'}));
-                    tm = ping(id);
-                }, 20000);
+                    tm = ping(id, ws);
+                }, 5000);
 
                 break;
 

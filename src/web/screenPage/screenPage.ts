@@ -192,7 +192,7 @@ function randomColorCreation(id: number = Math.floor((Math.random() * 1000000)))
 
 const url = 'wss' + window.location.href.substr(5);
 
-const websocket = new WebSocket(url);
+let websocket = new WebSocket(url);
 console.log('Starting Websocket connection...');
 
 websocket.onopen = () => {
@@ -208,10 +208,11 @@ websocket.onmessage = (message:WebSocketMessage) => {
         controllerId = mes.id;
         latestControllerID = mes.id[mes.id.length-1];
     }
+    /*
     if(mes.client === 'disconnect' && mes.id === myId.innerHTML) {
         console.log('Illegal ID, removing websocket connection.');
         websocket.close();
-    }
+    }*/
     if(mes.client === 'multi-screen') {
         console.log('Received message');
         let url = window.location.href;
@@ -369,9 +370,9 @@ websocket.onmessage = (message:WebSocketMessage) => {
 };
 
 websocket.onclose = () => {
+    console.log('Connection lost, attempting to reconnect...'); //ADD TO HTML PAGE !!!!
     window.location.href = '/catcaster/error/';
 };
-
 
 if (getIdScreen() !== null) {
     myId.innerHTML = <string>getIdScreen();
